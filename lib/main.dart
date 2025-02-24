@@ -318,12 +318,12 @@ Future<void> writeRef() async {
     String table = row['tablename'];
     int num = row['num'];
     String name = row['name'];
-    await setDbData('INSERT INTO $table (num, name) VALUES ($num, "$name");');
+    await setDbData("INSERT INTO $table (num, name) VALUES ($num, '$name');");
   }
 
   await setDbData('''
     INSERT INTO bikes (num, owner, brand, model, type, serialnum, buydate, photo) 
-    VALUES (1, 1, "*", "*", 1, "", "", "");
+    VALUES (1, 1, '*', '*', 1, '', '', '');
     ''');
 }
 
