@@ -1,20 +1,21 @@
-import 'package:flutter/material.dart';
-import 'package:path_provider/path_provider.dart'; // For getting system paths
-import 'package:flutter/foundation.dart' show defaultTargetPlatform, TargetPlatform;
-import 'dart:io'; // For File and Directory operations
-import 'package:flutter/services.dart' show rootBundle;
-import 'dart:typed_data'; // ByteData
 import 'dart:async'; // For Completer
+import 'dart:io'; // For File and Directory operations
+import 'dart:typed_data'; // ByteData
+import 'package:flutter/foundation.dart'
+    show defaultTargetPlatform, TargetPlatform;
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show rootBundle;
+import 'package:path_provider/path_provider.dart'; // For getting system paths
 import 'package:sqflite_common_ffi/sqflite_ffi.dart'; // For Linux
 // my
 import 'my_globals.dart';
+import 'add_action_screen.dart';
 import 'bike_log_screen.dart';
-import 'settings_screen.dart';
-import 'reference_settings_screen.dart';
 import 'bike_settings_screen.dart';
 import 'filter_screen.dart';
-import 'add_action_screen.dart';
 import 'options_settings_screen.dart';
+import 'reference_settings_screen.dart';
+import 'settings_screen.dart';
 
 // === STARTER ===
 Future<void> firstRunLanguageSelection() async {
@@ -24,12 +25,12 @@ Future<void> firstRunLanguageSelection() async {
     Completer<String> completer = Completer<String>();
     runApp(
       MaterialApp(
+        debugShowCheckedModeBanner: false,
         home: Builder(
           builder: (BuildContext context) {
             final screenWidth = MediaQuery.of(context).size.width;
             final containerWidth = screenWidth * 0.9; // 90% ширины экрана
             final buttonWidth = (containerWidth - 48 - 24) / 3;
-
             return Scaffold(
               body: Container(
                 decoration: BoxDecoration(
@@ -39,67 +40,83 @@ Future<void> firstRunLanguageSelection() async {
                     colors: [clFon, clUpBar],
                   ),
                 ),
-                child: Center(
-                  child: Container(
-                    width: containerWidth,
-                    padding: const EdgeInsets.all(24),
-                    decoration: BoxDecoration(
-                      color: clFill,
-                      borderRadius: BorderRadius.circular(16),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black,
-                          blurRadius: 10,
-                          offset: Offset(0, 5),
-                        ),
-                      ],
-                    ),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          'Select Language',
-                          style: TextStyle(
-                            fontSize: fsLarge,
-                            fontWeight: fwNormal,
-                            color: clText,
+                child: Stack(
+                  children: [
+                    Positioned(
+                      top: MediaQuery.of(context).size.height * 0.2,
+                      // Регулируйте это значение для изменения положения
+                      left: 0,
+                      right: 0,
+                      child: Center(
+                        child: Container(
+                          width: containerWidth,
+                          padding: const EdgeInsets.all(24),
+                          margin: const EdgeInsets.only(bottom: 50),
+                          decoration: BoxDecoration(
+                            color: clFill,
+                            borderRadius: BorderRadius.circular(16),
+                            boxShadow: [
+                              BoxShadow(
+                                color: clText,
+                                blurRadius: 10,
+                                offset: Offset(0, 5),
+                              ),
+                            ],
                           ),
-                        ),
-                        const SizedBox(height: 24),
-                        Wrap(
-                          spacing: 9, // horizontal
-                          runSpacing: 12, // vertical space
-                          alignment: WrapAlignment.center,
-                          children: availableLangs.map((lang) =>
-                              SizedBox(
-                                width: buttonWidth,
-                                height: 40,
-                                child: ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: clUpBar,
-                                    foregroundColor: clText,
-                                    elevation: 3,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(20), // Более закругленные края
-                                    ),
-                                  ),
-                                  onPressed: () {
-                                    completer.complete(lang);
-                                  },
-                                  child: Text(
-                                    lang,
-                                    style: TextStyle(
-                                      fontSize: fsNormal,
-                                      fontWeight: fwNormal,
-                                    ),
-                                  ),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                'Select Language',
+                                style: TextStyle(
+                                  fontSize: fsLarge,
+                                  fontWeight: fwNormal,
+                                  color: clText,
                                 ),
                               ),
-                          ).toList(),
+                              const SizedBox(height: 24),
+                              Wrap(
+                                spacing: 9, // horizontal
+                                runSpacing: 12, // vertical space
+                                alignment: WrapAlignment.center,
+                                children:
+                                    availableLangs
+                                        .map(
+                                          (lang) => SizedBox(
+                                            width: buttonWidth,
+                                            height: 40,
+                                            child: ElevatedButton(
+                                              style: ElevatedButton.styleFrom(
+                                                backgroundColor: clUpBar,
+                                                foregroundColor: clText,
+                                                elevation: 3,
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(15),
+                                                ),
+                                              ),
+                                              onPressed: () {
+                                                completer.complete(lang);
+                                              },
+                                              child: Text(
+                                                lang,
+                                                style: TextStyle(
+                                                  color: clText,
+                                                  fontSize: fsNormal,
+                                                  fontWeight: fwNormal,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        )
+                                        .toList(),
+                              ),
+                            ],
+                          ),
                         ),
-                      ],
+                      ),
                     ),
-                  ),
+                  ],
                 ),
               ),
             );
@@ -144,22 +161,27 @@ class BikeLogApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       navigatorObservers: [routeObserver],
-      debugShowCheckedModeBanner: false, // Disable debug banner
-      scaffoldMessengerKey: scaffoldMessengerKey, // global key for ScaffoldMessenger
-      navigatorKey: navigatorKey, // Global key for NavigatorState
+      debugShowCheckedModeBanner: false,
+      // Disable debug banner
+      scaffoldMessengerKey: scaffoldMessengerKey,
+      // global key for ScaffoldMessenger
+      navigatorKey: navigatorKey,
+      // Global key for NavigatorState
       title: lw('BikeLogBook'),
       initialRoute: '/bike_log',
       routes: {
         '/bike_log': (context) => const BikeLogScreen(),
         '/settings': (context) => const SettingsScreen(),
         '/reference_settings': (context) {
-          final int refMode = ModalRoute.of(context)!.settings.arguments as int? ?? 1;
+          final int refMode =
+              ModalRoute.of(context)!.settings.arguments as int? ?? 1;
           return ReferenceSettingsScreen(refMode: refMode);
         },
         '/bike_settings': (context) => const BikeSettingsScreen(),
         '/filters': (context) => const FilterScreen(),
         '/add_action': (context) {
-          final int? actionNum = ModalRoute.of(context)!.settings.arguments as int?;
+          final int? actionNum =
+              ModalRoute.of(context)!.settings.arguments as int?;
           return AddActionScreen(actionNum: actionNum);
         },
         '/options_settings': (context) => const OptionsSettingsScreen(),
@@ -167,7 +189,6 @@ class BikeLogApp extends StatelessWidget {
     );
   }
 }
-
 
 Future<void> initializePaths() async {
   switch (defaultTargetPlatform) {
@@ -196,8 +217,8 @@ Future<void> initializePaths() async {
       xvBakDir = '${xvHomePath}/BikeLogBackup';
       break;
 
-//    case TargetPlatform.windows:
-//    case TargetPlatform.macOS:
+    //    case TargetPlatform.windows:
+    //    case TargetPlatform.macOS:
     // Добавить специфичные пути для Windows и macOS
     //  throw UnsupportedError('Platform not supported yet');
 
@@ -206,20 +227,16 @@ Future<void> initializePaths() async {
   }
 
   // Установка общих путей к базам данных
-  xvMainHome = '${xvHomePath}/$mainDb';
-  xvLangHome = '${xvHomePath}/$langDb';
-  xvHelpHome = '${xvHomePath}/$helpDb';
-  xvSettHome = '${xvHomePath}/$settDb';
+  xvMainHome = '$xvHomePath/$mainDb';
+  xvLangHome = '$xvHomePath/$langDb';
+  xvHelpHome = '$xvHomePath/$helpDb';
+  xvSettHome = '$xvHomePath/$settDb';
 }
-
-
 
 Future<bool> copyAssetsToFileSystem() async {
   String currentVersionInDb = await getKey('.Prog version');
-  if (
-      (xdef['.First start'] == 'false') &&
-      (currentVersionInDb == progVersion)
-  ) {
+  if ((xdef['.First start'] == 'false') &&
+      (currentVersionInDb == progVersion)) {
     return true;
   }
   bool allSuccess = true;
@@ -230,7 +247,7 @@ Future<bool> copyAssetsToFileSystem() async {
   ];
   for (final (assetPath, fileName) in assetFiles) {
     try {
-      final filePath = '${xvHomePath}/$fileName';
+      final filePath = '$xvHomePath/$fileName';
       final ByteData data = await rootBundle.load(assetPath);
       final List<int> bytes = data.buffer.asUint8List();
       await File(filePath).writeAsBytes(bytes);
@@ -252,11 +269,10 @@ Future<bool> copyAssetsToFileSystem() async {
   return allSuccess;
 }
 
-
 Future<void> initSqlDatabase({
   required String dbFilePath,
   required String sqlFilePath,
-  required String dbType
+  required String dbType,
 }) async {
   try {
     File dbFile = File(dbFilePath);
@@ -293,10 +309,13 @@ Future<void> initializeAllDatabases() async {
     // Get the SQL file name
     final sqlFile = '${xvHomePath}/${sqlFiles[i]}';
     // Call the universal function
-    await initSqlDatabase(dbFilePath: dbFilePath, sqlFilePath: sqlFile, dbType: type);
+    await initSqlDatabase(
+      dbFilePath: dbFilePath,
+      sqlFilePath: sqlFile,
+      dbType: type,
+    );
   }
 }
-
 
 Future<void> writeRef() async {
   if (await getTableRowCount('types') > 0) return;
@@ -326,8 +345,6 @@ Future<void> writeRef() async {
     VALUES (1, 1, '*', '*', 1, '', '', '');
     ''');
 }
-
-
 
 // first time init settings db-file and write ini-keys
 Future<void> initializeIni() async {
@@ -360,7 +377,6 @@ Future<void> initializeIni() async {
   }
 }
 
-
 // if first start and was file xxxxx.sql then add it
 Future<void> processExtraData() async {
   // Exit early if not first start
@@ -376,14 +392,18 @@ Future<void> processExtraData() async {
       // Сначала удаляем многострочные комментарии
       sql = sql.replaceAll(RegExp(r'/\*.*?\*/', dotAll: true), '');
 
-      List<String> queries = sql
-          .split(';')
-          .map((q) => q.split('\n')
-          .where((line) => !line.trim().startsWith('--'))
-          .join(' '))
-          .map((q) => q.trim())
-          .where((q) => q.isNotEmpty)
-          .toList();
+      List<String> queries =
+          sql
+              .split(';')
+              .map(
+                (q) => q
+                    .split('\n')
+                    .where((line) => !line.trim().startsWith('--'))
+                    .join(' '),
+              )
+              .map((q) => q.trim())
+              .where((q) => q.isNotEmpty)
+              .toList();
 
       Database database = await myOpenDatabase(xvMainHome);
       try {
