@@ -40,6 +40,10 @@ Future<void> firstRunLanguageSelection() async {
                     end: Alignment.bottomRight,
                     colors: [clFon, clUpBar],
                   ),
+                  // image: DecorationImage(
+                  //   image: AssetImage('assets/images/splash_background.png'),
+                  //   fit: BoxFit.cover, // Растянуть изображение на весь контейнер
+                  // ),
                 ),
                 child: Stack(
                   children: [
@@ -156,12 +160,18 @@ void main() async {
 }
 
 String _getLocaleCode(String language) {
-  switch (language.toUpperCase()) {
-    case 'EN': return 'en';
-    case 'RU': return 'ru';
-    case 'UA': return 'uk'; // Украинский - код 'uk'
-    default: return 'en';
-  }
+  // Словарь только для исключений, где код отличается от простого преобразования
+  final Map<String, String> exceptions = {
+    'UA': 'uk',  // ukraine
+    'GR': 'el',  // greek
+    'CN': 'zh',  // china
+    'JP': 'ja',  // japan
+    'SE': 'sv',  // sveden
+    'DK': 'da',  // Датский
+    'CZ': 'cs',  // cheska
+  };
+  String langCode = language.toUpperCase();
+  return exceptions[langCode] ?? langCode.toLowerCase();
 }
 
 class BikeLogApp extends StatelessWidget {
