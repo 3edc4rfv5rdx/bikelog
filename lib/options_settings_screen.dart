@@ -212,7 +212,7 @@ class _OptionsSettingsScreenState extends State<OptionsSettingsScreen> {
                               return DropdownMenuItem<String>(
                                 value: value,
                                 child: Text(
-                                  value,
+                                  lw(value),
                                   style: TextStyle(fontWeight: fwNormal, fontSize: fsNormal, color: clText,),
                                 ),
                               );

@@ -94,7 +94,7 @@ const List<List<Color>> curTHEME = [
     Color(0xFFEDF7FB),      // fon - светлый лазурный
     Color(0xFFC6E0E9),      // menu - светло-голубой
     Color(0x4D3D6B7F),      // selected - серо-голубой с прозрачностью
-    Color(0xFF60A3C4),      // upBar - глубокий голубой
+    Color(0xFF7FB8D5),      // upBar - глубокий голубой
     Color(0xFF0A181E),      // text - темно-синий
     Colors.white,          // fill
     Colors.grey,           // frame
@@ -104,7 +104,7 @@ const List<List<Color>> curTHEME = [
     Color(0xFFF7F2ED),      // fon - светлый бежевый
     Color(0xFFE2D4C6),      // menu - светло-коричневый
     Color(0x4D6B4D3D),      // selected - коричневый с прозрачностью
-    Color(0xFFA37E60),      // upBar - глубокий коричневый
+    Color(0xFFB69478),      // upBar - глубокий коричневый
     Colors.black,           // text
     Colors.white,          // fill
     Colors.grey,           // frame
@@ -114,7 +114,7 @@ const List<List<Color>> curTHEME = [
     Color(0xFFF2EDF7),      // fon - светлый лавандовый
     Color(0xFFD4C6E2),      // menu - светло-фиолетовый
     Color(0x4D5D3D6B),      // selected - фиолетовый с прозрачностью
-    Color(0xFF8560A3),      // upBar - глубокий фиолетовый
+    Color(0xFF9A75B8),      // upBar - глубокий фиолетовый
     Color(0xFF180A1E),      // text - темно-фиолетовый
     Color(0xFFFFFFFF),      // white
     Color(0xFF808080),      // grey
@@ -124,7 +124,7 @@ const List<List<Color>> curTHEME = [
     Color(0xFFF7F0ED),      // fon - светлый персиковый
     Color(0xFFE2CDC6),      // menu - светло-оранжевый
     Color(0x4D6B533D),      // selected - оранжевый с прозрачностью
-    Color(0xFFD7844F),      // upBar - глубокий оранжевый
+    Color(0xFFE59967),      // upBar - глубокий оранжевый
     Color(0xFF1E120A),      // text - темно-коричневый
     Color(0xFFFFFFFF),      // white
     Color(0xFF808080),      // grey
