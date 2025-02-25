@@ -1,3 +1,4 @@
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'dart:async'; // For Completer
 import 'dart:io'; // For File and Directory operations
 import 'dart:typed_data'; // ByteData
@@ -154,6 +155,15 @@ void main() async {
   runApp(const BikeLogApp());
 }
 
+String _getLocaleCode(String language) {
+  switch (language.toUpperCase()) {
+    case 'EN': return 'en';
+    case 'RU': return 'ru';
+    case 'UA': return 'uk'; // Украинский - код 'uk'
+    default: return 'en';
+  }
+}
+
 class BikeLogApp extends StatelessWidget {
   const BikeLogApp({super.key});
 
@@ -168,6 +178,15 @@ class BikeLogApp extends StatelessWidget {
       navigatorKey: navigatorKey,
       // Global key for NavigatorState
       title: lw('BikeLogBook'),
+
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: appLANGUAGES.map((lang) => Locale(_getLocaleCode(lang))).toList(),
+      locale: Locale(_getLocaleCode(xdef['Program language'])),
+
       initialRoute: '/bike_log',
       routes: {
         '/bike_log': (context) => const BikeLogScreen(),
