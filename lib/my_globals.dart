@@ -52,9 +52,9 @@ int get progOwners => prgEditions[currVers].$2;
 int get progBikes => prgEditions[currVers].$3;
 
 // all program landuages
-const List<String> appLANGUAGES = ['EN','RU', 'UA',];
+const List<String> appLANGUAGES = ['EN','RU','UA',];
 // Названия тем
-const List<String> appTHEMES = ['Light', 'Dark', 'Green',];
+const List<String> appTHEMES = ['Light','Dark','Green','Blue','Brown','Purple','Orange',];
 
 // Определяем темы
 const List<List<Color>> curTHEME = [
@@ -86,6 +86,46 @@ const List<List<Color>> curTHEME = [
     Color(0x4D4C6B3D),      // selected - оливковый с прозрачностью
     Color(0xFF97BA60),      // upBar - глубокий оливковый
     Color(0xFF121E0A),      // text - темно-зеленый
+    Colors.white,          // fill
+    Colors.grey,           // frame
+  ],
+  // blue theme = 3
+  [
+    Color(0xFFEDF7FB),      // fon - светлый лазурный
+    Color(0xFFC6E0E9),      // menu - светло-голубой
+    Color(0x4D3D6B7F),      // selected - серо-голубой с прозрачностью
+    Color(0xFF60A3C4),      // upBar - глубокий голубой
+    Color(0xFF0A181E),      // text - темно-синий
+    Colors.white,          // fill
+    Colors.grey,           // frame
+  ],
+  // Brown = 4
+  [
+    Color(0xFFF7F2ED),      // fon - светлый бежевый
+    Color(0xFFE2D4C6),      // menu - светло-коричневый
+    Color(0x4D6B4D3D),      // selected - коричневый с прозрачностью
+    Color(0xFFA37E60),      // upBar - глубокий коричневый
+    Colors.black,           // text
+    Colors.white,          // fill
+    Colors.grey,           // frame
+  ],
+  // purple = 5
+  [
+    Color(0xFFF2EDF7),      // fon - светлый лавандовый
+    Color(0xFFD4C6E2),      // menu - светло-фиолетовый
+    Color(0x4D5D3D6B),      // selected - фиолетовый с прозрачностью
+    Color(0xFF8560A3),      // upBar - глубокий фиолетовый
+    Color(0xFF180A1E),      // text - темно-фиолетовый
+    Color(0xFFFFFFFF),      // white
+    Color(0xFF808080),      // grey
+  ],
+  // orange = 6
+  [
+    Color(0xFFF7F0ED),      // fon - светлый персиковый
+    Color(0xFFE2CDC6),      // menu - светло-оранжевый
+    Color(0x4D6B533D),      // selected - оранжевый с прозрачностью
+    Color(0xFFD7844F),      // upBar - глубокий оранжевый
+    Color(0xFF1E120A),      // text - темно-коричневый
     Color(0xFFFFFFFF),      // white
     Color(0xFF808080),      // grey
   ],
@@ -710,7 +750,7 @@ void okInfoBarOrange(String message) {
         message,
         style: TextStyle(
           fontSize: fsSmall,
-          color: Colors.black,
+          color: clText,
         ),
       ),
       behavior: SnackBarBehavior.floating,
@@ -727,7 +767,7 @@ void okInfoBarYellow(String message) {
         message,
         style: TextStyle(
           fontSize: fsSmall,
-          color: Colors.black,
+          color: clText,
         ),
       ),
       backgroundColor: Colors.yellow,
@@ -744,7 +784,7 @@ void okInfoBarGreen(String message, {Duration? duration}) {
         message,
         style: TextStyle(
           fontSize: fsSmall,
-          color: Colors.white,
+          color: clText,
         ),
       ),
       duration: duration ?? Duration(seconds: 3),
@@ -762,7 +802,7 @@ void okInfoBarPurple(String message) {
         message,
         style: TextStyle(
           fontSize: fsSmall,
-          color: Colors.white,
+          color: clFill,
         ),
       ),
       behavior: SnackBarBehavior.floating,

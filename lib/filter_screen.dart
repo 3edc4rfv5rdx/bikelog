@@ -354,7 +354,7 @@ class _FilterScreenState extends State<FilterScreen> {
                   flex: 2,
                   child: Container(
                     decoration: BoxDecoration(
-                      border: Border.all(color: Colors.grey),
+                      border: Border.all(color: clFrame),
                     ),
                     child: DropdownButtonFormField<String>(
                       decoration: InputDecoration(
@@ -435,7 +435,7 @@ class _FilterScreenState extends State<FilterScreen> {
                   flex: 2,
                   child: Container(
                     decoration: BoxDecoration(
-                      border: Border.all(color: Colors.grey),
+                      border: Border.all(color: clFrame),
                     ),
                     child: DropdownButtonFormField<String>(
                       decoration: InputDecoration(
