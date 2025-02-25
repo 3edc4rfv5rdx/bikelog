@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart'; // For Linux
 import 'package:flutter/foundation.dart' show defaultTargetPlatform, TargetPlatform;
-// import 'package:flutter/foundation.dart';
 import 'dart:io';
 
 // Global key for accessing ScaffoldMessenger
@@ -33,10 +32,10 @@ String xvLangHome = '';
 String xvHelpHome = '';
 String xvSettHome = '';
 String xvBakDir = '';
-bool xvBusiness = true;
+bool xvBusiness = false;
 
-const String progVersion = '0.8.250223';
-//const String progDate = '2025-02-19';
+const String progVersion = '0.8.250225';
+// const String progDate = '2025-02-19';
 const String progAuthor = 'Eugen';
 const String progEmail = 'xxxx@xxx.xx';
 const String progSite = 'bikelogbook.od.ua';
@@ -51,15 +50,15 @@ String get progEdition => prgEditions[currVers].$1;
 int get progOwners => prgEditions[currVers].$2;
 int get progBikes => prgEditions[currVers].$3;
 
-// all program landuages
+// all program landuages, if changes, look at main/_getLocaleCode
 const List<String> appLANGUAGES = ['EN','RU','UA',];
-// Названия тем
+// color themes names
 const List<String> appTHEMES = ['Light','Dark','Green','Blue','Brown','Purple','Orange',];
 
-// Определяем темы
+// themes colors
 const List<List<Color>> curTHEME = [
-  // Color(0xFFxxxxx)  цвет в формате ARGB (Alpha, Red, Green, Blue),
-  // Светлая тема currentThemeIndex = 0
+  // Color(0xFFxxxxx):  color format ARGB (Alpha, Red, Green, Blue),
+  // Light theme, currentThemeIndex = 0
   [
     Color(0xFFFFF8E1),      // fon (Colors.amber.shade50)
     Color(0xFFB3E5FC),      // menu (Colors.lightBlue.shade100)
@@ -69,7 +68,7 @@ const List<List<Color>> curTHEME = [
     Colors.white,          // fill
     Colors.grey,           // frame
   ],
-  // Темная тема currentThemeIndex = 1
+  // Dark theme, currentThemeIndex = 1
   [
     Color(0xFF121212),      // fon - почти черный фон списков
     Color(0xFF5C5C5C),      // menu - средне-темный серый
@@ -79,7 +78,7 @@ const List<List<Color>> curTHEME = [
     Color(0xFF4d4d4d),      // white
     Color(0xFF808080),      // grey
   ],
-  // Зеленая тема currentThemeIndex = 2
+  // Green theme,  currentThemeIndex = 2
   [
     Color(0xFFF3F7ED),      // fon - светлый фисташковый
     Color(0xFFD4E2C6),      // menu - шалфейный
