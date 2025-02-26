@@ -35,15 +35,15 @@ Future<void> firstRunLanguageSelection() async {
             return Scaffold(
               body: Container(
                 decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [clFon, clUpBar],
-                  ),
-                  // image: DecorationImage(
-                  //   image: AssetImage('assets/images/splash_background.png'),
-                  //   fit: BoxFit.cover, // Растянуть изображение на весь контейнер
+                  // gradient: LinearGradient(
+                  //   begin: Alignment.topLeft,
+                  //   end: Alignment.bottomRight,
+                  //   colors: [clFon, clUpBar],
                   // ),
+                  image: DecorationImage(
+                    image: AssetImage('assets/images/main512.png'),
+                    fit: BoxFit.cover, // Растянуть изображение на весь контейнер
+                  ),
                 ),
                 child: Stack(
                   children: [
@@ -132,6 +132,7 @@ Future<void> firstRunLanguageSelection() async {
     String selectedLang = await completer.future;
     xdef['Program language'] = selectedLang;
     setKey('Program language', selectedLang);
+    myPrint("+++ firstRunLanguageSelection finished");
   }
 }
 
@@ -229,7 +230,6 @@ Future<void> initializePaths() async {
       final externalStorageDirectory = await getExternalStorageDirectory();
       xvExt1Path = externalStorageDirectory?.path ?? xvHomePath;
       myPrint(">>> External storage directory path: ${xvExt1Path}");
-
       xvBakDir = '/storage/emulated/0/Download/BikeLogBackup';
       break;
 
@@ -260,6 +260,7 @@ Future<void> initializePaths() async {
   xvLangHome = '$xvHomePath/$langDb';
   xvHelpHome = '$xvHomePath/$helpDb';
   xvSettHome = '$xvHomePath/$settDb';
+  myPrint("+++ initializePaths finished");
 }
 
 Future<bool> copyAssetsToFileSystem() async {
@@ -294,6 +295,7 @@ Future<bool> copyAssetsToFileSystem() async {
   // Если успешно скопировали, обновляем версию в БД
   if (allSuccess) {
     await setKey('.Prog version', progVersion);
+    myPrint("+++ copyAssetsToFileSystem finished");
   }
   return allSuccess;
 }
@@ -310,6 +312,7 @@ Future<void> initSqlDatabase({
       String sql = await File(sqlFilePath).readAsString();
       await setMultiOper(sql, dbFilePath);
     } else {
+      myPrint("+++ initSqlDatabase finished");
       return;
     }
   } catch (e) {
@@ -344,6 +347,7 @@ Future<void> initializeAllDatabases() async {
       dbType: type,
     );
   }
+  myPrint("+++ initializeAllDatabases finished");
 }
 
 Future<void> writeRef() async {
@@ -373,6 +377,7 @@ Future<void> writeRef() async {
     INSERT INTO bikes (num, owner, brand, model, type, serialnum, buydate, photo) 
     VALUES (1, 1, '*', '*', 1, '', '', '');
     ''');
+  myPrint("+++ writeRef finished");
 }
 
 // first time init settings db-file and write ini-keys
@@ -404,6 +409,7 @@ Future<void> initializeIni() async {
       xdef[key] = s;
     }
   }
+  myPrint("+++ initializeIni finished");
 }
 
 // if first start and was file xxxxx.sql then add it
@@ -441,6 +447,7 @@ Future<void> processExtraData() async {
         }
       } finally {
         await database.close();
+        myPrint("+++ processExtraData finished");
       }
     } catch (e) {
       myPrint('>>> Failed to process xxxxx.sql: $e');
