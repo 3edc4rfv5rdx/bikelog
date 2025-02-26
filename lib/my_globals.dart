@@ -423,6 +423,7 @@ Future<void> initTranslations() async {
     for (var row in result) {
       _translationCache[row['word']] = row[lang];
     }
+    myPrint("+++ initTranslations finished");
   } catch (e) {
     myPrint('>>> Error initializing translations: $e');
     rethrow;
