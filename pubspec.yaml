@@ -67,7 +67,7 @@ flutter:
     - assets/sql/bikelog_lang.sql
     - assets/sql/bikelog_help.sql
     - assets/icons/icon.png
-#    - assets/images/splash_background.png  # splash for lang select
+    - assets/images/main512.png  # splash for lang select
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
@@ -111,7 +111,7 @@ flutter_launcher_icons:
   min_sdk_android: 21
   image_path: "assets/icons/icon.png"  # Ваша обычная иконка
   adaptive_icon_background: "#FFFFFF" # или путь к фоновому изображению
-  adaptive_icon_foreground: "assets/icons/icon.png" # передний план
+  adaptive_icon_foreground: "assets/icons/iconbig.png" # передний план
 
 
 
