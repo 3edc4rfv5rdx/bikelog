@@ -1,4 +1,4 @@
-create table help (
+create table if not exists help (
     num integer,
     en text,
     ru text,

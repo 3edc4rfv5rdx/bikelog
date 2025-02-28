@@ -1,4 +1,4 @@
-create table langs (
+create table if not exists langs (
     id integer primary key autoincrement,
     tag text,
     word text unique,
@@ -8,7 +8,7 @@ create table langs (
 
 create index idx_word on langs (word);
 
-insert into langs (word, ru, ua) values
+INSERT OR REPLACE INTO langs (word, ru, ua) values
 ('About', 'О программе', 'Про програму'),
 ('Action Menu', 'Меню действий', 'Меню дій'),
 ('Action deleted successfully', 'Действие успешно удалено', 'Дію успішно видалено'),
@@ -155,7 +155,7 @@ insert into langs (word, ru, ua) values
 
 /* ================== ref tables ================= */
 
-insert into langs (word, tag, ru, ua) values
+INSERT OR REPLACE INTO langs (word, tag, ru, ua) values
 ('Me', 'Owners|1', 'Я', 'Я'),
 ('Servicing', 'Events|1', 'Обслуживание', 'Обслуговування'),
 ('Installing accessories', 'Events|2', 'Монтаж аксессуаров', 'Монтаж аксесуарів'),
