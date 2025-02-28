@@ -1,7 +1,7 @@
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'dart:async'; // For Completer
 import 'dart:io'; // For File and Directory operations
-import 'dart:typed_data'; // ByteData
+// import 'dart:typed_data'; // ByteData
 import 'package:flutter/foundation.dart'
     show defaultTargetPlatform, TargetPlatform;
 import 'package:flutter/material.dart';
@@ -143,7 +143,7 @@ void main() async {
   initializeSqflite();
   await initializePaths(); // Initialize paths
   await initializeIni();
-  await copyAssetsToFileSystem(); // one at first time
+//  await copyAssetsToFileSystem(); // one at first time
   await initializeAllDatabases(); // first start or not
   await firstRunLanguageSelection(); // === STARTER ===
   await writeRef(); // one at first time
@@ -263,91 +263,63 @@ Future<void> initializePaths() async {
   myPrint("+++ initializePaths finished");
 }
 
-Future<bool> copyAssetsToFileSystem() async {
-  String currentVersionInDb = await getKey('.Prog version');
-  if ((xdef['.First start'] == 'false') &&
-      (currentVersionInDb == progVersion)) {
-    return true;
-  }
-  bool allSuccess = true;
-  final List<(String, String)> assetFiles = [
-    ('assets/sql/bikelog_main.sql', mainSql),
-    ('assets/sql/bikelog_lang.sql', langSql),
-    ('assets/sql/bikelog_help.sql', helpSql),
-  ];
-  for (final (assetPath, fileName) in assetFiles) {
-    try {
-      final filePath = '$xvHomePath/$fileName';
-      final ByteData data = await rootBundle.load(assetPath);
-      final List<int> bytes = data.buffer.asUint8List();
-      await File(filePath).writeAsBytes(bytes);
-      myPrint('>>> Successfully copied $assetPath to $filePath');
-    } catch (e) {
-      allSuccess = false;
-      myPrint('>>> Failed to copy $assetPath: $e');
-      if (e is FlutterError) {
-        myPrint('>>> Asset not found: $assetPath');
-      } else if (e is FileSystemException) {
-        myPrint('>>> File system error: ${e.message}');
-      }
-    }
-  }
-  // Если успешно скопировали, обновляем версию в БД
-  if (allSuccess) {
-    await setKey('.Prog version', progVersion);
-    myPrint("+++ copyAssetsToFileSystem finished");
-  }
-  return allSuccess;
-}
-
-Future<void> initSqlDatabase({
+Future<bool> initSqlDatabase({
   required String dbFilePath,
   required String sqlFilePath,
   required String dbType,
 }) async {
   try {
+    // Проверяем существование файла
     File dbFile = File(dbFilePath);
-    if (!await dbFile.exists() || await dbFile.length() == 0) {
-      // Read SQL file and execute queries
-      String sql = await File(sqlFilePath).readAsString();
-      await setMultiOper(sql, dbFilePath);
-    } else {
-      myPrint("+++ initSqlDatabase finished");
-      return;
+    bool fileExists = await dbFile.exists();
+    // if exist and this 'main' tnen skip
+    if (dbType == 'main' && fileExists) {
+      myPrint(">>> Skipping main database initialization - file already exists");
+      return true;
     }
+    // Читаем SQL из assets и Выполняем SQL-операции
+    String sql = await rootBundle.loadString(sqlFilePath);
+    await setMultiOper(sql, dbFilePath);
+    if (!fileExists) {
+      myPrint(">>> initSqlDatabase created new database for $dbType");
+    } else {
+      myPrint(">>> initSqlDatabase updated existing database for $dbType");
+    }
+    return true;
   } catch (e) {
     String ee = 'An error occurred';
     myPrint('>>> $ee: In type $dbType: $e');
+    return false;
   }
 }
 
-// save from sql to db
 Future<void> initializeAllDatabases() async {
-  if (xdef['.First start'] != 'true') {
+  bool isFirstStart = xdef['.First start'] == 'true';
+  bool isVersionChanged = progVersion != await getKey('.Prog version');
+  // Если не первый запуск и версия не изменилась, просто выходим
+  if (!isFirstStart && !isVersionChanged) {
+    myPrint(">>> Skipping database initialization - not first start and version unchanged");
     return;
   }
-  // Array of database types
-  final List<String> databaseTypes = ['main', 'lang', 'help'];
-  // Array of xv[] keys for database file paths
+  bool allSuccess = true;
+  // Array of database types, file paths and SQL files
+  final List<String> dbTypes = ['main', 'lang', 'help'];
   final List<String> dbFileKeys = [xvMainHome, xvLangHome, xvHelpHome];
-  // Array of SQL file names
   final List<String> sqlFiles = [mainSql, langSql, helpSql];
   // Initialize each database in a loop
-  for (int i = 0; i < databaseTypes.length; i++) {
-    // Get the current database type
-    final type = databaseTypes[i];
-    // Get the database file path from xv[]
-    final dbFilePath = dbFileKeys[i];
-    // Get the SQL file name
-    final sqlFile = '${xvHomePath}/${sqlFiles[i]}';
-    // Call the universal function
-    await initSqlDatabase(
-      dbFilePath: dbFilePath,
-      sqlFilePath: sqlFile,
-      dbType: type,
+  for (int i = 0; i < dbTypes.length; i++) {
+    allSuccess = allSuccess && await initSqlDatabase(
+      dbFilePath: dbFileKeys[i],
+      sqlFilePath: 'assets/sql/${sqlFiles[i]}',
+      dbType: dbTypes[i],
     );
   }
-  myPrint("+++ initializeAllDatabases finished");
+  // Если успешно создали/обновили БД, обновляем только версию программы
+  if (allSuccess) {
+    await setKey('.Prog version', progVersion);
+    myPrint(">>> Databases initialized successfully, updated version");
+  }
+  myPrint(">>> initializeAllDatabases finished, success: $allSuccess");
 }
 
 Future<void> writeRef() async {
@@ -391,8 +363,7 @@ Future<void> initializeIni() async {
       await database.execute('''
         CREATE TABLE IF NOT EXISTS settings (
           key TEXT PRIMARY KEY NOT NULL,
-          value TEXT NOT NULL
-        )
+          value TEXT NOT NULL)
       ''');
     } catch (e) {
       myPrint('>>> Error creating database: $e');
@@ -402,11 +373,11 @@ Future<void> initializeIni() async {
   }
   // write ini keys
   for (var key in xdef.keys) {
-    String s = await getKey(key);
-    if (s == '') {
-      await setKey(key, xdef[key]);
+    String saved = await getKey(key);
+    if (saved == '') {
+      await setKey(key, xdef[key]); // default
     } else {
-      xdef[key] = s;
+      xdef[key] = saved;
     }
   }
   myPrint("+++ initializeIni finished");

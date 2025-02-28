@@ -163,7 +163,7 @@ const String helpDb = '${prgName}_help.db';
 const String helpSql = '${prgName}_help.sql';
 // Sett database and SQL file
 const String settDb = '${prgName}_sett.db';
-const String settSql = '${prgName}_sett.sql';
+//const String settSql = '${prgName}_sett.sql';
 
 int currentThemeIndex = 0;
 void initThemeColors(int themeIndex) {
