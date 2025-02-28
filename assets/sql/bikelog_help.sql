@@ -1,11 +1,9 @@
 create table if not exists help (
-    num integer,
+    num INTEGER PRIMARY KEY,
     en text,
     ru text,
     ua text
 );
-
-CREATE INDEX IF NOT EXISTS  idx_help_num on help (num);
 
 INSERT OR REPLACE INTO help (num, en, ru, ua) values (1,
 'This program is a digital diary for tracking the maintenance and repair
@@ -22,7 +20,7 @@ Important:
 1) The program is not a financial tool. Prices are for reference only.
 2) It works without an internet connection. All data is stored locally
 and is not shared with third parties',
-'Эта-программа — цифровой дневник для отслеживания обслуживания и ремонта
+'Эта программа — цифровой дневник для отслеживания обслуживания и ремонта
 ваших велосипедов. Она подходит для:
 1) Владельцев одного или нескольких велосипедов.
 2) Семей, где каждый член имеет свой велосипед.
@@ -90,7 +88,6 @@ INSERT OR REPLACE INTO help (num, en, ru, ua) values (9,
 'Кнопка ''Назад'' возвращает вас на предыдущий экран. Если вы редактируете информацию и не сохранили изменения, они будут потеряны. Нажатие этой кнопки на главном экране закроет программу',
 'Кнопка ''Назад'' повертає вас на попередній екран. Якщо ви редагуєте інформацію та не зберегли зміни, вони будуть втрачені. Натискання цієї кнопки на головному екрані закриє програму');
 
-/* bike log main */
 INSERT OR REPLACE INTO help (num, en, ru, ua) values (10,
 'Main menu',
 'Основное меню программы',
@@ -131,7 +128,6 @@ INSERT OR REPLACE INTO help (num, en, ru, ua) values (17,
 'Удалить выбранную запись',
 'Видалити вибраний запис');
 
-/* options settings */
 
 INSERT OR REPLACE INTO help (num, en, ru, ua) values (20,
 'Language selection. Choose the language that suits your preferences',
@@ -190,7 +186,6 @@ INSERT OR REPLACE INTO help (num, en, ru, ua) values (26,
 'Опция "Округление до целого" позволяет отображать денежные суммы без копеек. Если опция включена, все суммы будут округляться до целых значений.',
 'Опція "Округлення до цілого" дозволяє відображати грошові суми без копійок. Якщо опція увімкнена, всі суми будуть округлятися до цілих значень.');
 
-/* add action screen */
 
 INSERT OR REPLACE INTO help (num, en, ru, ua) values (40,
 'Choose owner or bike from the proposed lists',
@@ -222,7 +217,6 @@ INSERT OR REPLACE INTO help (num, en, ru, ua) values (45,
 'При отмеченном флажке доллара, введенная сумма автоматически переводится в национальную валюту, а информация об исходной сумме добавляется в комментарий',
 'Якщо позначено прапорець долара, введена сума автоматично переводиться в національну валюту, а інформація про початкову суму додається до коментаря');
 
-/* references */
 
 INSERT OR REPLACE INTO help (num, en, ru, ua) values (48,
 'Enter or edit the bike owner name, type or event',
@@ -234,7 +228,6 @@ INSERT OR REPLACE INTO help (num, en, ru, ua) values (49,
 'Нажмите (+) для добавления нового названия события, типа или имени владельца велосипеда',
 'Натисніть (+) для додавання нової назви події, типу або імені власника велосипеда');
 
-/* bikes */
 
 INSERT OR REPLACE INTO help (num, en, ru, ua) values (50,
 'Select a bicycle owner from the provided reference list',
@@ -312,9 +305,9 @@ INSERT OR REPLACE INTO help (num, en, ru, ua) values (65,
     'Кнопка збереження даних та резервного копіювання');
 
 INSERT OR REPLACE INTO help (num, en, ru, ua) values (66,
-    'Button to restore data from backup. You need to select a folder with saved files or a file',
-    'Кнопка восстановления данных из резервной копии. При этом необходимо выбрать папку с сохраненными файлами или файл',
-    'Кнопка відновлення даних з резервної копії. При цьому необхідно вибрати папку з збереженими файлами або файл');
+    'Button to restore data from backup. You need to select a folder with saved files',
+    'Кнопка восстановления данных из резервной копии. При этом необходимо выбрать папку с сохраненными файлами',
+    'Кнопка відновлення даних з резервної копії. При цьому необхідно вибрати папку з збереженими файлами');
 
 INSERT OR REPLACE INTO help (num, en, ru, ua) values (68,
     'If this checkbox is set, the data will also be saved in CSV format. If the checkbox is not set, the data will be saved in the bikelog_main.db database file',

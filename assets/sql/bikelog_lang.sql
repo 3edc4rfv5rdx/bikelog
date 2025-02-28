@@ -6,8 +6,6 @@ create table if not exists langs (
     ua text
 );
 
-CREATE INDEX IF NOT EXISTS idx_word ON langs (word);
-
 INSERT OR REPLACE INTO langs (word, ru, ua) values
 ('About', 'О программе', 'Про програму'),
 ('Action Menu', 'Меню действий', 'Меню дій'),
