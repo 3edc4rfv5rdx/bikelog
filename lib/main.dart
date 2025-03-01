@@ -143,7 +143,6 @@ void main() async {
   initializeSqflite();
   await initializePaths(); // Initialize paths
   await initializeIni();
-//  await copyAssetsToFileSystem(); // one at first time
   await initializeAllDatabases(); // first start or not
   await firstRunLanguageSelection(); // === STARTER ===
   await writeRef(); // one at first time
