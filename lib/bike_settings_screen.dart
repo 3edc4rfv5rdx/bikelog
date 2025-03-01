@@ -272,28 +272,39 @@ class _BikeSettingsScreenState extends State<BikeSettingsScreen> {
   }
 
   Future<void> _saveBike() async {
-    if (selectedOwner == '0' || selectedOwner == null) {  // Проверяем только owner
-      okInfoBarOrange(lw('Please select an owner'));  // Уточняем сообщение об ошибке
+    if (selectedOwner == '0' || selectedOwner == null) {
+      okInfoBarOrange(lw('Please select an owner'));
       return;
     }
-
-    // Проверяем корректность даты
     if (buyDateController.text.isNotEmpty && !validateDateInput(buyDateController.text)) {
       okInfoBarRed(lw('Invalid date format or value. Use YYYY-MM-DD and date not in future'));
       return;
     }
-
     try {
       String normBrand = strCleanAndEscape(brandController.text);
       String normModel = strCleanAndEscape(modelController.text);
       String normSerNum = strCleanAndEscape(serialNumController.text);
-
-      final sql = '''INSERT OR REPLACE INTO bikes (num, owner, type, 
-                    brand, model, serialnum, buydate, photo)
-         VALUES (${selectedBikeIndex != null ? bikes[selectedBikeIndex!]['num'] : null}, 
-                $selectedOwner, $selectedType, '$normBrand', '$normModel', '$normSerNum',
-                '${buyDateController.text}', '${photoController.text}')''';
-
+      // Create SQL statement based on whether we're updating or inserting
+      String sql;
+      if (selectedBikeIndex != null) {
+        // Update existing bike
+        int bikeNum = bikes[selectedBikeIndex!]['num'];
+        sql = '''
+        UPDATE bikes
+        SET owner = $selectedOwner, type = $selectedType,
+            brand = '$normBrand', model = '$normModel',
+            serialnum = '$normSerNum', buydate = '${buyDateController.text}',
+            photo = '${photoController.text}'
+        WHERE num = $bikeNum
+      ''';
+      } else {
+        // Insert new bike
+        sql = '''
+        INSERT INTO bikes (owner, type, brand, model, serialnum, buydate, photo)
+        VALUES ($selectedOwner, $selectedType, '$normBrand', '$normModel', 
+                '$normSerNum', '${buyDateController.text}', '${photoController.text}')
+      ''';
+      }
       await setDbData(sql);
       await _loadBikes();
       setState(() {
@@ -301,7 +312,7 @@ class _BikeSettingsScreenState extends State<BikeSettingsScreen> {
         selectedBikeIndex = null;
       });
       _clearForm();
-
+      okInfoBarGreen(lw('Bike saved successfully'));
     } catch (e) {
       String msg = lw('Failed to save bike');
       okInfoBarRed('$msg: $e');
