@@ -20,6 +20,7 @@ class _BikeSettingsScreenState extends State<BikeSettingsScreen> {
 
   bool _fieldsEnabled = false;
   int? selectedBikeIndex;
+  int? editingBikeId;
 
   List<Map<String, dynamic>> bikes = [];
   List<Map<String, dynamic>> owners = [];
@@ -177,6 +178,7 @@ class _BikeSettingsScreenState extends State<BikeSettingsScreen> {
       if (value == 'EDIT') {
         setState(() {
           _fieldsEnabled = true;
+          editingBikeId = bike['num'];
           _fillFormWithBikeData(bike);
         });
       } else if (value == 'DELETE') {
@@ -286,16 +288,14 @@ class _BikeSettingsScreenState extends State<BikeSettingsScreen> {
       String normSerNum = strCleanAndEscape(serialNumController.text);
       // Create SQL statement based on whether we're updating or inserting
       String sql;
-      if (selectedBikeIndex != null) {
-        // Update existing bike
-        int bikeNum = bikes[selectedBikeIndex!]['num'];
+      if (editingBikeId != null) {
         sql = '''
-        UPDATE bikes
-        SET owner = $selectedOwner, type = $selectedType,
-            brand = '$normBrand', model = '$normModel',
-            serialnum = '$normSerNum', buydate = '${buyDateController.text}',
-            photo = '${photoController.text}'
-        WHERE num = $bikeNum
+      UPDATE bikes
+      SET owner = $selectedOwner, type = $selectedType,
+          brand = '$normBrand', model = '$normModel',
+          serialnum = '$normSerNum', buydate = '${buyDateController.text}',
+          photo = '${photoController.text}'
+      WHERE num = $editingBikeId
       ''';
       } else {
         // Insert new bike
@@ -310,6 +310,7 @@ class _BikeSettingsScreenState extends State<BikeSettingsScreen> {
       setState(() {
         _fieldsEnabled = false;
         selectedBikeIndex = null;
+        editingBikeId = null;
       });
       _clearForm();
       okInfoBarGreen(lw('Bike saved successfully'));
@@ -341,6 +342,7 @@ class _BikeSettingsScreenState extends State<BikeSettingsScreen> {
             setState(() {
               _fieldsEnabled = true;
               selectedBikeIndex = null;
+              editingBikeId = null;
               _clearForm();
             });
           },

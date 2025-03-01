@@ -110,7 +110,7 @@ flutter_launcher_icons:
   ios: false
   min_sdk_android: 21
   image_path: "assets/icons/icon.png"  # Ваша обычная иконка
-  adaptive_icon_background: "#DAA520" # или путь к фоновому изображению
+  adaptive_icon_background: "#FBFF00" # или путь к фоновому изображению
   adaptive_icon_foreground: "assets/icons/iconbig.png" # передний план
 
 
