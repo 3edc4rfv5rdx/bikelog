@@ -132,7 +132,7 @@ Future<void> firstRunLanguageSelection() async {
     String selectedLang = await completer.future;
     xdef['Program language'] = selectedLang;
     setKey('Program language', selectedLang);
-    myPrint("+++ firstRunLanguageSelection finished");
+    myPrint(">>> firstRunLanguageSelection finished");
   }
 }
 
@@ -259,7 +259,7 @@ Future<void> initializePaths() async {
   xvLangHome = '$xvHomePath/$langDb';
   xvHelpHome = '$xvHomePath/$helpDb';
   xvSettHome = '$xvHomePath/$settDb';
-  myPrint("+++ initializePaths finished");
+  myPrint(">>> initializePaths finished");
 }
 
 Future<bool> initSqlDatabase({
@@ -348,7 +348,7 @@ Future<void> writeRef() async {
     INSERT INTO bikes (num, owner, brand, model, type, serialnum, buydate, photo) 
     VALUES (1, 1, '*', '*', 1, '', '', '');
     ''');
-  myPrint("+++ writeRef finished");
+  myPrint(">>> writeRef finished");
 }
 
 // first time init settings db-file and write ini-keys
@@ -379,7 +379,7 @@ Future<void> initializeIni() async {
       xdef[key] = saved;
     }
   }
-  myPrint("+++ initializeIni finished");
+  myPrint(">>> initializeIni finished");
 }
 
 // if first start and was file xxxxx.sql then add it
@@ -417,7 +417,7 @@ Future<void> processExtraData() async {
         }
       } finally {
         await database.close();
-        myPrint("+++ processExtraData finished");
+        myPrint(">>> processExtraData finished");
       }
     } catch (e) {
       myPrint('>>> Failed to process xxxxx.sql: $e');
