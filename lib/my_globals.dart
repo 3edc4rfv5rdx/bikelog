@@ -53,7 +53,7 @@ int get progBikes => prgEditions[currVers].$3;
 // all program landuages, if changes, look at main/_getLocaleCode
 const List<String> appLANGUAGES = ['EN','RU','UA',];
 // color themes names
-const List<String> appTHEMES = ['Light','Dark','Green','Blue','Brown','Purple','Orange',];
+const List<String> appTHEMES = ['Light','Dark','Green','Blue','Brown','Purple','Orange', 'Fant1',];
 
 // themes colors
 const List<List<Color>> curTHEME = [
@@ -126,6 +126,16 @@ const List<List<Color>> curTHEME = [
     Color(0xFFE59967),      // upBar - глубокий оранжевый
     Color(0xFF1E120A),      // text - темно-коричневый
     Color(0xFFFFFFFF),      // white
+    Color(0xFF808080),      // grey
+  ],
+  // grren2 = 7
+  [
+    Color(0xFFFEFAE0),      // fon - светлый персиковый
+    Color(0xFFE9EDC9),      // menu - светло-оранжевый
+    Color(0xFFCCD5AE),      // selected - оранжевый с прозрачностью
+    Color(0xFFD4A373),      // upBar - глубокий оранжевый
+    Color(0xFF),      // text - темно-коричневый
+    Color(0xFFFAEDCD),      // white
     Color(0xFF808080),      // grey
   ],
 ]; //  color 77b300
