@@ -34,7 +34,7 @@ String xvSettHome = '';
 String xvBakDir = '';
 bool xvBusiness = false;
 
-const String progVersion = '0.8.250301';
+const String progVersion = '0.8.250302';
 // const String progDate = '2025-02-19';
 const String progAuthor = 'Eugen';
 const String progEmail = 'xxxx@xxx.xx';
@@ -53,7 +53,7 @@ int get progBikes => prgEditions[currVers].$3;
 // all program landuages, if changes, look at main/_getLocaleCode
 const List<String> appLANGUAGES = ['EN','RU','UA',];
 // color themes names
-const List<String> appTHEMES = ['Light','Dark','Green','Blue','Brown','Purple','Orange', 'Fant1',];
+const List<String> appTHEMES = ['Light','Dark','Green','Blue','Brown','Purple','Orange',];
 
 // themes colors
 const List<List<Color>> curTHEME = [
@@ -128,16 +128,16 @@ const List<List<Color>> curTHEME = [
     Color(0xFFFFFFFF),      // white
     Color(0xFF808080),      // grey
   ],
-  // grren2 = 7
-  [
-    Color(0xFFFEFAE0),      // fon - светлый персиковый
-    Color(0xFFE9EDC9),      // menu - светло-оранжевый
-    Color(0xFFCCD5AE),      // selected - оранжевый с прозрачностью
-    Color(0xFFD4A373),      // upBar - глубокий оранжевый
-    Color(0xFF),      // text - темно-коричневый
-    Color(0xFFFAEDCD),      // white
-    Color(0xFF808080),      // grey
-  ],
+  // // grren2 = 7
+  // [
+  //   Color(0xFFFEFAE0),      // fon - светлый персиковый
+  //   Color(0xFFE9EDC9),      // menu - светло-оранжевый
+  //   Color(0xFFCCD5AE),      // selected - оранжевый с прозрачностью
+  //   Color(0xFFD4A373),      // upBar - глубокий оранжевый
+  //   Color(0xFF000000),      // text - темно-коричневый
+  //   Color(0xFFFAEDCD),      // white
+  //   Color(0xFF808080),      // grey
+  // ],
 ]; //  color 77b300
 
 
@@ -188,7 +188,8 @@ void initThemeColors(int themeIndex) {
 
 // Получение индекса темы по названию
 int getThemeIndex(String themeName) {
-  return appTHEMES.indexOf(themeName);
+  int index = appTHEMES.indexOf(themeName);
+  return (index == -1) ? 0 : index; // 0 = appTHEMES.indexOf("Light")
 }
 
 // Получение названия темы по индексу
