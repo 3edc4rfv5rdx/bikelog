@@ -1,7 +1,6 @@
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'dart:async'; // For Completer
 import 'dart:io'; // For File and Directory operations
-// import 'dart:typed_data'; // ByteData
 import 'package:flutter/foundation.dart'
     show defaultTargetPlatform, TargetPlatform;
 import 'package:flutter/material.dart';
@@ -35,11 +34,6 @@ Future<void> firstRunLanguageSelection() async {
             return Scaffold(
               body: Container(
                 decoration: BoxDecoration(
-                  // gradient: LinearGradient(
-                  //   begin: Alignment.topLeft,
-                  //   end: Alignment.bottomRight,
-                  //   colors: [clFon, clUpBar],
-                  // ),
                   image: DecorationImage(
                     image: AssetImage('assets/images/main512.png'),
                     fit: BoxFit.cover, // Растянуть изображение на весь контейнер
@@ -136,8 +130,6 @@ Future<void> firstRunLanguageSelection() async {
   }
 }
 
-// ==============
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized(); // Required for permission handling
   initializeSqflite();
@@ -147,7 +139,7 @@ void main() async {
   await firstRunLanguageSelection(); // === STARTER ===
   await writeRef(); // one at first time
   await initTranslations();
-  await processExtraData(); // todo for DEBUG only, xxxxx.sql add
+  await processExtraData();
   if (xdef['.First start'] == 'true') {
     xdef['.First start'] = 'false';
     await setKey('.First start', 'false');
@@ -160,7 +152,7 @@ void main() async {
 }
 
 String _getLocaleCode(String language) {
-  // Словарь только для исключений, где код отличается от простого преобразования
+  // Словарь только для исключений, где код страны отличается
   final Map<String, String> exceptions = {
     'UA': 'uk',  // ukraine
     'GR': 'el',  // greek
@@ -181,12 +173,9 @@ class BikeLogApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       navigatorObservers: [routeObserver],
-      debugShowCheckedModeBanner: false,
-      // Disable debug banner
-      scaffoldMessengerKey: scaffoldMessengerKey,
-      // global key for ScaffoldMessenger
-      navigatorKey: navigatorKey,
-      // Global key for NavigatorState
+      debugShowCheckedModeBanner: false, // Disable debug banner
+      scaffoldMessengerKey: scaffoldMessengerKey, // global key for ScaffoldMessenger
+      navigatorKey: navigatorKey, // Global key for NavigatorState
       title: lw('BikeLogBook'),
 
       localizationsDelegates: const [
@@ -224,11 +213,11 @@ Future<void> initializePaths() async {
     case TargetPlatform.android:
       final appStorageDirectory = await getApplicationDocumentsDirectory();
       xvHomePath = appStorageDirectory.path;
-      myPrint(">>> Application documents path: ${xvHomePath}");
+      myPrint(">>> Application documents path: $xvHomePath");
 
       final externalStorageDirectory = await getExternalStorageDirectory();
       xvExt1Path = externalStorageDirectory?.path ?? xvHomePath;
-      myPrint(">>> External storage directory path: ${xvExt1Path}");
+      myPrint(">>> External storage directory path: $xvExt1Path");
       xvBakDir = '/storage/emulated/0/Download/BikeLogBackup';
       break;
 
@@ -245,9 +234,8 @@ Future<void> initializePaths() async {
       xvBakDir = '${xvHomePath}/BikeLogBackup';
       break;
 
-    //    case TargetPlatform.windows:
-    //    case TargetPlatform.macOS:
-    // Добавить специфичные пути для Windows и macOS
+    // case TargetPlatform.windows:
+    // case TargetPlatform.macOS:
     //  throw UnsupportedError('Platform not supported yet');
 
     default:
@@ -384,12 +372,10 @@ Future<void> initializeIni() async {
 
 // if first start and was file xxxxx.sql then add it
 Future<void> processExtraData() async {
-  // Exit early if not first start
-  if (xdef['.First start'] != 'true') {
-    return;
-  }
+  if (xvDebug != true) return; // for debug only
+  if (xdef['.First start'] != 'true') return; // for first start only
 
-  String xxxFilePath = '${xvHomePath}/xxxxx.sql';
+  String xxxFilePath = '$xvHomePath/xxxxx.sql';
   File xxxFile = File(xxxFilePath);
   if (await xxxFile.exists()) {
     try {
