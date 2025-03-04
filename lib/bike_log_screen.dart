@@ -92,7 +92,7 @@ class _BikeLogScreenState extends State<BikeLogScreen> with RouteAware {
       inner join owners on bikes.owner = owners.num
       inner join events on actions.event = events.num
       inner join bikes on actions.bike = bikes.num
-      ${xvFilter} order by actions.date desc, actions.num desc
+      $xvFilter order by actions.date desc, actions.num desc
     ''';
 
     // Add LIMIT clause if lines > 0

@@ -13,7 +13,7 @@ final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
 Map<String, dynamic> xdef = {
   'Program language': 'EN',
   'Color theme': 'Light', // N 0
-  'Last actions': '33',
+  'Last actions': '0',
   'Exchange rate': '42',
   'Several actions': 'false',
   'Back after clear': 'true',
@@ -50,8 +50,8 @@ String get progEdition => prgEditions[currVers].$1;
 int get progOwners => prgEditions[currVers].$2;
 int get progBikes => prgEditions[currVers].$3;
 
-// all program landuages, if changes, look at main/_getLocaleCode
-const List<String> appLANGUAGES = ['EN','RU','UA',];
+// all program landuages,
+const List<String> appLANGUAGES = ['EN','RU','UA',]; // if change, look at main/_getLocaleCode
 // color themes names
 const List<String> appTHEMES = ['Light','Dark','Green','Blue','Brown','Purple','Orange',];
 
@@ -128,16 +128,6 @@ const List<List<Color>> curTHEME = [
     Color(0xFFFFFFFF),      // white
     Color(0xFF808080),      // grey
   ],
-  // // grren2 = 7
-  // [
-  //   Color(0xFFFEFAE0),      // fon - светлый персиковый
-  //   Color(0xFFE9EDC9),      // menu - светло-оранжевый
-  //   Color(0xFFCCD5AE),      // selected - оранжевый с прозрачностью
-  //   Color(0xFFD4A373),      // upBar - глубокий оранжевый
-  //   Color(0xFF000000),      // text - темно-коричневый
-  //   Color(0xFFFAEDCD),      // white
-  //   Color(0xFF808080),      // grey
-  // ],
 ]; //  color 77b300
 
 
@@ -907,7 +897,7 @@ Future<bool> copyFiles(List<String> sourcePaths, String destinationDir) async {
 // Function to get the count of rows in a table
 Future<int> getTableRowCount(String tableName) async {
   try {
-    final sql = 'SELECT COUNT(*) as count FROM $tableName';
+    final sql = 'SELECT COUNT(*) as count FROM $tableName;';
     final result = await getDbData(sql);
     return result[0]['count'] as int;
   } catch (e) {
