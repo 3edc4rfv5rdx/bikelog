@@ -186,18 +186,18 @@ void initThemeColors(int themeIndex) {
   clFrame = curTHEME[themeIndex][6];
 }
 
-// Получение индекса темы по названию
+// get theme index by name
 int getThemeIndex(String themeName) {
   int index = appTHEMES.indexOf(themeName);
   return (index == -1) ? 0 : index; // 0 = appTHEMES.indexOf("Light")
 }
 
-// Получение названия темы по индексу
+// get theme name by index
 String getThemeName(int index) {
   if (index >= 0 && index < appTHEMES.length) {
     return appTHEMES[index];
   }
-  return appTHEMES[0]; // возвращаем Light theme по умолчанию
+  return appTHEMES[0]; // return Light by default
 }
 
 
