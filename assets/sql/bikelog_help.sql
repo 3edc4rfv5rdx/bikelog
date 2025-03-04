@@ -235,19 +235,19 @@ INSERT OR REPLACE INTO help (num, en, ru, ua) values (50,
 'Виберіть власника велосипеда із запропонованого списку');
 
 INSERT OR REPLACE INTO help (num, en, ru, ua) values (51,
-    'Enter the name of the bicycle manufacturer',
-    'Введите название фирмы-производителя велосипеда',
-    'Введіть назву фірми-виробника велосипеда');
+'Enter the name of the bicycle manufacturer',
+'Введите название фирмы-производителя велосипеда',
+'Введіть назву фірми-виробника велосипеда');
 
 INSERT OR REPLACE INTO help (num, en, ru, ua) values (52,
-    'Enter the model of the bicycle',
-    'Введите модель велосипеда',
-    'Введіть модель велосипеда');
+'Enter the model of the bicycle',
+'Введите модель велосипеда',
+'Введіть модель велосипеда');
 
 INSERT OR REPLACE INTO help (num, en, ru, ua) values (53,
-    'Select the type of bicycle from the list',
-    'Выберите тип велосипеда из списка',
-    'Виберіть тип велосипеда зі списку');
+'Select the type of bicycle from the list',
+'Выберите тип велосипеда из списка',
+'Виберіть тип велосипеда зі списку');
 
 INSERT OR REPLACE INTO help (num, en, ru, ua) values (54,
 'Enter bike serial number - helps to identify your bike if stolen',
@@ -255,9 +255,9 @@ INSERT OR REPLACE INTO help (num, en, ru, ua) values (54,
 'Введіть серійний номер велосипеда - допоможе впізнати велосипед при крадіжці');
 
 INSERT OR REPLACE INTO help (num, en, ru, ua) values (55,
-    'Enter the date of purchase of the bicycle',
-    'Введите дату покупки велосипеда',
-    'Введіть дату купівлі велосипеда');
+'Enter the date of purchase of the bicycle',
+'Введите дату покупки велосипеда',
+'Введіть дату купівлі велосипеда');
 
 INSERT OR REPLACE INTO help (num, en, ru, ua) values (57,
 'Select photo path from storage, better move photos to /Download/BikeLogBackup first',
@@ -275,59 +275,59 @@ INSERT OR REPLACE INTO help (num, en, ru, ua) values (59,
 'Натисніть для додавання нового велосипеда до бази та не забудьте зберегти');
 
 INSERT OR REPLACE INTO help (num, en, ru, ua) values (60,
-    'Button to enter the main settings window',
-    'Кнопка входа в окно главных настроек',
-    'Кнопка входу в вікно головних налаштувань');
+'Button to enter the main settings window',
+'Кнопка входа в окно главных настроек',
+'Кнопка входу в вікно головних налаштувань');
 
 INSERT OR REPLACE INTO help (num, en, ru, ua) values (61,
-    'Button to enter the directory of bicycle owners',
-    'Кнопка входа в справочник хозяев велосипедов',
-    'Кнопка входу в довідник власників велосипедів');
+'Button to enter the directory of bicycle owners',
+'Кнопка входа в справочник хозяев велосипедов',
+'Кнопка входу в довідник власників велосипедів');
 
 INSERT OR REPLACE INTO help (num, en, ru, ua) values (62,
-    'Button to enter the directory of bicycle types',
-    'Кнопка входа в справочник типов велосипедов',
-    'Кнопка входу в довідник типів велосипедів');
+'Button to enter the directory of bicycle types',
+'Кнопка входа в справочник типов велосипедов',
+'Кнопка входу в довідник типів велосипедів');
 
 INSERT OR REPLACE INTO help (num, en, ru, ua) values (63,
-    'Button to enter the directory of events related to bicycles',
-    'Кнопка входа в справочник событий, связанных с велосипедами',
-    'Кнопка входу в довідник подій, пов’язаних з велосипедами');
+'Button to enter the directory of events related to bicycles',
+'Кнопка входа в справочник событий, связанных с велосипедами',
+'Кнопка входу в довідник подій, пов’язаних з велосипедами');
 
 INSERT OR REPLACE INTO help (num, en, ru, ua) values (64,
-    'Button to enter the directory of bicycles',
-    'Кнопка входа в справочник велосипедов',
-    'Кнопка входу в довідник велосипедів');
+'Button to enter the directory of bicycles',
+'Кнопка входа в справочник велосипедов',
+'Кнопка входу в довідник велосипедів');
 
 INSERT OR REPLACE INTO help (num, en, ru, ua) values (65,
-    'Button to save data and backup',
-    'Кнопка сохранения данных и резервного копирования',
-    'Кнопка збереження даних та резервного копіювання');
+'Button to save data and backup',
+'Кнопка сохранения данных и резервного копирования',
+'Кнопка збереження даних та резервного копіювання');
 
 INSERT OR REPLACE INTO help (num, en, ru, ua) values (66,
-    'Button to restore data from backup. You need to select a folder with saved files',
-    'Кнопка восстановления данных из резервной копии. При этом необходимо выбрать папку с сохраненными файлами',
-    'Кнопка відновлення даних з резервної копії. При цьому необхідно вибрати папку з збереженими файлами');
+'Button to restore data from backup. You need to select a folder with saved files',
+'Кнопка восстановления данных из резервной копии. При этом необходимо выбрать папку с сохраненными файлами',
+'Кнопка відновлення даних з резервної копії. При цьому необхідно вибрати папку з збереженими файлами');
 
 INSERT OR REPLACE INTO help (num, en, ru, ua) values (68,
-    'If this checkbox is set, the data will also be saved in CSV format. If the checkbox is not set, the data will be saved in the bikelog_main.db database file',
-    'Если установлен данный флажок, данные будут сохраняться также в формате CSV. Если флажок не установлен, данные будут сохраняться в файле базы данных bikelog_main.db',
-    'Якщо встановлено цей прапорець, дані також будуть збережені в форматі CSV. Якщо прапорець не встановлено, дані будуть збережені в файлі бази даних bikelog_main.db');
+'If this checkbox is set, the data will also be saved in CSV format. If the checkbox is not set, the data will be saved in the bikelog_main.db database file',
+'Если установлен данный флажок, данные будут сохраняться также в формате CSV. Если флажок не установлен, данные будут сохраняться в файле базы данных bikelog_main.db',
+'Якщо встановлено цей прапорець, дані також будуть збережені в форматі CSV. Якщо прапорець не встановлено, дані будуть збережені в файлі бази даних bikelog_main.db');
 
 INSERT OR REPLACE INTO help (num, en, ru, ua) values (69,
-    'If this checkbox is set, the data will be restored from CSV format. If the checkbox is not set, the data will be restored from the bikelog_main.db database file. In this case, you need to select a folder with saved files or a file',
-    'Если установлен данный флажок, данные будут восстанавливаться из формата CSV. Если флажок не установлен, данные будут восстанавливаться из файла базы данных bikelog_main.db. При этом необходимо выбрать папку с сохраненными файлами или файл',
-    'Якщо встановлено цей прапорець, дані будуть відновлені з формату CSV. Якщо прапорець не встановлено, дані будуть відновлені з файлу бази даних bikelog_main.db. При цьому необхідно вибрати папку зі збереженими файлами або файл');
+'If this checkbox is set, the data will be restored from CSV format. If the checkbox is not set, the data will be restored from the bikelog_main.db database file. In this case, you need to select a folder with saved files or a file',
+'Если установлен данный флажок, данные будут восстанавливаться из формата CSV. Если флажок не установлен, данные будут восстанавливаться из файла базы данных bikelog_main.db. При этом необходимо выбрать папку с сохраненными файлами или файл',
+'Якщо встановлено цей прапорець, дані будуть відновлені з формату CSV. Якщо прапорець не встановлено, дані будуть відновлені з файлу бази даних bikelog_main.db. При цьому необхідно вибрати папку зі збереженими файлами або файл');
 
 INSERT OR REPLACE INTO help (num, en, ru, ua) values (72,
-    'Set the start date, the lower limit of the filter. This will filter the data starting from this date',
-    'Установите дату начала, нижнюю границу фильтра. При этом будут отфильтрованы данные начиная с этой даты',
-    'Встановіть дату початку, нижню межу фільтра. При цьому будуть відфільтровані дані, починаючи з цієї дати');
+'Set the start date, the lower limit of the filter. This will filter the data starting from this date',
+'Установите дату начала, нижнюю границу фильтра. При этом будут отфильтрованы данные начиная с этой даты',
+'Встановіть дату початку, нижню межу фільтра. При цьому будуть відфільтровані дані, починаючи з цієї дати');
 
 INSERT OR REPLACE INTO help (num, en, ru, ua) values (73,
-    'Set the end date, the upper limit of the filter. If set, actions will be selected up to and including this date',
-    'Установите дату верхней границы фильтра. Если она установлена, то действия будут выбраны по эту дату включительно',
-    'Встановіть дату кінцевої межі фільтра. Якщо встановлено, дії будуть вибрані до цієї дати включно');
+'Set the end date, the upper limit of the filter. If set, actions will be selected up to and including this date',
+'Установите дату верхней границы фильтра. Если она установлена, то действия будут выбраны по эту дату включительно',
+'Встановіть дату кінцевої межі фільтра. Якщо встановлено, дії будуть вибрані до цієї дати включно');
 
 INSERT OR REPLACE INTO help (num, en, ru, ua) values (74,
 'Set the lower price limit of the filter. If both prices are set, the actions will be selected within these limits',
