@@ -7,9 +7,6 @@ create table if not exists langs (
 );
 
 INSERT OR REPLACE INTO langs (word, ru, ua) values
-('Report to CSV', 'Отчет в CSV', 'Звіт у CSV'),
-('Report exported to CSV', 'Отчет экспортирован в CSV', 'Звіт експортовано в CSV'),
-('Error exporting report to CSV', 'Ошибка экспорта отчета в CSV', 'Помилка експорту звіту в CSV'),
 ('About', 'О программе', 'Про програму'),
 ('Action Menu', 'Меню действий', 'Меню дій'),
 ('Action deleted successfully', 'Действие успешно удалено', 'Дію успішно видалено'),
@@ -60,6 +57,7 @@ INSERT OR REPLACE INTO langs (word, ru, ua) values
 ('Edition', 'Редакция', 'Редакція'),
 ('Error adding data', 'Ошибка добавления данных', 'Помилка додавання даних'),
 ('Error deleting data', 'Ошибка удаления данных', 'Помилка видалення даних'),
+('Error exporting report to CSV', 'Ошибка экспорта отчета в CSV', 'Помилка експорту звіту в CSV'),
 ('Error exporting tables to CSV', 'Ошибка экспорта таблиц в CSV', 'Помилка експорту таблиць в CSV'),
 ('Error loading data', 'Ошибка загрузки данных', 'Помилка завантаження даних'),
 ('Error picking file', 'Ошибка выбора файла', 'Помилка вибору файлу'),
@@ -127,6 +125,8 @@ INSERT OR REPLACE INTO langs (word, ru, ua) values
 ('Program language', 'Язык программы', 'Мова програми'),
 ('Purple', 'Фиолетовый', 'Фіолетовий'),
 ('Refresh', 'Обновить', 'Оновити'),
+('Report exported to CSV', 'Отчет экспортирован в CSV', 'Звіт експортовано в CSV'),
+('Report to CSV', 'Отчет в CSV', 'Звіт у CSV'),
 ('Restore cancelled', 'Восстановление отменено', 'Відновлення скасовано'),
 ('Restore completed successfully', 'Восстановление завершено успешно', 'Відновлення завершено успішно'),
 ('Restore failed. Check logs for details', 'Ошибка восстановления. Подробности в журнале', 'Помилка відновлення. Деталі в журналі'),
