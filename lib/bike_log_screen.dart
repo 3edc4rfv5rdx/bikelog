@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:io'; // For File and Directory operations
 import 'filter_screen.dart'; // Import the filter screen
 import 'settings_screen.dart'; // Import the settings screen
 import 'package:flutter/services.dart';
@@ -20,6 +21,7 @@ class _BikeLogScreenState extends State<BikeLogScreen> with RouteAware {
     'filters': lw('Filters'),
     'settings': lw('Settings'),
     'sum': lw('Sum'),
+    'reportToCSV': lw('Report to CSV'),
     'refresh': lw('Refresh'),
     'about': lw('About')
   };
@@ -49,6 +51,53 @@ class _BikeLogScreenState extends State<BikeLogScreen> with RouteAware {
     });
   }
 
+  Future<void> _exportActionsToCSV() async {
+    try {
+      // Create the directory for reports if it doesn't exist
+      String reportDir = '$xvBakDir/reports';
+      await newMakeDir(reportDir);
+      // Generate a timestamp for the filename
+      DateTime now = DateTime.now();
+      String timestamp = "${now.year}${now.month.toString().padLeft(2, '0')}${now.day.toString().padLeft(2, '0')}";
+      timestamp += "${now.hour.toString().padLeft(2, '0')}${now.minute.toString().padLeft(2, '0')}";
+      // Create the file with a timestamp
+      File csvFile = File('$reportDir/actions-$timestamp.csv');
+      IOSink sink = csvFile.openWrite();
+      // Write header row if there's data
+      if (actions.isNotEmpty) {
+        // Get the keys from the first item for the header
+        sink.writeln(actions.first.keys.join(','));
+        // Write each row of data
+        for (var row in actions) {
+          // Process each value properly for CSV format
+          List<String> formattedValues = row.values.map((value) {
+            // If value is a string, enclose in quotes and escape any existing quotes
+            if (value is String) {
+              String escapedValue = value.replaceAll('"', '""');
+              return '"$escapedValue"';
+            } else if (value == null) {
+              return '""'; // Empty quoted string for null values
+            } else {
+              return value.toString(); // Numbers don't need quotes
+            }
+          }).toList();
+          sink.writeln(formattedValues.join(','));
+        }
+      } else {
+        // If no data, just write a header row with standard fields
+        sink.writeln('num,date,owner,brand,model,price,event,comment');
+      }
+      await sink.flush();
+      await sink.close();
+      String msg = 'Report exported to CSV';
+      okInfoBarGreen(lw(msg));
+      myPrint('>>> $msg: ${csvFile.path}');
+    } catch (e) {
+      String msg = lw('Error exporting report to CSV');
+      okInfoBarRed('$msg: $e');
+      myPrint('>>> $msg: $e');
+    }
+  }
 
   String _getIndicatorText() {
     if (xvFilter != '') {
@@ -60,7 +109,6 @@ class _BikeLogScreenState extends State<BikeLogScreen> with RouteAware {
     }
     return '(${lw('All')})';
   }
-
 
   void _showAbout() {
     String txt = lw('BikeLogBook');
@@ -80,7 +128,6 @@ class _BikeLogScreenState extends State<BikeLogScreen> with RouteAware {
     okInfo(txt);
   }
 
-
   // Function to load actions from the database
   Future<void> _loadActions() async {
     // Build the SQL query
@@ -92,7 +139,8 @@ class _BikeLogScreenState extends State<BikeLogScreen> with RouteAware {
       inner join owners on bikes.owner = owners.num
       inner join events on actions.event = events.num
       inner join bikes on actions.bike = bikes.num
-      $xvFilter order by actions.date desc, actions.num desc
+      $xvFilter
+      order by date, owner, brand, model, price, event, num
     ''';
 
     // Add LIMIT clause if lines > 0
@@ -102,10 +150,8 @@ class _BikeLogScreenState extends State<BikeLogScreen> with RouteAware {
       sql += ' limit $lines offset 0';
     }
     sql += ';';
-
     // Execute the query using your getDbData function
     final actionsFromDb = await getDbData(sql);
-
     // Update the state with the fetched data
     setState(() {
       actions = actionsFromDb; // Update the state with fetched actions
@@ -233,6 +279,8 @@ class _BikeLogScreenState extends State<BikeLogScreen> with RouteAware {
       case 'sum':
         _showTotalSum();
         break;
+      case 'reportToCSV':
+        _exportActionsToCSV();
       case 'refresh':
         _loadActions();
         break;
@@ -332,6 +380,9 @@ class _BikeLogScreenState extends State<BikeLogScreen> with RouteAware {
                             break;
                           case 'sum':
                             okHelp(13); // help_id = 5 for Sum
+                            break;
+                          case 'reportToCSV':
+                            okHelp(18); // New help ID for Report to CSV
                             break;
                           case 'refresh':
                             okHelp(14); // help_id = 9 for Refresh

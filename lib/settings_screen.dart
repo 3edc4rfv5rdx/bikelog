@@ -104,22 +104,20 @@ Future<bool> backupDatabase() async {
   myPrint(result ? '>>> Database backup completed successfully' : '>>> Database backup failed');
   return result;
 }
+
 Future<bool> backupToCSV() async {
   myPrint('>>> Starting CSV backup to: $backupDirPath');
-
   try {
     for (String tableName in APP_TABLES) {
       List<Map<String, dynamic>> data = await getDbData("SELECT * FROM $tableName");
       File csvFile = File('$backupDirPath/main-$tableName.csv');
       IOSink sink = csvFile.openWrite();
-
       if (data.isNotEmpty) {
         sink.writeln(data.first.keys.join(','));
         for (var row in data) {
           sink.writeln(row.values.join(','));
         }
       }
-
       await sink.flush();
       await sink.close();
     }
@@ -127,7 +125,6 @@ Future<bool> backupToCSV() async {
     okInfoBarGreen(lw(msg));
     myPrint('>>> $msg');
     return true;
-
   } catch (e) {
     String msg = lw('Error exporting tables to CSV');
     okInfoBarPurple('$msg: $e');

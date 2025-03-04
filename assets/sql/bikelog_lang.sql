@@ -7,6 +7,9 @@ create table if not exists langs (
 );
 
 INSERT OR REPLACE INTO langs (word, ru, ua) values
+('Report to CSV', 'Отчет в CSV', 'Звіт у CSV'),
+('Report exported to CSV', 'Отчет экспортирован в CSV', 'Звіт експортовано в CSV'),
+('Error exporting report to CSV', 'Ошибка экспорта отчета в CSV', 'Помилка експорту звіту в CSV'),
 ('About', 'О программе', 'Про програму'),
 ('Action Menu', 'Меню действий', 'Меню дій'),
 ('Action deleted successfully', 'Действие успешно удалено', 'Дію успішно видалено'),

@@ -128,6 +128,10 @@ INSERT OR REPLACE INTO help (num, en, ru, ua) values (17,
 'Удалить выбранную запись',
 'Видалити вибраний запис');
 
+INSERT OR REPLACE INTO help (num, en, ru, ua) values (18,
+'Allows you to export the data currently visible in the list to a CSV file, taking into account any active filters',
+'Позволяет выдать в файл формата CSV данные, которые сейчас видны в списке с учетом фильтра',
+'Дозволяє видати у файл формату CSV дані, які зараз видно у списку з урахуванням фільтра');
 
 INSERT OR REPLACE INTO help (num, en, ru, ua) values (20,
 'Language selection. Choose the language that suits your preferences',
