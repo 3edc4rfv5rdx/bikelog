@@ -424,9 +424,9 @@ Future<void> initTranslations() async {
     for (var row in result) {
       _translationCache[row['word']] = row[lang];
     }
-    myPrint(">>> initTranslations finished");
+    myPrint("initTranslations finished");
   } catch (e) {
-    myPrint('>>> Error initializing translations: $e');
+    myPrint('Error initializing translations: $e');
     rethrow;
   }
 }
@@ -518,7 +518,7 @@ bool isDateFromBeforeDateTo(String dateFrom, String dateTo) {
 }
 
 // Function to execute a SQL query on the language database
-Future<List<Map<String, dynamic>>> getLangData(String sql) async {
+Future<List<Map<String, dynamicgetLangData(String sql) async {
   dbLangBusy = true;
   Database? database;
   List<Map<String, dynamic>> result = []; // Default value
@@ -526,7 +526,7 @@ Future<List<Map<String, dynamic>>> getLangData(String sql) async {
     database = await myOpenDatabase(xvLangHome);
     result = await database.rawQuery(sql);
   } catch (e) {
-    myPrint('>>> Error in getLangData: $e');
+    myPrint('Error in getLangData: $e');
     rethrow;
   } finally {
     if (database != null) {
@@ -550,7 +550,7 @@ Future<String> getDbOne(String sql) async {
       result = queryResult[0].values.first.toString(); // Get the first value
     }
   } catch (e) {
-    myPrint('>>> Error in getDbOne: $e');
+    myPrint('Error in getDbOne: $e');
     rethrow;
   } finally {
     if (database != null) {
@@ -562,7 +562,7 @@ Future<String> getDbOne(String sql) async {
 }
 
 // Function to execute a SQL query and return a list of rows
-Future<List<Map<String, dynamic>>> getDbData(String sql) async {
+Future<List<Map<String, dynamicgetDbData(String sql) async {
   dbMainBusy = true;
   Database? database;
   List<Map<String, dynamic>> result = []; // Default value
@@ -570,7 +570,7 @@ Future<List<Map<String, dynamic>>> getDbData(String sql) async {
     database = await myOpenDatabase(xvMainHome);
     result = await database.rawQuery(sql);
   } catch (e) {
-    myPrint('>>> Error in getDbData: $e');
+    myPrint('Error in getDbData: $e');
     rethrow;
   } finally {
     if (database != null) {
@@ -589,7 +589,7 @@ Future<void> setDbData(String sql) async {
     database = await myOpenDatabase(xvMainHome);
     await database.execute(sql);
   } catch (e) {
-    myPrint('>>> Error in setDbData: $e');
+    myPrint('Error in setDbData: $e');
     rethrow;
   } finally {
     if (database != null) {
@@ -609,7 +609,7 @@ Future<void> setKey(String key, String value) async {
         [key, value]
     );
   } catch (e) {
-    myPrint('>>> Error in setKey: $e');
+    myPrint('Error in setKey: $e');
     rethrow;
   } finally {
     if (database != null) {
@@ -632,7 +632,7 @@ Future<String> getKey(String key) async {
       result = queryResult[0].values.first.toString().trim();
     }
   } catch (e) {
-    myPrint('>>> Error in getKey: $e');
+    myPrint('Error in getKey: $e');
     rethrow;
   } finally {
     if (database != null) {
@@ -651,9 +651,9 @@ Future<void> compactDatabase() async {
   try {
     database = await myOpenDatabase(xvMainHome);
     await database.execute("VACUUM"); // Execute the VACUUM operation
-    myPrint('>>> Database VACUUM ok');
+    myPrint('Database VACUUM ok');
   } catch (e) {
-    myPrint('>>> Error during VACUUM compaction: $e');
+    myPrint('Error during VACUUM compaction: $e');
     okInfoBarRed('VACUUM ${lw('An error occurred')}: $e'); // Handle the error
     rethrow; // Пробрасываем ошибку дальше, чтобы ее можно было обработать в вызывающем коде
   } finally {
@@ -685,7 +685,7 @@ Future<void> setMultiOper(String sql, String databasePath) async {
       }
     });
   } catch (e) {
-    myPrint('>>> Error in setMultiOper: $e');
+    myPrint('Error in setMultiOper: $e');
     rethrow;
   } finally {
     await database.close();
@@ -830,7 +830,7 @@ Future<Database> myOpenDatabase(String path) async {
       defaultTargetPlatform == TargetPlatform.macOS) {
     return await databaseFactoryFfi.openDatabase(path);
   } else {
-    throw UnsupportedError('>>> Platform not supported');
+    throw UnsupportedError('Platform not supported');
   }
 }
 
@@ -849,7 +849,7 @@ Future<void> executeDbTransaction(List<String> sqlStatements) async {
       }
     });
   } catch (e) {
-    myPrint('>>> Error in executeDbTransaction: $e');
+    myPrint('Error in executeDbTransaction: $e');
     rethrow;
   } finally {
     await db.close();
@@ -865,15 +865,15 @@ Future<bool> newMakeDir(String newPath) async {
     if (!await newDirectory.exists()) {
       // If not, create it
       await newDirectory.create(recursive: true); // recursive: true to create all nested directories
-      myPrint('>>> Directory successfully created: $newPath');
+      myPrint('Directory successfully created: $newPath');
     } else {
-      myPrint('>>> Directory already exists: $newPath');
+      myPrint('Directory already exists: $newPath');
     }
     // Return true if the directory is created or already exists
     return true;
   } catch (e) {
     // In case of an error, print the message and return false
-    myPrint('>>> Error creating directory: $e');
+    myPrint('Error creating directory: $e');
     return false;
   }
 }
@@ -885,11 +885,11 @@ Future<bool> copyFiles(List<String> sourcePaths, String destinationDir) async {
       String fileName = sourcePath.split('/').last;
       String destinationPath = '$destinationDir/$fileName';
       await File(sourcePath).copy(destinationPath);
-      myPrint('>>> File copied: $destinationPath');
+      myPrint('File copied: $destinationPath');
     }
     return true;
   } catch (e) {
-    myPrint('>>> Error copying files: $e');
+    myPrint('Error copying files: $e');
     return false;
   }
 }
@@ -901,7 +901,7 @@ Future<int> getTableRowCount(String tableName) async {
     final result = await getDbData(sql);
     return result[0]['count'] as int;
   } catch (e) {
-    myPrint('>>> Error getting row count from $tableName: $e');
+    myPrint('Error getting row count from $tableName: $e');
     return 0;
   }
 }
@@ -913,7 +913,7 @@ void initializeSqflite() {
   }
 }
 
-void myPrint(String msg) {if (xvDebug) print(msg);}
+void myPrint(String msg) {if (xvDebug) print('>>> $msg');}
 
 String strCleanAndEscape(String input) {
   if (input.isEmpty) return input;

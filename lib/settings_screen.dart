@@ -24,7 +24,7 @@ Future<String?> selectRestoreDirectory() async {
 
 Future<bool> restoreFromFiles(String backupDir) async {
   try {
-    myPrint('>>> Starting file restore from directory: $backupDir');
+    myPrint('Starting file restore from directory: $backupDir');
     List<(String, String)> filePairs = [
       (xvMainHome, '$backupDir/${xvMainHome.split('/').last}'),
       (xvLangHome, '$backupDir/${xvLangHome.split('/').last}'),
@@ -33,15 +33,15 @@ Future<bool> restoreFromFiles(String backupDir) async {
     ];
 
     for (var pair in filePairs) {
-      myPrint('>>> Copying file from ${pair.$2} to ${pair.$1}');
+      myPrint('Copying file from ${pair.$2} to ${pair.$1}');
       File sourceFile = File(pair.$2);
       await sourceFile.copy(pair.$1);
     }
-    myPrint('>>> File restore completed successfully');
+    myPrint('File restore completed successfully');
     return true;
   } catch (e) {
     String msg = lw('Error restoring from files');
-    myPrint('>>> Restore error: $e');
+    myPrint('Restore error: $e');
     okInfoBarRed('$msg: $e');
     return false;
   }
@@ -50,26 +50,26 @@ Future<bool> restoreFromFiles(String backupDir) async {
 
 Future<bool> restoreFromCSV(String csvDir) async {
   try {
-    myPrint('>>> Starting CSV restore from directory: $csvDir');
+    myPrint('Starting CSV restore from directory: $csvDir');
     for (String tableName in APP_TABLES) {
-      myPrint('>>> Processing table: $tableName');
+      myPrint('Processing table: $tableName');
       File csvFile = File('$csvDir/main-$tableName.csv');
       if (!await csvFile.exists()) {
-        myPrint('>>> CSV file not found for table: $tableName');
+        myPrint('CSV file not found for table: $tableName');
         continue;
       }
       List<String> lines = await csvFile.readAsLines();
       if (lines.isEmpty) {
-        myPrint('>>> Empty CSV file for table: $tableName');
+        myPrint('Empty CSV file for table: $tableName');
         continue;
       }
       await setDbData('DELETE FROM $tableName;');
       List<String> headers = parseCSVLine(lines[0]);
-      myPrint('>>> Processing ${lines.length - 1} records for table: $tableName');
+      myPrint('Processing ${lines.length - 1} records for table: $tableName');
       for (int i = 1; i < lines.length; i++) {
         List<String> values = parseCSVLine(lines[i]);
         if (values.length != headers.length) {
-          myPrint('>>> Skipping malformed line: ${lines[i]}');
+          myPrint('Skipping malformed line: ${lines[i]}');
           continue;
         }
         String columns = headers.join(',');
@@ -77,11 +77,11 @@ Future<bool> restoreFromCSV(String csvDir) async {
         await setDbData('INSERT INTO $tableName ($columns) VALUES ($vals);');
       }
     }
-    myPrint('>>> CSV restore completed successfully');
+    myPrint('CSV restore completed successfully');
     return true;
   } catch (e) {
     String msg = lw('Error restoring from CSV');
-    myPrint('>>> CSV restore error: $e');
+    myPrint('CSV restore error: $e');
     okInfoBarRed('$msg: $e');
     return false;
   }
@@ -123,22 +123,22 @@ Future<bool> backupDatabase() async {
   DateTime now = DateTime.now();
   currentDate = "${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}";
   backupDirPath = '${xvBakDir}/bak-$currentDate';
-  myPrint('>>> Starting database backup to: $backupDirPath');
+  myPrint('Starting database backup to: $backupDirPath');
   // Создаем каталог для бекапа
   if (!await newMakeDir(backupDirPath)) {
-    myPrint('>>> Failed to create backup directory');
+    myPrint('Failed to create backup directory');
     return false;
   }
   // Копируем файлы базы данных
   List<String> dbFiles = [xvMainHome, xvLangHome, xvHelpHome, xvSettHome];
-  myPrint('>>> Copying database files to backup directory');
+  myPrint('Copying database files to backup directory');
   bool result = await copyFiles(dbFiles, backupDirPath);
-  myPrint(result ? '>>> Database backup completed successfully' : '>>> Database backup failed');
+  myPrint(result ? 'Database backup completed successfully' : 'Database backup failed');
   return result;
 }
 
 Future<bool> backupToCSV() async {
-  myPrint('>>> Starting CSV backup to: $backupDirPath');
+  myPrint('Starting CSV backup to: $backupDirPath');
   try {
     for (String tableName in APP_TABLES) {
       List<Map<String, dynamic>> data = await getDbData("SELECT * FROM $tableName");
@@ -169,12 +169,12 @@ Future<bool> backupToCSV() async {
     }
     String msg = 'CSV export completed';
     okInfoBarGreen(lw(msg));
-    myPrint('>>> $msg');
+    myPrint('$msg');
     return true;
   } catch (e) {
     String msg = lw('Error exporting tables to CSV');
     okInfoBarPurple('$msg: $e');
-    myPrint('>>> $msg');
+    myPrint('$msg');
     return false;
   }
 }

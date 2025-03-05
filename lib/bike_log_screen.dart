@@ -91,11 +91,11 @@ class _BikeLogScreenState extends State<BikeLogScreen> with RouteAware {
       await sink.close();
       String msg = 'Report exported to CSV';
       okInfoBarGreen(lw(msg));
-      myPrint('>>> $msg: ${csvFile.path}');
+      myPrint('$msg: ${csvFile.path}');
     } catch (e) {
       String msg = lw('Error exporting report to CSV');
       okInfoBarRed('$msg: $e');
-      myPrint('>>> $msg: $e');
+      myPrint('$msg: $e');
     }
   }
 

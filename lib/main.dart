@@ -126,7 +126,7 @@ Future<void> firstRunLanguageSelection() async {
     String selectedLang = await completer.future;
     xdef['Program language'] = selectedLang;
     setKey('Program language', selectedLang);
-    myPrint(">>> firstRunLanguageSelection finished");
+    myPrint("firstRunLanguageSelection finished");
   }
 }
 
@@ -213,11 +213,11 @@ Future<void> initializePaths() async {
     case TargetPlatform.android:
       final appStorageDirectory = await getApplicationDocumentsDirectory();
       xvHomePath = appStorageDirectory.path;
-      myPrint(">>> Application documents path: $xvHomePath");
+      myPrint("Application documents path: $xvHomePath");
 
       final externalStorageDirectory = await getExternalStorageDirectory();
       xvExt1Path = externalStorageDirectory?.path ?? xvHomePath;
-      myPrint(">>> External storage directory path: $xvExt1Path");
+      myPrint("External storage directory path: $xvExt1Path");
       xvBakDir = '/storage/emulated/0/Download/BikeLogBackup';
       break;
 
@@ -247,7 +247,7 @@ Future<void> initializePaths() async {
   xvLangHome = '$xvHomePath/$langDb';
   xvHelpHome = '$xvHomePath/$helpDb';
   xvSettHome = '$xvHomePath/$settDb';
-  myPrint(">>> initializePaths finished");
+  myPrint("initializePaths finished");
 }
 
 Future<bool> initSqlDatabase({
@@ -261,21 +261,21 @@ Future<bool> initSqlDatabase({
     bool fileExists = await dbFile.exists();
     // if exist and this 'main' tnen skip
     if (dbType == 'main' && fileExists) {
-      myPrint(">>> Skipping main database initialization - file already exists");
+      myPrint("Skipping main database initialization - file already exists");
       return true;
     }
     // Читаем SQL из assets и Выполняем SQL-операции
     String sql = await rootBundle.loadString(sqlFilePath);
     await setMultiOper(sql, dbFilePath);
     if (!fileExists) {
-      myPrint(">>> initSqlDatabase created new database for $dbType");
+      myPrint("initSqlDatabase created new database for $dbType");
     } else {
-      myPrint(">>> initSqlDatabase updated existing database for $dbType");
+      myPrint("initSqlDatabase updated existing database for $dbType");
     }
     return true;
   } catch (e) {
     String ee = 'An error occurred';
-    myPrint('>>> $ee: In type $dbType: $e');
+    myPrint('$ee: In type $dbType: $e');
     return false;
   }
 }
@@ -285,7 +285,7 @@ Future<void> initializeAllDatabases() async {
   bool isVersionChanged = progVersion != await getKey('.Prog version');
   // Если не первый запуск и версия не изменилась, просто выходим
   if (!isFirstStart && !isVersionChanged) {
-    myPrint(">>> Skipping database initialization - not first start and version unchanged");
+    myPrint("Skipping database initialization - not first start and version unchanged");
     return;
   }
   bool allSuccess = true;
@@ -304,9 +304,9 @@ Future<void> initializeAllDatabases() async {
   // Если успешно создали/обновили БД, обновляем только версию программы
   if (allSuccess) {
     await setKey('.Prog version', progVersion);
-    myPrint(">>> Databases initialized successfully, updated version");
+    myPrint("Databases initialized successfully, updated version");
   }
-  myPrint(">>> initializeAllDatabases finished, success: $allSuccess");
+  myPrint("initializeAllDatabases finished, success: $allSuccess");
 }
 
 Future<void> writeRef() async {
@@ -336,7 +336,7 @@ Future<void> writeRef() async {
     INSERT INTO bikes (num, owner, brand, model, type, serialnum, buydate, photo) 
     VALUES (1, 1, '*', '*', 1, '', '', '');
     ''');
-  myPrint(">>> writeRef finished");
+  myPrint("writeRef finished");
 }
 
 // first time init settings db-file and write ini-keys
@@ -353,7 +353,7 @@ Future<void> initializeIni() async {
           value TEXT NOT NULL)
       ''');
     } catch (e) {
-      myPrint('>>> Error creating database: $e');
+      myPrint('Error creating database: $e');
     } finally {
       await database?.close();
     }
@@ -367,7 +367,7 @@ Future<void> initializeIni() async {
       xdef[key] = saved;
     }
   }
-  myPrint(">>> initializeIni finished");
+  myPrint("initializeIni finished");
 }
 
 // if first start and was file xxxxx.sql then add it
@@ -403,10 +403,10 @@ Future<void> processExtraData() async {
         }
       } finally {
         await database.close();
-        myPrint(">>> processExtraData finished");
+        myPrint("processExtraData finished");
       }
     } catch (e) {
-      myPrint('>>> Failed to process xxxxx.sql: $e');
+      myPrint('Failed to process xxxxx.sql: $e');
     }
   }
 }
