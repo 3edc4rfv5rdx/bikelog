@@ -101,7 +101,8 @@ class _AddActionScreenState extends State<AddActionScreen> {
       bikes =
           bikesFromDb.map((bike) {
             return {
-              'num': bike['num']?.toString() ?? '0', // Use 'Num' from the query
+              'num':
+                  bike['num']?.toString() ?? '0', // Use 'Num' from the query
               'owner':
                   bike['owner'] ?? lw('Unknown'), // Use 'Owner' from the query
               'brand':
@@ -215,9 +216,7 @@ class _AddActionScreenState extends State<AddActionScreen> {
                 // Проверка даты
                 if (!validateDateInput(dateController.text)) {
                   String msg = lw('Invalid date');
-                  msg += lw(
-                    'Please enter a valid date in the format YYYY-MM-DD ',
-                  );
+                  msg += lw('Please enter a valid date in the format YYYY-MM-DD ',);
                   msg += lw('and ensure it is not in the future');
                   okInfoBarYellow(msg);
                   return;
@@ -230,8 +229,7 @@ class _AddActionScreenState extends State<AddActionScreen> {
                       'Invalid price. Please enter a valid number (with optional decimal point)',
                     ),
                   );
-                  priceFocusNode
-                      .requestFocus(); // Установить фокус на поле Price
+                  priceFocusNode.requestFocus(); // фокус на поле Price
                   return;
                 }
 
@@ -263,20 +261,26 @@ class _AddActionScreenState extends State<AddActionScreen> {
                 );
 
                 try {
-                  String numf = '';
-                  String numv = '';
-                  if (widget.actionNum != null) {
-                    numf = 'num, ';
-                    numv = '${widget.actionNum}, ';
-                  }
-
-                  final sql = '''
-                    INSERT OR REPLACE INTO actions 
-                    ($numf bike, date, event, price, comment)
-                    VALUES 
-                    ($numv $selectedBike, '${dateController.text}', 
-                    $selectedEvent, $price, '$originalComment');
+                  String sql;
+                  if (widget.actionNum != null) { // Update existing record
+                    sql = '''
+                      UPDATE actions 
+                      SET bike = $selectedBike,
+                          date = '${dateController.text}',
+                          event = $selectedEvent,
+                          price = $price,
+                          comment = '$originalComment'
+                      WHERE num = ${widget.actionNum};
                     ''';
+                  } else { // Insert new record
+                      sql = '''
+                      INSERT INTO actions 
+                      (bike, date, event, price, comment)
+                      VALUES 
+                      ($selectedBike, '${dateController.text}', 
+                      $selectedEvent, $price, '$originalComment');
+                    ''';
+                  }
                   await setDbData(sql);
 
                   if (widget.actionNum == null &&
