@@ -232,6 +232,7 @@ class _OptionsSettingsScreenState extends State<OptionsSettingsScreen> {
                             isExpanded: true,
                           ),
                         )
+
                             : entry.value == 'true' || entry.value == 'false'
                             ? Align(
                           alignment: Alignment.centerLeft,

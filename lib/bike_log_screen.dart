@@ -131,6 +131,7 @@ class _BikeLogScreenState extends State<BikeLogScreen> with RouteAware {
   // Function to load actions from the database
   Future<void> _loadActions() async {
     // Build the SQL query
+    final String dateSort = xdef['Newest first'] == 'true' ? 'desc' : '';
     String sql = '''
       select actions.num as num, actions.date as date, owners.name as owner,
              bikes.brand as brand, bikes.model as model, actions.price as price, 
@@ -140,7 +141,7 @@ class _BikeLogScreenState extends State<BikeLogScreen> with RouteAware {
       inner join events on actions.event = events.num
       inner join bikes on actions.bike = bikes.num
       $xvFilter
-      order by date desc, owner, brand, model, price, event, num
+      order by date $dateSort, owner, brand, model, price, event, num
     ''';
 
     // Add LIMIT clause if lines > 0

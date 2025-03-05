@@ -164,6 +164,11 @@ will be indicated',
 вказано позначення з сумами');
 
 INSERT OR REPLACE INTO help (num, en, ru, ua) values (24,
+'Displays items with more recent dates at the top of the main screen',
+'На главном экране отображает элементы с более поздними датами вверху списка',
+'На головному екрані відображає елементи з більш пізніми датами вгорі списку');
+
+INSERT OR REPLACE INTO help (num, en, ru, ua) values (25,
 'Checkbox "Entering multiple actions at once". If this checkbox is set, you can enter
 multiple actions in a row without returning to the main screen. If the checkbox
 is not set, the program will return to the main screen after each action is entered',
@@ -174,7 +179,7 @@ is not set, the program will return to the main screen after each action is ente
 декілька дій поспіль без повернення на головний екран. Якщо флажок знято, після кожного
 введення дії програма буде повертатися на головний екран');
 
-INSERT OR REPLACE INTO help (num, en, ru, ua) values (25,
+INSERT OR REPLACE INTO help (num, en, ru, ua) values (26,
 'Checkbox "Return after clearing". It sets the behavior of the filter screen when the
 "Clear" button is pressed. If the checkbox is set, after clearing you will be returned
 to the main screen, if not - you will stay on the filter screen',
@@ -185,7 +190,7 @@ to the main screen, if not - you will stay on the filter screen',
 натисканні кнопки "Очистити". Якщо флажок встановлено, після очищення ви будете
 повернені на головний екран, якщо ні - залишитеся на екрані фільтрів');
 
-INSERT OR REPLACE INTO help (num, en, ru, ua) values (26,
+INSERT OR REPLACE INTO help (num, en, ru, ua) values (27,
 'The "Round to integer" option displays monetary amounts without cents. When enabled, all amounts will be rounded to whole numbers.',
 'Опция "Округление до целого" позволяет отображать денежные суммы без копеек. Если опция включена, все суммы будут округляться до целых значений.',
 'Опція "Округлення до цілого" дозволяє відображати грошові суми без копійок. Якщо опція увімкнена, всі суми будуть округлятися до цілих значень.');

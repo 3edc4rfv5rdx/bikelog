@@ -15,6 +15,7 @@ Map<String, dynamic> xdef = {
   'Color theme': 'Light', // N 0
   'Last actions': '0',
   'Exchange rate': '42',
+  'Newest first': 'true',
   'Several actions': 'false',
   'Back after clear': 'true',
   'Round to integer': 'true',
