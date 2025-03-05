@@ -4,7 +4,7 @@ import 'package:file_picker/file_picker.dart';
 import 'my_globals.dart';
 
 
-const List<String> APP_TABLES = ['actions','types','owners','bikes','events'];
+const List<String> appTables = ['actions','types','owners','bikes','events'];
 String currentDate = '';
 String backupDirPath = '';
 
@@ -51,7 +51,7 @@ Future<bool> restoreFromFiles(String backupDir) async {
 Future<bool> restoreFromCSV(String csvDir) async {
   try {
     myPrint('Starting CSV restore from directory: $csvDir');
-    for (String tableName in APP_TABLES) {
+    for (String tableName in appTables) {
       myPrint('Processing table: $tableName');
       File csvFile = File('$csvDir/main-$tableName.csv');
       if (!await csvFile.exists()) {
@@ -122,7 +122,7 @@ List<String> parseCSVLine(String line) {
 Future<bool> backupDatabase() async {
   DateTime now = DateTime.now();
   currentDate = "${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}";
-  backupDirPath = '${xvBakDir}/bak-$currentDate';
+  backupDirPath = '$xvBakDir/bak-$currentDate';
   myPrint('Starting database backup to: $backupDirPath');
   // Создаем каталог для бекапа
   if (!await newMakeDir(backupDirPath)) {
@@ -140,7 +140,7 @@ Future<bool> backupDatabase() async {
 Future<bool> backupToCSV() async {
   myPrint('Starting CSV backup to: $backupDirPath');
   try {
-    for (String tableName in APP_TABLES) {
+    for (String tableName in appTables) {
       List<Map<String, dynamic>> data = await getDbData("SELECT * FROM $tableName");
       File csvFile = File('$backupDirPath/main-$tableName.csv');
       IOSink sink = csvFile.openWrite();
@@ -168,13 +168,13 @@ Future<bool> backupToCSV() async {
       await sink.close();
     }
     String msg = 'CSV export completed';
+    myPrint(msg);
     okInfoBarGreen(lw(msg));
-    myPrint('$msg');
     return true;
   } catch (e) {
-    String msg = lw('Error exporting tables to CSV');
-    okInfoBarPurple('$msg: $e');
-    myPrint('$msg');
+    String msg = 'Error exporting tables to CSV';
+    myPrint(msg);
+    okInfoBarPurple(lw(msg) + ': ' + e.toString());
     return false;
   }
 }
