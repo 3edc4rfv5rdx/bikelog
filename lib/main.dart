@@ -231,7 +231,7 @@ Future<void> initializePaths() async {
       final appStorageDirectory = await getApplicationDocumentsDirectory();
       xvHomePath = appStorageDirectory.path;
       xvExt1Path = xvHomePath;
-      xvBakDir = '${xvHomePath}/BikeLogBackup';
+      xvBakDir = '$xvHomePath/BikeLogBackup';
       break;
 
     // case TargetPlatform.windows:
