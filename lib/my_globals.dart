@@ -913,7 +913,7 @@ void initializeSqflite() {
   }
 }
 
-void myPrint(String msg) {if (xvDebug) print('>>> + $msg');}
+void myPrint(String msg) {if (xvDebug) print('>>> ${msg}');}
 
 String strCleanAndEscape(String input) {
   if (input.isEmpty) return input;
