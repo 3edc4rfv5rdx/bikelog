@@ -424,7 +424,7 @@ Future<void> initTranslations() async {
     for (var row in result) {
       _translationCache[row['word']] = row[lang];
     }
-    myPrint("initTranslations finished");
+    myPrint('initTranslations finished');
   } catch (e) {
     myPrint('Error initializing translations: $e');
     rethrow;
@@ -518,7 +518,7 @@ bool isDateFromBeforeDateTo(String dateFrom, String dateTo) {
 }
 
 // Function to execute a SQL query on the language database
-Future<List<Map<String, dynamicgetLangData(String sql) async {
+Future<List<Map<String, dynamic>>> getLangData(String sql) async {
   dbLangBusy = true;
   Database? database;
   List<Map<String, dynamic>> result = []; // Default value
@@ -562,7 +562,7 @@ Future<String> getDbOne(String sql) async {
 }
 
 // Function to execute a SQL query and return a list of rows
-Future<List<Map<String, dynamicgetDbData(String sql) async {
+Future<List<Map<String, dynamic>>> getDbData(String sql) async {
   dbMainBusy = true;
   Database? database;
   List<Map<String, dynamic>> result = []; // Default value
@@ -830,7 +830,7 @@ Future<Database> myOpenDatabase(String path) async {
       defaultTargetPlatform == TargetPlatform.macOS) {
     return await databaseFactoryFfi.openDatabase(path);
   } else {
-    throw UnsupportedError('Platform not supported');
+    throw UnsupportedError('>>> Platform not supported');
   }
 }
 
@@ -913,7 +913,7 @@ void initializeSqflite() {
   }
 }
 
-void myPrint(String msg) {if (xvDebug) print('>>> $msg');}
+void myPrint(String msg) {if (xvDebug) print('>>> + $msg');}
 
 String strCleanAndEscape(String input) {
   if (input.isEmpty) return input;
