@@ -58,20 +58,22 @@ Future<bool> restoreFromCSV(String csvDir) async {
         myPrint('>>> CSV file not found for table: $tableName');
         continue;
       }
-
       List<String> lines = await csvFile.readAsLines();
       if (lines.isEmpty) {
         myPrint('>>> Empty CSV file for table: $tableName');
         continue;
       }
-
       await setDbData('DELETE FROM $tableName;');
-      List<String> headers = lines[0].split(',');
+      List<String> headers = parseCSVLine(lines[0]);
       myPrint('>>> Processing ${lines.length - 1} records for table: $tableName');
-
       for (int i = 1; i < lines.length; i++) {
+        List<String> values = parseCSVLine(lines[i]);
+        if (values.length != headers.length) {
+          myPrint('>>> Skipping malformed line: ${lines[i]}');
+          continue;
+        }
         String columns = headers.join(',');
-        String vals = lines[i].split(',').map((v) => "'${v.trim()}'").join(',');
+        String vals = values.map((v) => "'${v.replaceAll("'", "''")}'").join(',');
         await setDbData('INSERT INTO $tableName ($columns) VALUES ($vals);');
       }
     }
@@ -83,6 +85,36 @@ Future<bool> restoreFromCSV(String csvDir) async {
     okInfoBarRed('$msg: $e');
     return false;
   }
+}
+
+// Helper function to properly parse CSV lines with quoted values
+List<String> parseCSVLine(String line) {
+  List<String> result = [];
+  bool inQuotes = false;
+  String currentValue = '';
+  for (int i = 0; i < line.length; i++) {
+    String char = line[i];
+    if (char == '"') {
+      // Check if this is an escaped quote (double quote)
+      if (i + 1 < line.length && line[i + 1] == '"') {
+        currentValue += '"';
+        i++; // Skip the next quote
+      } else {
+        // Toggle the inQuotes flag
+        inQuotes = !inQuotes;
+      }
+    } else if (char == ',' && !inQuotes) {
+      // End of value
+      result.add(currentValue);
+      currentValue = '';
+    } else {
+      // Add character to current value
+      currentValue += char;
+    }
+  }
+  // Add the last value
+  result.add(currentValue);
+  return result;
 }
 
 
@@ -113,9 +145,23 @@ Future<bool> backupToCSV() async {
       File csvFile = File('$backupDirPath/main-$tableName.csv');
       IOSink sink = csvFile.openWrite();
       if (data.isNotEmpty) {
+        // Write header row
         sink.writeln(data.first.keys.join(','));
+        // Write data rows with proper CSV formatting
         for (var row in data) {
-          sink.writeln(row.values.join(','));
+          // Process each value properly for CSV format
+          List<String> formattedValues = row.values.map((value) {
+            // If value is a string, enclose in quotes and escape any existing quotes
+            if (value is String) {
+              String escapedValue = value.replaceAll('"', '""');
+              return '"$escapedValue"';
+            } else if (value == null) {
+              return '""'; // Empty quoted string for null values
+            } else {
+              return value.toString(); // Numbers don't need quotes
+            }
+          }).toList();
+          sink.writeln(formattedValues.join(','));
         }
       }
       await sink.flush();
