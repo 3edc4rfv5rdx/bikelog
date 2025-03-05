@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'dart:math';
-import 'my_globals.dart';  // Import global variables and functions
+import 'my_globals.dart'; // Import global variables and functions
 
 class AddActionScreen extends StatefulWidget {
-  final int? actionNum;  // Action identifier for editing
+  final int? actionNum; // Action identifier for editing
 
   const AddActionScreen({super.key, this.actionNum});
 
@@ -13,10 +13,10 @@ class AddActionScreen extends StatefulWidget {
 
 class _AddActionScreenState extends State<AddActionScreen> {
   // Data for the bike dropdown list
-  List<Map<String, dynamic>> bikes = [];  // List of bikes
+  List<Map<String, dynamic>> bikes = []; // List of bikes
 
   // Data for the event dropdown list
-  List<Map<String, dynamic>> events = [];  // List of events
+  List<Map<String, dynamic>> events = []; // List of events
 
   // Controllers for text fields
   final TextEditingController dateController = TextEditingController();
@@ -59,8 +59,8 @@ class _AddActionScreenState extends State<AddActionScreen> {
 
   Future<void> _loadDataSequentially() async {
     try {
-      await _loadBikes();  // Wait for _loadBikes to complete
-      await _loadEvents();  // Wait for _loadEvents to complete
+      await _loadBikes(); // Wait for _loadBikes to complete
+      await _loadEvents(); // Wait for _loadEvents to complete
 
       // If actionNum is provided, load data for editing
       if (widget.actionNum != null) {
@@ -68,7 +68,8 @@ class _AddActionScreenState extends State<AddActionScreen> {
       }
     } catch (e) {
       String msg = lw('Failed to load data');
-      okInfoBarRed('$msg: $e');    }
+      okInfoBarRed('$msg: $e');
+    }
   }
 
   @override
@@ -97,14 +98,18 @@ class _AddActionScreenState extends State<AddActionScreen> {
     final bikesFromDb = await getDbData(sql);
     setState(() {
       // Save data to the bikes list
-      bikes = bikesFromDb.map((bike) {
-        return {
-          'num': bike['num']?.toString() ?? '0',  // Use 'Num' from the query
-          'owner': bike['owner'] ?? lw('Unknown'),    // Use 'Owner' from the query
-          'brand': bike['brand'] ?? lw('Unknown'),    // Use 'Brand' from the query
-          'model': bike['model'] ?? lw('Unknown'),    // Use 'Model' from the query
-        };
-      }).toList();
+      bikes =
+          bikesFromDb.map((bike) {
+            return {
+              'num': bike['num']?.toString() ?? '0', // Use 'Num' from the query
+              'owner':
+                  bike['owner'] ?? lw('Unknown'), // Use 'Owner' from the query
+              'brand':
+                  bike['brand'] ?? lw('Unknown'), // Use 'Brand' from the query
+              'model':
+                  bike['model'] ?? lw('Unknown'), // Use 'Model' from the query
+            };
+          }).toList();
     });
   }
 
@@ -116,12 +121,15 @@ class _AddActionScreenState extends State<AddActionScreen> {
     final eventsFromDb = await getDbData(sql);
     setState(() {
       // Save data to the events list
-      events = eventsFromDb.map((event) {
-        return {
-          'num': event['num']?.toString() ?? '0',  // Use 'Num' from the query
-          'name': event['name'] ?? lw('Unknown'),      // Use 'Name' from the query
-        };
-      }).toList();
+      events =
+          eventsFromDb.map((event) {
+            return {
+              'num':
+                  event['num']?.toString() ?? '0', // Use 'Num' from the query
+              'name':
+                  event['name'] ?? lw('Unknown'), // Use 'Name' from the query
+            };
+          }).toList();
     });
   }
 
@@ -144,24 +152,25 @@ class _AddActionScreenState extends State<AddActionScreen> {
           commentController.text = action['comment'] ?? '';
           // Ensure the selected bike exists in the bikes list
           if (!bikes.any((bike) => bike['num'] == selectedBike)) {
-            selectedBike = '0';  // Set default value
+            selectedBike = '0'; // Set default value
           }
         });
         // Debug logging
       }
     } catch (e) {
       String msg = lw('Failed to load action data');
-      okInfoBarRed('$msg: $e');    }
+      okInfoBarRed('$msg: $e');
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: clFon,  // Screen background color
+      backgroundColor: clFon, // Screen background color
       appBar: AppBar(
-        backgroundColor: clUpBar,  // AppBar background color
+        backgroundColor: clUpBar, // AppBar background color
         title: GestureDetector(
-          onLongPress: () => okHelp(2),  // help_id  for the title
+          onLongPress: () => okHelp(2), // help_id  for the title
           child: Text(
             widget.actionNum == null ? lw('Add Action') : lw('Edit Action'),
             style: TextStyle(
@@ -184,11 +193,10 @@ class _AddActionScreenState extends State<AddActionScreen> {
 
         actions: [
           GestureDetector(
-            onLongPress: () => okHelp(58),  // help_id = 58 for the save button
+            onLongPress: () => okHelp(58), // help_id = 58 for the save button
             child: IconButton(
-              icon: Icon(Icons.save, color: clText),  // Save icon color
+              icon: Icon(Icons.save, color: clText), // Save icon color
               onPressed: () async {
-
                 // Проверка, что поле Bike заполнено
                 if (selectedBike == null || selectedBike == '0') {
                   okInfoBarYellow(lw('Please select a bike'));
@@ -199,14 +207,17 @@ class _AddActionScreenState extends State<AddActionScreen> {
                 // Проверка, что поле Event заполнено
                 if (selectedEvent == null || selectedEvent == '0') {
                   okInfoBarYellow(lw('Please select an event'));
-                  eventFocusNode.requestFocus(); // Установить фокус на поле Event
+                  eventFocusNode
+                      .requestFocus(); // Установить фокус на поле Event
                   return;
                 }
 
                 // Проверка даты
                 if (!validateDateInput(dateController.text)) {
                   String msg = lw('Invalid date');
-                  msg += lw('Please enter a valid date in the format YYYY-MM-DD ');
+                  msg += lw(
+                    'Please enter a valid date in the format YYYY-MM-DD ',
+                  );
                   msg += lw('and ensure it is not in the future');
                   okInfoBarYellow(msg);
                   return;
@@ -214,8 +225,13 @@ class _AddActionScreenState extends State<AddActionScreen> {
 
                 // Проверка цены
                 if (!validatePriceInput(priceController.text)) {
-                  okInfoBarYellow(lw('Invalid price. Please enter a valid number (with optional decimal point)'));
-                  priceFocusNode.requestFocus(); // Установить фокус на поле Price
+                  okInfoBarYellow(
+                    lw(
+                      'Invalid price. Please enter a valid number (with optional decimal point)',
+                    ),
+                  );
+                  priceFocusNode
+                      .requestFocus(); // Установить фокус на поле Price
                   return;
                 }
 
@@ -227,7 +243,8 @@ class _AddActionScreenState extends State<AddActionScreen> {
                   price = double.tryParse(priceText) ?? 0.0;
                   // Если флажок установлен, умножить на курс обмена
                   if (isDollar) {
-                    final exchangeRate = double.tryParse(xdef['Exchange rate']) ?? 1.0;
+                    final exchangeRate =
+                        double.tryParse(xdef['Exchange rate']) ?? 1.0;
                     price *= exchangeRate;
                     commentController.text += ' (\$$priceText)';
                   }
@@ -235,11 +252,15 @@ class _AddActionScreenState extends State<AddActionScreen> {
                   if (xdef['Round to integer'] == 'true') {
                     price = price.round().toDouble(); // Округляем до целого
                   } else {
-                    price = double.parse(price.toStringAsFixed(2)); // Округляем до 2 знаков
+                    price = double.parse(
+                      price.toStringAsFixed(2),
+                    ); // Округляем до 2 знаков
                   }
                 }
 
-                String originalComment = strCleanAndEscape(commentController.text);
+                String originalComment = strCleanAndEscape(
+                  commentController.text,
+                );
 
                 try {
                   String numf = '';
@@ -258,14 +279,16 @@ class _AddActionScreenState extends State<AddActionScreen> {
                     ''';
                   await setDbData(sql);
 
-                  if (widget.actionNum == null && xdef['Several actions'] == 'true') {
+                  if (widget.actionNum == null &&
+                      xdef['Several actions'] == 'true') {
                     // Clear the form and stay on screen
                     setState(() {
                       selectedBike = '0';
                       selectedEvent = '0';
                       // Reset date to current
                       final currentDate = DateTime.now();
-                      final formattedDate = "${currentDate.toLocal()}".split(' ')[0];
+                      final formattedDate =
+                          "${currentDate.toLocal()}".split(' ')[0];
                       dateController.text = formattedDate;
                       priceController.text = '';
                       commentController.text = '';
@@ -281,8 +304,7 @@ class _AddActionScreenState extends State<AddActionScreen> {
                   String msg = lw('Failed to save action');
                   okInfoBarRed('$msg: $e');
                 }
-              }
-
+              },
             ),
           ),
         ],
@@ -300,7 +322,11 @@ class _AddActionScreenState extends State<AddActionScreen> {
                     onLongPress: () => okHelp(40),
                     child: Text(
                       lw('Bike'),
-                      style: TextStyle(fontSize: fsNormal, fontWeight: fwNormal, color: clText),
+                      style: TextStyle(
+                        fontSize: fsNormal,
+                        fontWeight: fwNormal,
+                        color: clText,
+                      ),
                     ),
                   ),
                 ),
@@ -320,7 +346,11 @@ class _AddActionScreenState extends State<AddActionScreen> {
                         value: '0',
                         child: Text(
                           xvSelect,
-                          style: TextStyle(fontSize: fsNormal, fontWeight: fwNormal, color: clText),
+                          style: TextStyle(
+                            fontSize: fsNormal,
+                            fontWeight: fwNormal,
+                            color: clText,
+                          ),
                         ),
                       ),
                       if (bikes.isNotEmpty)
@@ -332,7 +362,11 @@ class _AddActionScreenState extends State<AddActionScreen> {
                             value: bike['num'],
                             child: Text(
                               '$owner-$brand-$model',
-                              style: TextStyle(fontSize: fsNormal, fontWeight: fwNormal, color: clText),
+                              style: TextStyle(
+                                fontSize: fsNormal,
+                                fontWeight: fwNormal,
+                                color: clText,
+                              ),
                             ),
                           );
                         }),
@@ -351,59 +385,68 @@ class _AddActionScreenState extends State<AddActionScreen> {
             const SizedBox(height: 8),
 
             // Date input field with calendar button
-              Row(
-                children: [
-                  Expanded(
-                    flex: 35,
-                    child: GestureDetector(
-                      onLongPress: () => okHelp(41),
-                      child: Text(
-                        lw('Date'),
-                        style: TextStyle(fontSize: fsNormal, fontWeight: fwNormal, color: clText),
+            Row(
+              children: [
+                Expanded(
+                  flex: 35,
+                  child: GestureDetector(
+                    onLongPress: () => okHelp(41),
+                    child: Text(
+                      lw('Date'),
+                      style: TextStyle(
+                        fontSize: fsNormal,
+                        fontWeight: fwNormal,
+                        color: clText,
                       ),
                     ),
                   ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    flex: 65,
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: TextFormField(
-                            controller: dateController,
-                            decoration: InputDecoration(
-                              border: OutlineInputBorder(),
-                              hintText: lw('YYYY-MM-DD'),
-                              filled: true,
-                              fillColor: clFill,
-                            ),
-                            style: TextStyle(fontSize: fsNormal, fontWeight: fwNormal, color: clText),
-                            keyboardType: TextInputType.datetime,
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  flex: 65,
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: TextFormField(
+                          controller: dateController,
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(),
+                            hintText: lw('YYYY-MM-DD'),
+                            filled: true,
+                            fillColor: clFill,
                           ),
+                          style: TextStyle(
+                            fontSize: fsNormal,
+                            fontWeight: fwNormal,
+                            color: clText,
+                          ),
+                          keyboardType: TextInputType.datetime,
                         ),
-                        const SizedBox(width: 8),
-                        IconButton(
-                          icon: Icon(Icons.calendar_today, color: clText),
-                          onPressed: () async {
-                            final DateTime? pickedDate = await showDatePicker(
-                              context: context,
-                              initialDate: DateTime.now(),
-                              firstDate: DateTime(2000),
-                              lastDate: DateTime.now(),
-                            );
-                            if (pickedDate != null) {
-                              final formattedDate = "${pickedDate.toLocal()}".split(' ')[0];
-                              setState(() {
-                                dateController.text = formattedDate;
-                              });
-                            }
-                          },
-                        ),
-                      ],
-                    ),
+                      ),
+                      const SizedBox(width: 8),
+                      IconButton(
+                        icon: Icon(Icons.calendar_today, color: clText),
+                        onPressed: () async {
+                          final DateTime? pickedDate = await showDatePicker(
+                            context: context,
+                            initialDate: DateTime.now(),
+                            firstDate: DateTime(2000),
+                            lastDate: DateTime.now(),
+                          );
+                          if (pickedDate != null) {
+                            final formattedDate =
+                                "${pickedDate.toLocal()}".split(' ')[0];
+                            setState(() {
+                              dateController.text = formattedDate;
+                            });
+                          }
+                        },
+                      ),
+                    ],
                   ),
-                ],
-              ),
+                ),
+              ],
+            ),
             const SizedBox(height: 8),
 
             // Dropdown for selecting an event
@@ -415,7 +458,11 @@ class _AddActionScreenState extends State<AddActionScreen> {
                     onLongPress: () => okHelp(42),
                     child: Text(
                       lw('Event'),
-                      style: TextStyle(fontSize: fsNormal, fontWeight: fwNormal, color: clText),
+                      style: TextStyle(
+                        fontSize: fsNormal,
+                        fontWeight: fwNormal,
+                        color: clText,
+                      ),
                     ),
                   ),
                 ),
@@ -435,7 +482,11 @@ class _AddActionScreenState extends State<AddActionScreen> {
                         value: '0',
                         child: Text(
                           xvSelect,
-                          style: TextStyle(fontSize: fsNormal, fontWeight: fwNormal, color: clText),
+                          style: TextStyle(
+                            fontSize: fsNormal,
+                            fontWeight: fwNormal,
+                            color: clText,
+                          ),
                         ),
                       ),
                       if (events.isNotEmpty)
@@ -445,7 +496,11 @@ class _AddActionScreenState extends State<AddActionScreen> {
                             value: event['num'],
                             child: Text(
                               name,
-                              style: TextStyle(fontSize: fsNormal, fontWeight: fwNormal, color: clText),
+                              style: TextStyle(
+                                fontSize: fsNormal,
+                                fontWeight: fwNormal,
+                                color: clText,
+                              ),
                             ),
                           );
                         }),
@@ -472,7 +527,11 @@ class _AddActionScreenState extends State<AddActionScreen> {
                     onLongPress: () => okHelp(43),
                     child: Text(
                       lw('Price'),
-                      style: TextStyle(fontSize: fsNormal, fontWeight: fwNormal, color: clText),
+                      style: TextStyle(
+                        fontSize: fsNormal,
+                        fontWeight: fwNormal,
+                        color: clText,
+                      ),
                     ),
                   ),
                 ),
@@ -481,15 +540,13 @@ class _AddActionScreenState extends State<AddActionScreen> {
                   flex: 65,
                   child: Row(
                     children: [
-                      Container(
-                        child: Checkbox(
-                          value: isDollar,
-                          onChanged: (bool? value) {
-                            setState(() {
-                              isDollar = value ?? false;
-                            });
-                          },
-                        ),
+                      Checkbox(
+                        value: isDollar,
+                        onChanged: (bool? value) {
+                          setState(() {
+                            isDollar = value ?? false;
+                          });
+                        },
                       ),
                       Text(
                         '\$',
@@ -509,8 +566,14 @@ class _AddActionScreenState extends State<AddActionScreen> {
                             filled: true,
                             fillColor: clFill,
                           ),
-                          style: TextStyle(fontSize: fsNormal, fontWeight: fwNormal, color: clText),
-                          keyboardType: TextInputType.numberWithOptions(decimal: true),
+                          style: TextStyle(
+                            fontSize: fsNormal,
+                            fontWeight: fwNormal,
+                            color: clText,
+                          ),
+                          keyboardType: TextInputType.numberWithOptions(
+                            decimal: true,
+                          ),
                         ),
                       ),
                     ],
@@ -530,7 +593,11 @@ class _AddActionScreenState extends State<AddActionScreen> {
                     onLongPress: () => okHelp(44),
                     child: Text(
                       lw('Comment'),
-                      style: TextStyle(fontSize: fsNormal, fontWeight: fwNormal, color: clText),
+                      style: TextStyle(
+                        fontSize: fsNormal,
+                        fontWeight: fwNormal,
+                        color: clText,
+                      ),
                     ),
                   ),
                 ),
@@ -544,7 +611,11 @@ class _AddActionScreenState extends State<AddActionScreen> {
                       filled: true,
                       fillColor: clFill,
                     ),
-                    style: TextStyle(fontSize: fsNormal, fontWeight: fwNormal, color: clText),
+                    style: TextStyle(
+                      fontSize: fsNormal,
+                      fontWeight: fwNormal,
+                      color: clText,
+                    ),
                     maxLines: 3,
                   ),
                 ),
