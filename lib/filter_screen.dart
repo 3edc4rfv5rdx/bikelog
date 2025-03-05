@@ -70,9 +70,9 @@ class _FilterScreenState extends State<FilterScreen> {
 
       List<String> s = [];
       if (_filterMode == FilterMode.byOwner && owner != null && owner != '0')
-        s.add('bikes.owner = $owner');
+        {s.add('bikes.owner = $owner');}
       if (_filterMode == FilterMode.byBike && bike != null && bike != '0')
-        s.add('actions.bike = $bike');
+        {s.add('actions.bike = $bike');}
 
       if (event != null && event != '0') s.add('actions.event = $event');
       if (dateFrom != null) s.add('actions.date >= "$dateFrom"');
@@ -727,7 +727,7 @@ class _FilterScreenState extends State<FilterScreen> {
                           });
                         },
                         decoration: const InputDecoration(
-                          contentPadding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+                          contentPadding: EdgeInsets.symmetric(vertical: 8, horizontal: 4),
                           border: InputBorder.none,
                         ),
                       ),
@@ -786,7 +786,7 @@ class _FilterScreenState extends State<FilterScreen> {
                           });
                         },
                         decoration: const InputDecoration(
-                          contentPadding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+                          contentPadding: EdgeInsets.symmetric(vertical: 8, horizontal: 4),
                           border: InputBorder.none,
                         ),
                       ),
@@ -819,7 +819,7 @@ class _FilterScreenState extends State<FilterScreen> {
                         keyboardType: TextInputType.text,
                         style: TextStyle(fontSize: fsNormal, color: clText),
                         decoration: const InputDecoration(
-                          contentPadding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+                          contentPadding: EdgeInsets.symmetric(vertical: 8, horizontal: 4),
                           border: InputBorder.none,
                         ),
                         onChanged: (value) {
