@@ -337,7 +337,7 @@ class _AddActionScreenState extends State<AddActionScreen> {
                   return;
                 }
 
-// Проверка цены (добавить вместо существующей проверки)
+                // Проверка цены
                 if (!isValidCalculatorExpression(priceController.text)) {
                   okInfoBarYellow(
                     lw('Invalid price. Please enter a valid number (with optional decimal point)'),
@@ -346,12 +346,14 @@ class _AddActionScreenState extends State<AddActionScreen> {
                   return;
                 }
 
-// Обработка цены (заменить весь блок обработки цены)
+                // Обработка цены
                 String priceText = priceController.text.trim();
                 double price = 0.0;
                 if (priceText.isNotEmpty) {
                   // Проверка на наличие математических операторов
-                  if (priceText.contains(RegExp(r'[+\-*/]'))) {
+                  bool isExpression = priceText.contains(RegExp(r'[+\-*/]'));
+
+                  if (isExpression) {
                     // Вычисляем выражение
                     price = evaluateExpression(priceText);
 
@@ -367,13 +369,23 @@ class _AddActionScreenState extends State<AddActionScreen> {
 
                   // Если валюта доллар, умножаем на курс обмена
                   if (isDollar) {
+                    // Для выражений сначала добавляем результат вычисления в долларах
+                    if (isExpression) {
+                      String dollarValueComment = ' (\$' + price.toString() + ')';
+                      if (!commentController.text.contains(dollarValueComment)) {
+                        commentController.text += dollarValueComment;
+                      }
+                    } else {
+                      // Для обычной цены добавляем исходное значение
+                      String dollarComment = ' (\$' + priceText + ')';
+                      if (!commentController.text.contains(dollarComment)) {
+                        commentController.text += dollarComment;
+                      }
+                    }
+
+                    // Конвертируем в локальную валюту
                     final exchangeRate = double.tryParse(xdef['Exchange rate']) ?? 1.0;
                     price *= exchangeRate;
-
-                    // Добавляем в комментарий информацию о валюте
-                    if (!commentController.text.contains(' (\$$priceText)')) {
-                      commentController.text += ' (\$$priceText)';
-                    }
                   }
 
                   // Округляем цену согласно настройке
@@ -385,7 +397,6 @@ class _AddActionScreenState extends State<AddActionScreen> {
                 }
 
                 String originalComment = strCleanAndEscape(commentController.text);
-
 
                 try {
                   String sql;

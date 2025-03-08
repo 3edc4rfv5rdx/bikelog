@@ -212,9 +212,9 @@ INSERT OR REPLACE INTO help (num, en, ru, ua) values (42,
 'Виберіть тип події зі списку');
 
 INSERT OR REPLACE INTO help (num, en, ru, ua) values (43,
-'Cost of work-parts-services in national or other currency. When $ is selected, the amount is automatically converted to national currency at the exchange rate from settings. Currency amount information will be added to the comment',
-'Стоимость работы-услуги-запчастей в национальной или другой валюте. При выборе $ сумма автоматически конвертируется в национальную валюту по курсу из настроек. Информация о сумме в валюте добавится к комментарию',
-'Вартість роботи-послуги-запчастин у національній або іншій валюті. При виборі $ сума автоматично конвертується в національну валюту за курсом з налаштувань. Інформація про суму у валюті додасться до коментаря');
+'The cost of work, service, or parts in national or other currency. When $ is selected, the amount is automatically converted to the national currency at the exchange rate from settings. Information about the amount in currency will be added to the comment. You can also enter mathematical expressions, for example: 2*520+75+600 (for instance, you bought two tires plus delivery cost and labor). The expression will be calculated, and its text will be added to the comment',
+'Стоимость работы-услуги-запчастей в национальной или другой валюте. При выборе $ сумма автоматически конвертируется в национальную валюту по курсу из настроек. Информация о сумме в валюте добавится к комментарию. Также можно вводить математические выражения, например: 2*520+75+600 (к примеру вы купили две покрышки и цена доставки и работа). Выражение будет вычислено, его текст добавится в комментарий',
+'Вартість роботи-послуги-запчастин у національній або іншій валюті. При виборі $ сума автоматично конвертується в національну валюту за курсом із налаштувань. Інформація про суму в валюті додасться до коментаря. Також можна вводити математичні вирази, наприклад: 2*520+75+600 (наприклад, ви купили дві покришки плюс вартість доставки та робота). Вираз буде обчислено, його текст додасться до коментаря');
 
 INSERT OR REPLACE INTO help (num, en, ru, ua) values (44,
 'Any text comment to help recall event-operation details',
