@@ -40,6 +40,121 @@ class _AddActionScreenState extends State<AddActionScreen> {
   // Checkbox state for currency
   bool isDollar = false;
 
+
+  // Функции для оценки математических выражений
+  double evaluateExpression(String expression) {
+    try {
+      // Remove all spaces
+      expression = expression.replaceAll(' ', '');
+
+      // Parse and evaluate the expression
+      List<String> tokens = _tokenize(expression);
+      return _evaluate(tokens);
+    } catch (e) {
+      // Return error value on any exception
+      throw FormatException('Invalid expression: $expression');
+    }
+  }
+
+// Helper function to tokenize the expression
+  List<String> _tokenize(String expression) {
+    List<String> tokens = [];
+    String currentNumber = '';
+
+    for (int i = 0; i < expression.length; i++) {
+      String char = expression[i];
+
+      if (char == '+' || char == '-' || char == '*' || char == '/') {
+        if (currentNumber.isNotEmpty) {
+          tokens.add(currentNumber);
+          currentNumber = '';
+        }
+        tokens.add(char);
+      } else if (char.contains(RegExp(r'[0-9.]'))) {
+        currentNumber += char;
+      } else {
+        throw FormatException('Invalid character: $char');
+      }
+    }
+
+    if (currentNumber.isNotEmpty) {
+      tokens.add(currentNumber);
+    }
+
+    return tokens;
+  }
+
+// Helper function to evaluate tokenized expression
+  double _evaluate(List<String> tokens) {
+    // First pass: Handle multiplication and division
+    List<String> secondPassTokens = [];
+
+    int i = 0;
+    while (i < tokens.length) {
+      if (i + 2 < tokens.length && (tokens[i + 1] == '*' || tokens[i + 1] == '/')) {
+        double leftOperand = double.parse(tokens[i]);
+        String operator = tokens[i + 1];
+        double rightOperand = double.parse(tokens[i + 2]);
+
+        double result;
+        if (operator == '*') {
+          result = leftOperand * rightOperand;
+        } else { // operator == '/'
+          if (rightOperand == 0) {
+            throw FormatException('Division by zero');
+          }
+          result = leftOperand / rightOperand;
+        }
+
+        secondPassTokens.add(result.toString());
+        i += 3;
+      } else {
+        secondPassTokens.add(tokens[i]);
+        i++;
+      }
+    }
+
+    // Second pass: Handle addition and subtraction
+    double result = double.parse(secondPassTokens[0]);
+
+    for (i = 1; i < secondPassTokens.length; i += 2) {
+      String operator = secondPassTokens[i];
+      double operand = double.parse(secondPassTokens[i + 1]);
+
+      if (operator == '+') {
+        result += operand;
+      } else if (operator == '-') {
+        result -= operand;
+      }
+    }
+
+    return result;
+  }
+
+// Функция проверки ввода цены (включая выражения)
+  bool isValidCalculatorExpression(String input) {
+    if (input.isEmpty) {
+      return true; // Allow empty price
+    }
+
+    // Check if the input contains any mathematical operators
+    bool hasOperators = input.contains(RegExp(r'[+\-*/]'));
+
+    if (!hasOperators) {
+      // If no operators, validate as regular numeric input
+      return validatePriceInput(input);
+    }
+
+    try {
+      // Try to evaluate the expression
+      evaluateExpression(input);
+      return true; // If no exception was thrown, the expression is valid
+    } catch (e) {
+      return false; // Invalid expression
+    }
+  }
+
+
   @override
   void initState() {
     super.initState();
@@ -222,43 +337,55 @@ class _AddActionScreenState extends State<AddActionScreen> {
                   return;
                 }
 
-                // Проверка цены
-                if (!validatePriceInput(priceController.text)) {
+// Проверка цены (добавить вместо существующей проверки)
+                if (!isValidCalculatorExpression(priceController.text)) {
                   okInfoBarYellow(
-                    lw(
-                      'Invalid price. Please enter a valid number (with optional decimal point)',
-                    ),
+                    lw('Invalid price. Please enter a valid number (with optional decimal point)'),
                   );
                   priceFocusNode.requestFocus(); // фокус на поле Price
                   return;
                 }
 
-                // Обработка цены
+// Обработка цены (заменить весь блок обработки цены)
                 String priceText = priceController.text.trim();
                 double price = 0.0;
                 if (priceText.isNotEmpty) {
-                  // Преобразовать в double
-                  price = double.tryParse(priceText) ?? 0.0;
-                  // Если флажок установлен, умножить на курс обмена
-                  if (isDollar) {
-                    final exchangeRate =
-                        double.tryParse(xdef['Exchange rate']) ?? 1.0;
-                    price *= exchangeRate;
-                    commentController.text += ' (\$$priceText)';
+                  // Проверка на наличие математических операторов
+                  if (priceText.contains(RegExp(r'[+\-*/]'))) {
+                    // Вычисляем выражение
+                    price = evaluateExpression(priceText);
+
+                    // Добавляем выражение в комментарий
+                    String expressionComment = ' (=' + priceText + ')';
+                    if (!commentController.text.contains(expressionComment)) {
+                      commentController.text += expressionComment;
+                    }
+                  } else {
+                    // Обычная цена
+                    price = double.tryParse(priceText) ?? 0.0;
                   }
-                  // Округлить цену согласно настройке
+
+                  // Если валюта доллар, умножаем на курс обмена
+                  if (isDollar) {
+                    final exchangeRate = double.tryParse(xdef['Exchange rate']) ?? 1.0;
+                    price *= exchangeRate;
+
+                    // Добавляем в комментарий информацию о валюте
+                    if (!commentController.text.contains(' (\$$priceText)')) {
+                      commentController.text += ' (\$$priceText)';
+                    }
+                  }
+
+                  // Округляем цену согласно настройке
                   if (xdef['Round to integer'] == 'true') {
                     price = price.round().toDouble(); // Округляем до целого
                   } else {
-                    price = double.parse(
-                      price.toStringAsFixed(2),
-                    ); // Округляем до 2 знаков
+                    price = double.parse(price.toStringAsFixed(2)); // Округляем до 2 знаков
                   }
                 }
 
-                String originalComment = strCleanAndEscape(
-                  commentController.text,
-                );
+                String originalComment = strCleanAndEscape(commentController.text);
+
 
                 try {
                   String sql;
