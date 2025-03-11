@@ -1,0 +1,292 @@
+{
+  "1": {
+    "en": "This program is a digital diary for tracking the maintenance and repair of your bicycles. It is suitable for:\n1) Owners of one or more bicycles.\n2) Families where each member has their own bicycle.\n3) Entrepreneurs or enthusiasts who assist with repairs.\nThe program allows you to record all actions for each bicycle and owner. Data can be exported to CSV for analysis in spreadsheet editors.\nGetting started:\n1) Add or select an owner.\n2) Add a bicycle and enter its details.\nImportant:\n1) The program is not a financial tool. Prices are for reference only.\n2) It works without an internet connection. All data is stored locally and is not shared with third parties",
+    "ru": "Эта программа — цифровой дневник для отслеживания обслуживания и ремонта ваших велосипедов. Она подходит для:\n1) Владельцев одного или нескольких велосипедов.\n2) Семей, где каждый член имеет свой велосипед.\n3)Предпринимателей или энтузиастов, помогающих в ремонте.\n Программа позволяет фиксировать все действия по каждому велосипеду и владельцу. Данные можно экспортировать в CSV для анализа в табличных редакторах.\n Как начать:\n 1) Добавьте или выберите владельца.\n 2) Добавьте велосипед и введите данные о нём.\n Важно:\n 1) Программа не является финансовым инструментом. Цены носят справочный характер.\n 2) Работает без интернета. Все данные хранятся локально и не передаются третьим лицам",
+    "ua": "Ця програма — це цифровий щоденник для відстеження обслуговування та ремонту вашого велосипеда.\nВона підходить для:\n1) Власників одного або кількох велосипедів.\n2) Сімей, де кожен член має свій велосипед.\n3) Підприємців або ентузіастів, які допомагають у ремонті.\nПрограма дозволяє фіксувати всі дії для кожного велосипеда та власника. Дані можна експортувати у формат CSV для аналізу в табличних редакторах.\nЯк почати:\n1) Додайте або оберіть власника.\n2) Додайте велосипед та введіть його дані.\nВажливо:\n1) Програма не є фінансовим інструментом. Ціни мають довідковий характер.\n2) Працює без інтернету. Усі дані зберігаються локально та не передаються третім особам"
+  },
+  "2": {
+    "en": "Input actions. On this screen, you can enter actions and parameters that you want to save in the database",
+    "ru": "Ввод действий. На этом экране вы можете внести действия и параметры, которые хотите сохранить в базе данных",
+    "ua": "Введення дій. На цьому екрані ви можете внести дії та параметри, які хочете зберегти в базі даних"
+  },
+  "3": {
+    "en": "Filter settings screen. On this screen, you can select parameters to filter actions. You can choose one parameter or several, or all at once. When you have entered the data for filtering, click the \"Apply\" button. After that, the filtered data will be displayed on the main screen. You can also return to the filter screen and click the \"Clear\" button to return all filter fields to their original state",
+    "ru": "Экран установки фильтров. На этом экране вы можете выбрать параметры для фильтрации действий. Вы можете выбрать один параметр или несколько, или все сразу. Когда вы ввели данные для фильтрации, нажмите кнопку \"Применить\". После этого на главном экране будут отображены отфильтрованные данные. Также вы можете вернуться на экран фильтров и нажать кнопку \"Очистить\", чтобы вернуть все поля фильтров в исходное состояние",
+    "ua": "Екран налаштування фільтрів. На цьому екрані ви можете вибрати параметри для фільтрації дій. Ви можете вибрати один параметр або кілька, або всі відразу. Коли ви ввели дані для фільтрації, натисніть кнопку \"Застосувати\". Після цього на головному екрані будуть відображені відфільтровані дані. Також ви можете повернутися на екран фільтрів і натиснути кнопку \"Очистити\", щоб повернути всі поля фільтрів у початковий стан"
+  },
+  "4": {
+    "en": "Main settings. Customize program behavior and appearance. 1. Language selection. 2. Visible actions count (0 shows all). 3. Currency rate (price will be converted to national currency). 4. Multiple actions input (enable to input several actions without returning to the main screen). 5. Return after clear (enable to return to the main screen after clearing filters). 6. Round to integer (final action amount will be rounded to whole numbers)",
+    "ru": "Основные настройки. Настройте поведение и внешний вид программы. 1. Выбор языка. 2. Количество видимых действий (0 показывает все). 3. Курс валюты (цена будет пересчитана в национальную валюту). 4. Ввод нескольких действий (включите для ввода нескольких действий без возврата на главный экран). 5. Возврат после очистки (включите для возврата на главный экран после очистки фильтров). 6. Округление до целого (итоговая сумма действия будет округлена до целых чисел)",
+    "ua": "Основні налаштування. Налаштуйте поведінку та зовнішній вигляд програми. 1. Вибір мови. 2. Кількість видимих дій (0 показує всі). 3. Курс валюти (ціна буде перерахована в національну валюту). 4. Введення кількох дій (включіть для введення кількох дій без повернення на головний екран). 5. Повернення після очищення (включіть для повернення на головний екран після очищення фільтрів). 6. Округлення до цілого (підсумкова сума дії буде округлена до цілих чисел)"
+  },
+  "5": {
+    "en": "Reference management: Add - press (+), enter name, Save. Edit - long press on record = EDIT, edit name, Save. Delete - long press on record = DELETE, Save. Cancel = Back button",
+    "ru": "Справочники: Добавление - кнопка (+), ввод имени, Сохранить. Изменение - длинное нажатие на записи = EDIT, изменить имя, Сохранить. Удаление - длинное нажатие на записи = DELETE, Сохранить. Отмена = кнопка Назад",
+    "ua": "Довідники: Додавання - кнопка (+), введення імені, Зберегти. Зміна - довге натискання на запису = EDIT, змінити ім'я, Зберегти. Видалення - довге натискання на запису = DELETE, Зберегти. Відміна = кнопка Назад"
+  },
+  "6": {
+    "en": "Store your bikes data here with their owners, models and details",
+    "ru": "Соберите здесь данные о велосипедах, их владельцах и характеристиках",
+    "ua": "Зберіть тут дані про велосипеди, їх власників та характеристики"
+  },
+  "7": {
+    "en": "From the settings screen, you can access application settings, directories of owners, types of bicycles, events, and a list of bicycles, as well as functions for saving (including CSV) and restoring data",
+    "ru": "С экрана настроек можно перейти к настройкам приложения, справочникам владельцев, типов велосипедов, событий и списку велосипедов, а также к функциям сохранения (включая CSV) и восстановления данных",
+    "ua": "З екрану налаштувань можна перейти до налаштувань програми, довідників власників, типів велосипедів, подій та списку велосипедів, а також до функцій збереження (включаючи CSV) та відновлення даних"
+  },
+  "8": {
+    "en": "Creates a new action",
+    "ru": "Создает новое действие",
+    "ua": "Створює нову дію"
+  },
+  "9": {
+    "en": "The 'Back' button returns you to the previous screen. If you are editing information and have not saved the changes, they will be lost. Pressing this button on the main screen will close the program",
+    "ru": "Кнопка 'Назад' возвращает вас на предыдущий экран. Если вы редактируете информацию и не сохранили изменения, они будут потеряны. Нажатие этой кнопки на главном экране закроет программу",
+    "ua": "Кнопка 'Назад' повертає вас на попередній екран. Якщо ви редагуєте інформацію та не зберегли зміни, вони будуть втрачені. Натискання цієї кнопки на головному екрані закриє програму"
+  },
+  "10": {
+    "en": "Main menu",
+    "ru": "Основное меню программы",
+    "ua": "Основне меню програми"
+  },
+  "11": {
+    "en": "Filter actions by owner, bike, price range, date range, and comments",
+    "ru": "Фильтруйте действия по владельцу, велосипеду, диапазону цен, диапазону дат и комментариям",
+    "ua": "Фільтруйте дії за власником, велосипедом, діапазоном цін, діапазоном дат та коментарями"
+  },
+  "12": {
+    "en": "Here you can configure program parameters, edit reference books and perform database backup or restore operations",
+    "ru": "Здесь вы сможете настроить параметры программы, отредактировать справочники и выполнить операции сохранения или восстановления базы данных",
+    "ua": "Тут ви зможете налаштувати параметри програми, редагувати довідники та виконати операції збереження або відновлення бази даних"
+  },
+  "13": {
+    "en": "Here you can calculate the total expenses for all records or for filtered data only",
+    "ru": "Здесь вы сможете подсчитать общую сумму затрат по всем записям или только по отфильтрованным данным",
+    "ua": "Тут ви зможете підрахувати загальну суму витрат по всіх записах або тільки по відфільтрованих даних"
+  },
+  "14": {
+    "en": "Manual refresh of the screen content",
+    "ru": "Ручное обновление содержимого экрана",
+    "ua": "Ручне оновлення вмісту екрану"
+  },
+  "15": {
+    "en": "Information about the program, version and developer",
+    "ru": "Информация о программе, версии и разработчике",
+    "ua": "Інформація про програму, версію та розробника"
+  },
+  "16": {
+    "en": "Modify selected record",
+    "ru": "Изменить выбранную запись",
+    "ua": "Змінити вибраний запис"
+  },
+  "17": {
+    "en": "Delete selected record",
+    "ru": "Удалить выбранную запись",
+    "ua": "Видалити вибраний запис"
+  },
+  "18": {
+    "en": "Allows you to export the data currently visible in the list to a CSV file, taking into account any active filters",
+    "ru": "Позволяет выдать в файл формата CSV данные, которые сейчас видны в списке с учетом фильтра",
+    "ua": "Дозволяє видати у файл формату CSV дані, які зараз видно у списку з урахуванням фільтра"
+  },
+  "20": {
+    "en": "Language selection. Choose the language that suits your preferences",
+    "ru": "Выбор языка программы. Выберите язык, который соответствует вашим предпочтениям",
+    "ua": "Вибір мови програми. Виберіть мову, яка відповідає вашим вподобанням"
+  },
+  "21": {
+    "en": "Color theme lets you customize the appearance of the program. To change the theme, select the most comfortable option from the list, click Save and restart the program.",
+    "ru": "Цветовая тема позволяет настроить внешний вид программы. Для смены темы выберите наиболее комфортный для себя вариант из списка, нажмите кнопку \"Сохранить\" и перезапустите программу.",
+    "ua": "Кольорова тема дозволяє налаштувати зовнішній вигляд програми. Для зміни теми оберіть найбільш комфортний для себе варіант зі списку, натисніть кнопку \"Зберегти\" та перезапустіть програму."
+  },
+  "22": {
+    "en": "Setting the number of visible actions. Since there can be a lot of actions, there is no need to show them all. You can choose the number of last actions that will be displayed on the screen. If the value 0 is selected, all actions will be displayed",
+    "ru": "Настройка числа видимых действий. Поскольку действий может быть очень много, нет необходимости показывать все. Вы можете выбрать количество последних действий, которые будут отображаться на экране. Если выбрано значение 0, будут показаны все действия",
+    "ua": "Налаштування кількості видимих дій. Оскільки дій може бути дуже багато, немає необхідності показувати їх усі. Ви можете вибрати кількість останніх дій, які будуть відображатися на екрані. Якщо вибрано значення 0, будуть показані всі дії"
+  },
+  "23": {
+    "en": "Currency rate setting. When entering a price, you can specify a dollar sign and enter the price in dollars or another foreign currency. When saving data, the price will be recalculated into the national currency according to the course and saved in the national currency. In the comment, a mark with the amounts will be indicated",
+    "ru": "Настройка курса валюты. При вводе цены, вы можете указать значок доллара и внести цену в долларах или другой иностранной валюте. При сохранении данных цена будет пересчитана в национальную валюту согласно курсу и сохранена в национальной валюте. В комментарии будет указана отметка с суммами",
+    "ua": "Налаштування курсу валюти. При введенні ціни ви можете вказати знак долара та внести ціну в доларах або іншій іноземній валюті. При збереженні даних ціна будет перерахована в національну валюту згідно з курсом та збережена в національній валюті. У коментарі буде вказано позначення з сумами"
+  },
+  "24": {
+    "en": "Displays items with more recent dates at the top of the main screen",
+    "ru": "На главном экране отображает элементы с более поздними датами вверху списка",
+    "ua": "На головному екрані відображає елементи з більш пізніми датами вгорі списку"
+  },
+  "25": {
+    "en": "Checkbox \"Entering multiple actions at once\". If this checkbox is set, you can enter multiple actions in a row without returning to the main screen. If the checkbox is not set, the program will return to the main screen after each action is entered",
+    "ru": "Флажок \"Ввод нескольких действий сразу\". Если этот флажок установлен, вы можете вводить несколько действий подряд без возврата на главный экран. Если флажок снят, после каждого ввода действия программа будет возвращаться на главный экран",
+    "ua": "Флажок \"Введення декількох дій відразу\". Якщо цей флажок встановлено, ви можете вводити декілька дій поспіль без повернення на головний екран. Якщо флажок знято, після кожного введення дії програма буде повертатися на головний екран"
+  },
+  "26": {
+    "en": "Checkbox \"Return after clearing\". It sets the behavior of the filter screen when the \"Clear\" button is pressed. If the checkbox is set, after clearing you will be returned to the main screen, if not - you will stay on the filter screen",
+    "ru": "Флажок \"Возврат после очистки\". Он устанавливает поведение экрана фильтров при нажатии кнопки \"Очистить\". Если флажок установлен, после очистки вы будете возвращены на главный экран, если нет - останетесь на экране фильтров",
+    "ua": "Флажок \"Повернення після очищення\". Він встановлює поведінку екрану фільтрів при натисканні кнопки \"Очистити\". Якщо флажок встановлено, після очищення ви будете повернені на головний екран, якщо ні - залишитеся на екрані фільтрів"
+  },
+  "27": {
+    "en": "The \"Round to integer\" option displays monetary amounts without cents. When enabled, all amounts will be rounded to whole numbers.",
+    "ru": "Опция \"Округление до целого\" позволяет отображать денежные суммы без копеек. Если опция включена, все суммы будут округляться до целых значений.",
+    "ua": "Опція \"Округлення до цілого\" дозволяє відображати грошові суми без копійок. Якщо опція увімкнена, всі суми будуть округлятися до цілих значень."
+  },
+  "40": {
+    "en": "Choose owner or bike from the proposed lists",
+    "ru": "Выберите хозяина или велосипед из предложенных списков",
+    "ua": "Виберіть власника або велосипед із запропонованих списків"
+  },
+  "41": {
+    "en": "Enter the event date",
+    "ru": "Укажите дату события",
+    "ua": "Вкажіть дату події"
+  },
+  "42": {
+    "en": "Select event type from the list",
+    "ru": "Выберите тип события из списка",
+    "ua": "Виберіть тип події зі списку"
+  },
+  "43": {
+    "en": "The cost of work, service, or parts in national or other currency. When $ is selected, the amount is automatically converted to the national currency at the exchange rate from settings. Information about the amount in currency will be added to the comment. You can also enter mathematical expressions, for example: 2*520+75+600 (for instance, you bought two tires plus delivery cost and labor). The expression will be calculated, and its text will be added to the comment",
+    "ru": "Стоимость работы-услуги-запчастей в национальной или другой валюте. При выборе $ сумма автоматически конвертируется в национальную валюту по курсу из настроек. Информация о сумме в валюте добавится к комментарию. Также можно вводить математические выражения, например: 2*520+75+600 (к примеру вы купили две покрышки и цена доставки и работа). Выражение будет вычислено, его текст добавится в комментарий",
+    "ua": "Вартість роботи-послуги-запчастин у національній або іншій валюті. При виборі $ сума автоматично конвертується в національну валюту за курсом із налаштувань. Інформація про суму в валюті додасться до коментаря. Також можна вводити математичні вирази, наприклад: 2*520+75+600 (наприклад, ви купили дві покришки плюс вартість доставки та робота). Вираз буде обчислено, його текст додасться до коментаря"
+  },
+  "44": {
+    "en": "Any text comment to help recall event-operation details",
+    "ru": "Текстовый комментарий для деталей события-операции",
+    "ua": "Текстовий коментар для деталей події-операції"
+  },
+  "45": {
+    "en": "When the dollar checkbox is checked, the entered amount is automatically converted to the national currency, and information about the original amount is added to the comment",
+    "ru": "При отмеченном флажке доллара, введенная сумма автоматически переводится в национальную валюту, а информация об исходной сумме добавляется в комментарий",
+    "ua": "Якщо позначено прапорець долара, введена сума автоматично переводиться в національну валюту, а інформація про початкову суму додається до коментаря"
+  },
+  "48": {
+    "en": "Enter or edit the bike owner name, type or event",
+    "ru": "Введите или отредактируйте название события, типа или имя владельца велосипеда",
+    "ua": "Введіть або відредагуйте назву події, типу або ім'я власника велосипеда"
+  },
+  "49": {
+    "en": "Press (+) to add new event name, type or bike owner name",
+    "ru": "Нажмите (+) для добавления нового названия события, типа или имени владельца велосипеда",
+    "ua": "Натисніть (+) для додавання нової назви події, типу або імені власника велосипеда"
+  },
+  "50": {
+    "en": "Select a bicycle owner from the provided reference list",
+    "ru": "Выберите владельца велосипеда из предложенного списка",
+    "ua": "Виберіть власника велосипеда із запропонованого списку"
+  },
+  "51": {
+    "en": "Enter the name of the bicycle manufacturer",
+    "ru": "Введите название фирмы-производителя велосипеда",
+    "ua": "Введіть назву фірми-виробника велосипеда"
+  },
+  "52": {
+    "en": "Enter the model of the bicycle",
+    "ru": "Введите модель велосипеда",
+    "ua": "Введіть модель велосипеда"
+  },
+  "53": {
+    "en": "Select the type of bicycle from the list",
+    "ru": "Выберите тип велосипеда из списка",
+    "ua": "Виберіть тип велосипеда зі списку"
+  },
+  "54": {
+    "en": "Enter bike serial number - helps to identify your bike if stolen",
+    "ru": "Введите серийный номер велосипеда - поможет опознать велосипед при краже",
+    "ua": "Введіть серійний номер велосипеда - допоможе впізнати велосипед при крадіжці"
+  },
+  "55": {
+    "en": "Enter the date of purchase of the bicycle",
+    "ru": "Введите дату покупки велосипеда",
+    "ua": "Введіть дату купівлі велосипеда"
+  },
+  "57": {
+    "en": "Select photo path from storage, better move photos to /Download/BikeLogBackup first",
+    "ru": "Выбор пути к фото в памяти, лучше переместить фото в /Download/BikeLogBackup",
+    "ua": "Вибір шляху до фото у пам'яті, краще перемістити фото до /Download/BikeLogBackup"
+  },
+  "58": {
+    "en": "Click to save changes in database",
+    "ru": "Нажмите для сохранения изменений в базе",
+    "ua": "Натисніть для збереження змін у базі"
+  },
+  "59": {
+    "en": "Click to add a new bike to the database and don't forget to save",
+    "ru": "Нажмите для добавления нового велосипеда в базу и не забудьте сохранить",
+    "ua": "Натисніть для додавання нового велосипеда до бази та не забудьте зберегти"
+  },
+  "60": {
+    "en": "Button to enter the main settings window",
+    "ru": "Кнопка входа в окно главных настроек",
+    "ua": "Кнопка входу в вікно головних налаштувань"
+  },
+  "61": {
+    "en": "Button to enter the directory of bicycle owners",
+    "ru": "Кнопка входа в справочник хозяев велосипедов",
+    "ua": "Кнопка входу в довідник власників велосипедів"
+  },
+  "62": {
+    "en": "Button to enter the directory of bicycle types",
+    "ru": "Кнопка входа в справочник типов велосипедов",
+    "ua": "Кнопка входу в довідник типів велосипедів"
+  },
+  "63": {
+    "en": "Button to enter the directory of events related to bicycles",
+    "ru": "Кнопка входа в справочник событий, связанных с велосипедами",
+    "ua": "Кнопка входу в довідник подій, пов'язаних з велосипедами"
+  },
+  "64": {
+    "en": "Button to enter the directory of bicycles",
+    "ru": "Кнопка входа в справочник велосипедов",
+    "ua": "Кнопка входу в довідник велосипедів"
+  },
+  "65": {
+    "en": "Button to save data and backup",
+    "ru": "Кнопка сохранения данных и резервного копирования",
+    "ua": "Кнопка збереження даних та резервного копіювання"
+  },
+  "66": {
+    "en": "Button to restore data from backup. You need to select a folder with saved files",
+    "ru": "Кнопка восстановления данных из резервной копии. При этом необходимо выбрать папку с сохраненными файлами",
+    "ua": "Кнопка відновлення даних з резервної копії. При цьому необхідно вибрати папку з збереженими файлами"
+  },
+  "68": {
+    "en": "If this checkbox is set, the data will also be saved in CSV format. If the checkbox is not set, the data will be saved in the bikelog_main.db database file",
+    "ru": "Если установлен данный флажок, данные будут сохраняться также в формате CSV. Если флажок не установлен, данные будут сохраняться в файле базы данных bikelog_main.db",
+    "ua": "Якщо встановлено цей прапорець, дані також будуть збережені в форматі CSV. Якщо прапорець не встановлено, дані будуть збережені в файлі бази даних bikelog_main.db"
+  },
+  "69": {
+    "en": "If this checkbox is set, the data will be restored from CSV format. If the checkbox is not set, the data will be restored from the bikelog_main.db database file. In this case, you need to select a folder with saved files or a file",
+    "ru": "Если установлен данный флажок, данные будут восстанавливаться из формата CSV. Если флажок не установлен, данные будут восстанавливаться из файла базы данных bikelog_main.db. При этом необходимо выбрать папку с сохраненными файлами или файл",
+    "ua": "Якщо встановлено цей прапорець, дані будуть відновлені з формату CSV. Якщо прапорець не встановлено, дані будуть відновлені з файлу бази даних bikelog_main.db. При цьому необхідно вибрати папку зі збереженими файлами або файл"
+  },
+  "72": {
+    "en": "Set the start date, the lower limit of the filter. This will filter the data starting from this date",
+    "ru": "Установите дату начала, нижнюю границу фильтра. При этом будут отфильтрованы данные начиная с этой даты",
+    "ua": "Встановіть дату початку, нижню межу фільтра. При цьому будуть відфільтровані дані, починаючи з цієї дати"
+  },
+  "73": {
+    "en": "Set the end date, the upper limit of the filter. If set, actions will be selected up to and including this date",
+    "ru": "Установите дату верхней границы фильтра. Если она установлена, то действия будут выбраны по эту дату включительно",
+    "ua": "Встановіть дату кінцевої межі фільтра. Якщо встановлено, дії будуть вибрані до цієї дати включно"
+  },
+  "74": {
+    "en": "Set the lower price limit of the filter. If both prices are set, the actions will be selected within these limits",
+    "ru": "Установите нижнюю границу цен фильтра. Если установлены обе цены, то действия будут выбраны в этих границах",
+    "ua": "Встановіть нижню межу цін фільтра. Якщо встановлені обидві ціни, то дії будуть обрані в цих межах"
+  },
+  "75": {
+    "en": "Set the upper price limit of the filter. If both prices are set, the actions will be selected within these limits",
+    "ru": "Установите верхнюю границу цен фильтра. Если установлены обе цены, то действия будут выбраны в этих границах",
+    "ua": "Встановіть верхню межу цін фільтра. Якщо встановлені обидві ціни, то дії будуть обрані в цих межах"
+  },
+  "76": {
+    "en": "The \"Clear\" button provides a quick and easy way to undo all changes made to the filter if the user wants to start a search from scratch or change the filter criteria",
+    "ru": "Кнопка \"Очистить\" предоставляет быстрый и простой способ отменить все изменения, внесенные в фильтр, если пользователь хочет начать поиск с чистого листа или изменить критерии фильтрации",
+    "ua": "Кнопка \"Очистити\" надає швидкий та простий спосіб скасувати всі зміни, внесені до фільтра, якщо користувач хоче почати пошук з чистого аркуша або змінити критерії фільтрації"
+  },
+  "77": {
+    "en": "After the user selects the desired filter parameters (e.g., category, price range, brand, etc.), clicking the \"Apply\" button activates these settings",
+    "ru": "После того, как пользователь выбрал нужные параметры фильтра (например, категорию, ценовой диапазон, бренд и т.д.), нажатие кнопки \"Применить\" активирует эти установки",
+    "ua": "Після того, як користувач вибрав потрібні параметри фільтра (наприклад, категорію, ціновий діапазон, бренд тощо), натискання кнопки \"Застосувати\" активує ці установки"
+  }
+}

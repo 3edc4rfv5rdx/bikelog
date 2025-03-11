@@ -290,7 +290,7 @@ Future<void> initializeAllDatabases() async {
   }
   bool allSuccess = true;
   // Array of database types, file paths and SQL files
-  final List<String> dbTypes = ['main', 'lang', 'help'];
+  final List<String> dbTypes = ['main']; // , 'lang', 'help'
   final List<String> dbFileKeys = [xvMainHome, xvLangHome, xvHelpHome];
   final List<String> sqlFiles = [mainSql, langSql, helpSql];
   // Initialize each database in a loop

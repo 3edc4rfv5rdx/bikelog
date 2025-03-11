@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart'; // For Linux
 import 'package:flutter/foundation.dart' show defaultTargetPlatform, TargetPlatform;
 import 'dart:io';
+import 'dart:convert'; // Для работы с JSON (json.decode)
+import 'package:flutter/services.dart' show rootBundle; // Для загрузки файлов из assets
 
 // Global key for accessing ScaffoldMessenger
 final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
@@ -165,6 +167,9 @@ const String helpSql = '${prgName}_help.sql';
 // Sett database and SQL file
 const String settDb = '${prgName}_sett.db';
 //const String settSql = '${prgName}_sett.sql';
+
+// Добавляем константу для пути к файлу справки
+const String helpFile = 'assets/help.json';
 
 int currentThemeIndex = 0;
 void initThemeColors(int themeIndex) {
@@ -355,18 +360,52 @@ Future<String> getHelpText(int helpId) async {
   }
 }
 
-/// Shows help dialog with text from database
+
+/// Показывает диалог справки с текстом из JSON файла
 void okHelp(int helpId) async {
   if (helpId == 0) return;
 
-  final helpText = await getHelpText(helpId);
-  if (helpText.isNotEmpty) {
-    showCustomDialog(
-      title: lw('Help'),
-      message: helpText,
-      color: Colors.blue,
-      icon: Icons.info_outline,
-    );
+  try {
+    // Загружаем JSON файл с текстами справки
+    final jsonString = await rootBundle.loadString(helpFile);
+    final Map<String, dynamic> helpTexts = json.decode(jsonString);
+    final String helpIdStr = helpId.toString();
+    String helpText = '';
+
+    // Получаем текущий язык
+    final columnName = xdef['Program language'].toLowerCase();
+
+    // Получаем текст справки для текущего языка
+    if (helpTexts.containsKey(helpIdStr)) {
+      final Map<String, dynamic> helpEntry = helpTexts[helpIdStr];
+      if (helpEntry.containsKey(columnName)) {
+        helpText = helpEntry[columnName];
+      } else if (helpEntry.containsKey('en')) {
+        // Если нет перевода для текущего языка, используем английский
+        helpText = helpEntry['en'];
+      } else {
+        throw Exception(lw('Help text not found'));
+      }
+    } else {
+      throw Exception(lw('Help text not found'));
+    }
+
+    // Показываем диалог с текстом справки
+    if (helpText.isNotEmpty) {
+      showCustomDialog(
+        title: lw('Help'),
+        message: helpText,
+        color: clUpBar,
+        icon: Icons.info_outline,
+      );
+    }
+    myPrint('Showing help for ID: $helpId');
+  } on Exception catch (e) {
+    final errorMsg = lw('An error occurred');
+    okInfoBarPurple('$errorMsg: $e (helpId=$helpId)');
+  } catch (e) {
+    final errorMsg = lw('An error occurred');
+    okInfoBarPurple('$errorMsg: $e (helpId=$helpId)');
   }
 }
 
