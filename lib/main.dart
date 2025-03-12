@@ -1,12 +1,14 @@
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'dart:async'; // For Completer
 import 'dart:io'; // For File and Directory operations
+import 'dart:convert'; // Для работы с JSON (json.decode)
 import 'package:flutter/foundation.dart'
     show defaultTargetPlatform, TargetPlatform;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:path_provider/path_provider.dart'; // For getting system paths
 import 'package:sqflite_common_ffi/sqflite_ffi.dart'; // For Linux
+
 // my
 import 'my_globals.dart';
 import 'add_action_screen.dart';
@@ -35,7 +37,7 @@ Future<void> firstRunLanguageSelection() async {
               body: Container(
                 decoration: BoxDecoration(
                   image: DecorationImage(
-                    image: AssetImage('assets/images/main512.png'),
+                    image: AssetImage('assets/main512.png'),
                     fit: BoxFit.cover, // Растянуть изображение на весь контейнер
                   ),
                 ),
@@ -289,13 +291,13 @@ Future<void> initializeAllDatabases() async {
   bool allSuccess = true;
   // Array of database types, file paths and SQL files
   final List<String> dbTypes = ['main']; // , 'lang', 'help'
-  final List<String> dbFileKeys = [xvMainHome, xvLangHome, xvHelpHome];
-  final List<String> sqlFiles = [mainSql, langSql, helpSql];
+  final List<String> dbFileKeys = [xvMainHome];
+  final List<String> sqlFiles = [mainSql];
   // Initialize each database in a loop
   for (int i = 0; i < dbTypes.length; i++) {
     allSuccess = allSuccess && await initSqlDatabase(
       dbFilePath: dbFileKeys[i],
-      sqlFilePath: 'assets/sql/${sqlFiles[i]}',
+      sqlFilePath: 'assets/${sqlFiles[i]}',
       dbType: dbTypes[i],
     );
   }
@@ -308,33 +310,37 @@ Future<void> initializeAllDatabases() async {
 }
 
 Future<void> writeRef() async {
+  // Проверяем, есть ли уже записи в таблице типов
   if (await getTableRowCount('types') > 0) return;
-
-  final String programLanguage = xdef['Program language'].toLowerCase();
-  final String langColumn = programLanguage == 'en' ? 'word' : programLanguage;
-
-  List<Map<String, dynamic>> rows = await getLangData('''
-    SELECT 
-      $langColumn AS name, 
-      SUBSTR(tag, 1, INSTR(tag, '|') - 1) AS tablename, 
-      CAST(SUBSTR(tag, INSTR(tag, '|') + 1) AS INTEGER) AS num 
-    FROM langs 
-    WHERE tag IS NOT NULL AND tag != '' 
-    ORDER BY tablename, num;
-  ''');
-
-  for (var row in rows) {
-    String table = row['tablename'];
-    int num = row['num'];
-    String name = row['name'];
-    await setDbData("INSERT INTO $table (num, name) VALUES ($num, '$name');");
-  }
-
-  await setDbData('''
-    INSERT INTO bikes (num, owner, brand, model, type, serialnum, buydate, photo) 
-    VALUES (1, 1, '*', '*', 1, '', '', '');
+  try {
+    // Получаем текущий язык
+    final String programLanguage = xdef['Program language'].toLowerCase();
+    // Загружаем JSON-файл со справочными данными
+    final String jsonString = await rootBundle.loadString(refFile);
+    final Map<String, dynamic> refData = json.decode(jsonString);
+    // Получаем справочники
+    final Map<String, List<dynamic>> references = Map<String, List<dynamic>>.from(refData['references']);
+    // Заполняем таблицы
+    for (var tableEntry in references.entries) {
+      String tableName = tableEntry.key.toLowerCase(); // 'Owners' -> 'owners'
+      List<dynamic> items = tableEntry.value;
+      for (var item in items) {
+        // Выбираем название в зависимости от текущего языка
+        String name = item[programLanguage] ?? item['en']; // Если нет перевода, используем английский
+        int num = item['num'];
+        // Вставляем запись в соответствующую таблицу
+        await setDbData("INSERT INTO $tableName (num, name) VALUES ($num, '$name');");
+      }
+    }
+    // Вставляем запись для велосипеда (не меняется)
+    await setDbData('''
+      INSERT INTO bikes (num, owner, brand, model, type, serialnum, buydate, photo) 
+      VALUES (1, 1, '*', '*', 1, '', '', '');
     ''');
-  myPrint("writeRef finished");
+    myPrint("writeRef finished");
+  } catch (e) {
+    myPrint('Error in writeRef: $e');
+  }
 }
 
 // first time init settings db-file and write ini-keys

@@ -27,8 +27,6 @@ Future<bool> restoreFromFiles(String backupDir) async {
     myPrint('Starting file restore from directory: $backupDir');
     List<(String, String)> filePairs = [
       (xvMainHome, '$backupDir/${xvMainHome.split('/').last}'),
-      (xvLangHome, '$backupDir/${xvLangHome.split('/').last}'),
-      (xvHelpHome, '$backupDir/${xvHelpHome.split('/').last}'),
       (xvSettHome, '$backupDir/${xvSettHome.split('/').last}'),
     ];
 
@@ -130,7 +128,7 @@ Future<bool> backupDatabase() async {
     return false;
   }
   // Копируем файлы базы данных
-  List<String> dbFiles = [xvMainHome, xvLangHome, xvHelpHome, xvSettHome];
+  List<String> dbFiles = [xvMainHome, xvSettHome];
   myPrint('Copying database files to backup directory');
   bool result = await copyFiles(dbFiles, backupDirPath);
   myPrint(result ? 'Database backup completed successfully' : 'Database backup failed');

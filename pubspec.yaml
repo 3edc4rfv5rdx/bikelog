@@ -65,6 +65,7 @@ flutter:
   assets:
     - assets/bikelog_main.sql
     - assets/locales.json
+    - assets/references.json
     - assets/help.json
     - assets/iconbig.png # app icon
     - assets/main512.png  # splash for lang select
@@ -109,9 +110,9 @@ flutter_launcher_icons:
   android: true
   ios: false
   min_sdk_android: 21
-  image_path: "assets/icons/icon.png"  # Ваша обычная иконка
+  image_path: "assets/icon.png"  # Ваша обычная иконка
   adaptive_icon_background: "#F9E1CF" # или путь к фоновому изображению
-  adaptive_icon_foreground: "assets/icons/iconbig.png" # передний план
+  adaptive_icon_foreground: "assets/iconbig.png" # передний план
 
 
 

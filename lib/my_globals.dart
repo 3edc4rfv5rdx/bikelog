@@ -31,8 +31,6 @@ String xvSelect = '???';
 String xvHomePath = '/home/e/Documents';
 String xvExt1Path = '';
 String xvMainHome = '';
-String xvLangHome = '';
-String xvHelpHome = '';
 String xvSettHome = '';
 String xvBakDir = '';
 bool xvBusiness = false;
@@ -171,6 +169,7 @@ const String settDb = '${prgName}_sett.db';
 // Добавляем константу для пути к файлу справки
 const String helpFile = 'assets/help.json';
 const String langFile = 'assets/locales.json';
+const String refFile = 'assets/references.json';
 
 int currentThemeIndex = 0;
 void initThemeColors(int themeIndex) {
@@ -326,40 +325,40 @@ void showCustomDialog({
 }
 
 /// Retrieves help text from the database based on the specified help ID and current language
-Future<String> getHelpText(int helpId) async {
-  if (helpId == 0) return '';
-
-  dbHelpBusy = true;
-  Database? database;
-
-  try {
-    final columnName = xdef['Program language'].toUpperCase();
-    final sql = 'SELECT $columnName FROM help WHERE num = ?';
-
-    database = await myOpenDatabase(xvHelpHome);
-    final result = await database.rawQuery(sql, [helpId]);
-
-    if (result.isEmpty || result.first.values.first == null) {
-      throw Exception(lw('Help text not found'));
-    }
-
-    return result.first.values.first.toString();
-
-  } on DatabaseException catch (e) {
-    final errorMsg = lw('An SQLite error occurred');
-    okInfoBarPurple('$errorMsg: $e (helpId=$helpId)');
-    return lw('DB Error');
-
-  } catch (e) {
-    final errorMsg = lw('An error occurred');
-    okInfoBarPurple('$errorMsg: $e (helpId=$helpId)');
-    return lw('Error');
-
-  } finally {
-    await database?.close();
-    dbHelpBusy = false;
-  }
-}
+// Future<String> getHelpText(int helpId) async {
+//   if (helpId == 0) return '';
+//
+//   dbHelpBusy = true;
+//   Database? database;
+//
+//   try {
+//     final columnName = xdef['Program language'].toUpperCase();
+//     final sql = 'SELECT $columnName FROM help WHERE num = ?';
+//
+//     database = await myOpenDatabase(xvHelpHome);
+//     final result = await database.rawQuery(sql, [helpId]);
+//
+//     if (result.isEmpty || result.first.values.first == null) {
+//       throw Exception(lw('Help text not found'));
+//     }
+//
+//     return result.first.values.first.toString();
+//
+//   } on DatabaseException catch (e) {
+//     final errorMsg = lw('An SQLite error occurred');
+//     okInfoBarPurple('$errorMsg: $e (helpId=$helpId)');
+//     return lw('DB Error');
+//
+//   } catch (e) {
+//     final errorMsg = lw('An error occurred');
+//     okInfoBarPurple('$errorMsg: $e (helpId=$helpId)');
+//     return lw('Error');
+//
+//   } finally {
+//     await database?.close();
+//     dbHelpBusy = false;
+//   }
+// }
 
 
 /// Показывает диалог справки с текстом из JSON файла
@@ -478,7 +477,6 @@ Future<void> initTranslations() async {
 }
 
 // Function to translate a word
-// Функция для получения локализованного текста
 String lw(String wrd) {
   String lang = xdef['Program language']; // was .toUpperCase();
   if (lang == 'EN') { return wrd; }
@@ -562,24 +560,24 @@ bool isDateFromBeforeDateTo(String dateFrom, String dateTo) {
 }
 
 // Function to execute a SQL query on the language database
-Future<List<Map<String, dynamic>>> getLangData(String sql) async {
-  dbLangBusy = true;
-  Database? database;
-  List<Map<String, dynamic>> result = []; // Default value
-  try {
-    database = await myOpenDatabase(xvLangHome);
-    result = await database.rawQuery(sql);
-  } catch (e) {
-    myPrint('Error in getLangData: $e');
-    rethrow;
-  } finally {
-    if (database != null) {
-      await database.close();
-    }
-    dbLangBusy = false;
-  }
-  return result;
-}
+// Future<List<Map<String, dynamic>>> getLangData(String sql) async {
+//   dbLangBusy = true;
+//   Database? database;
+//   List<Map<String, dynamic>> result = []; // Default value
+//   try {
+//     database = await myOpenDatabase(xvLangHome);
+//     result = await database.rawQuery(sql);
+//   } catch (e) {
+//     myPrint('Error in getLangData: $e');
+//     rethrow;
+//   } finally {
+//     if (database != null) {
+//       await database.close();
+//     }
+//     dbLangBusy = false;
+//   }
+//   return result;
+// }
 
 // Function to execute a SQL query and return a single value
 Future<String> getDbOne(String sql) async {
