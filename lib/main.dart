@@ -288,25 +288,12 @@ Future<void> initializeAllDatabases() async {
     myPrint("Skipping database initialization - not first start and version unchanged");
     return;
   }
-  bool allSuccess = true;
-  // Array of database types, file paths and SQL files
-  final List<String> dbTypes = ['main']; // , 'lang', 'help'
-  final List<String> dbFileKeys = [xvMainHome];
-  final List<String> sqlFiles = [mainSql];
-  // Initialize each database in a loop
-  for (int i = 0; i < dbTypes.length; i++) {
-    allSuccess = allSuccess && await initSqlDatabase(
-      dbFilePath: dbFileKeys[i],
-      sqlFilePath: 'assets/${sqlFiles[i]}',
-      dbType: dbTypes[i],
-    );
-  }
-  // Если успешно создали/обновили БД, обновляем только версию программы
-  if (allSuccess) {
+  if (await initSqlDatabase(dbFilePath: xvMainHome,
+      sqlFilePath: 'assets/$mainSql',dbType: 'main')) {
     await setKey('.Prog version', progVersion);
     myPrint("Databases initialized successfully, updated version");
   }
-  myPrint("initializeAllDatabases finished, success: $allSuccess");
+  myPrint("initializeAllDatabases finished");
 }
 
 Future<void> writeRef() async {
