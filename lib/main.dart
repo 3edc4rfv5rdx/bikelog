@@ -244,8 +244,6 @@ Future<void> initializePaths() async {
 
   // Установка общих путей к базам данных
   xvMainHome = '$xvHomePath/$mainDb';
-  xvLangHome = '$xvHomePath/$langDb';
-  xvHelpHome = '$xvHomePath/$helpDb';
   xvSettHome = '$xvHomePath/$settDb';
   myPrint("initializePaths finished");
 }

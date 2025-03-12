@@ -37,7 +37,7 @@ String xvSettHome = '';
 String xvBakDir = '';
 bool xvBusiness = false;
 
-const String progVersion = '0.8.250308';
+const String progVersion = '0.8.250311';
 // const String progDate = '2025-02-19';
 const String progAuthor = 'Eugen';
 const String progEmail = 'xxxx@xxx.xx';
@@ -170,6 +170,7 @@ const String settDb = '${prgName}_sett.db';
 
 // Добавляем константу для пути к файлу справки
 const String helpFile = 'assets/help.json';
+const String langFile = 'assets/locales.json';
 
 int currentThemeIndex = 0;
 void initThemeColors(int themeIndex) {
@@ -452,34 +453,37 @@ void okSuccess(String message) {
 // Function to initialize translations
 Map<String, String> _translationCache = {};
 
+// Новая функция для загрузки локализаций из JSON файла
 Future<void> initTranslations() async {
   String lang = xdef['Program language'].toLowerCase();
-  if (lang == 'en') return;
-
+  // Для английского языка кеш не нужен
+  if (lang == 'en') { _translationCache.clear(); return; }
   try {
-    String sql = 'select word as word, $lang as $lang from langs where tag is null';
-    List<Map<String, dynamic>> result = await getLangData(sql);
-
-    _translationCache.clear(); // Clear the cache before updating
-    for (var row in result) {
-      _translationCache[row['word']] = row[lang];
-    }
-    myPrint('initTranslations finished');
+    // Загружаем JSON файл с локализациями
+    final String jsonString = await rootBundle.loadString(langFile);
+    final Map<String, dynamic> allTranslations = json.decode(jsonString);
+    // Очищаем кеш перед обновлением
+    _translationCache.clear();
+    // Заполняем кеш переводами для текущего языка
+    allTranslations.forEach((key, value) {
+      if (value is Map && value.containsKey(lang)) {
+        _translationCache[key] = value[lang];
+      }
+    });
+    myPrint('initTranslations finished, loaded ${_translationCache.length} translations');
   } catch (e) {
     myPrint('Error initializing translations: $e');
-    rethrow;
+    _translationCache.clear(); // В случае ошибки очищаем кеш
   }
 }
 
 // Function to translate a word
+// Функция для получения локализованного текста
 String lw(String wrd) {
-  String lang = xdef["Program language"].toUpperCase();
-  if (lang == 'EN') {
-    return wrd;
-  }
-  return _translationCache[wrd] ?? '*<( $wrd )>*';
+  String lang = xdef['Program language']; // was .toUpperCase();
+  if (lang == 'EN') { return wrd; }
+  return _translationCache[wrd] ?? '<( $wrd )>'; // Возвращаем текст, если перевод не найден
 }
-
 
 // Function to validate the date format (YYYY-MM-DD)
 bool isValidDateFormat(String input) {
