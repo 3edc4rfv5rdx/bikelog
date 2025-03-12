@@ -149,23 +149,11 @@ const FontWeight fwBold = FontWeight.bold;
 const FontWeight fwNormal = FontWeight.normal;
 
 bool dbMainBusy = false;
-bool dbHelpBusy = false;
-bool dbLangBusy = false;
-
 const String prgName = 'bikelog';
 // Main database and SQL file
 const String mainDb = '${prgName}_main.db';
 const String mainSql = '${prgName}_main.sql';
-// Language database and SQL file
-const String langDb = '${prgName}_lang.db';
-const String langSql = '${prgName}_lang.sql';
-// Help database and SQL file
-const String helpDb = '${prgName}_help.db';
-const String helpSql = '${prgName}_help.sql';
-// Sett database and SQL file
 const String settDb = '${prgName}_sett.db';
-//const String settSql = '${prgName}_sett.sql';
-
 // Добавляем константу для пути к файлу справки
 const String helpFile = 'assets/help.json';
 const String langFile = 'assets/locales.json';
@@ -324,44 +312,7 @@ void showCustomDialog({
   );
 }
 
-/// Retrieves help text from the database based on the specified help ID and current language
-// Future<String> getHelpText(int helpId) async {
-//   if (helpId == 0) return '';
-//
-//   dbHelpBusy = true;
-//   Database? database;
-//
-//   try {
-//     final columnName = xdef['Program language'].toUpperCase();
-//     final sql = 'SELECT $columnName FROM help WHERE num = ?';
-//
-//     database = await myOpenDatabase(xvHelpHome);
-//     final result = await database.rawQuery(sql, [helpId]);
-//
-//     if (result.isEmpty || result.first.values.first == null) {
-//       throw Exception(lw('Help text not found'));
-//     }
-//
-//     return result.first.values.first.toString();
-//
-//   } on DatabaseException catch (e) {
-//     final errorMsg = lw('An SQLite error occurred');
-//     okInfoBarPurple('$errorMsg: $e (helpId=$helpId)');
-//     return lw('DB Error');
-//
-//   } catch (e) {
-//     final errorMsg = lw('An error occurred');
-//     okInfoBarPurple('$errorMsg: $e (helpId=$helpId)');
-//     return lw('Error');
-//
-//   } finally {
-//     await database?.close();
-//     dbHelpBusy = false;
-//   }
-// }
-
-
-/// Показывает диалог справки с текстом из JSON файла
+// Показывает диалог справки с текстом из JSON файла
 void okHelp(int helpId) async {
   if (helpId == 0) return;
 
@@ -558,26 +509,6 @@ bool isDateFromBeforeDateTo(String dateFrom, String dateTo) {
     return false;
   }
 }
-
-// Function to execute a SQL query on the language database
-// Future<List<Map<String, dynamic>>> getLangData(String sql) async {
-//   dbLangBusy = true;
-//   Database? database;
-//   List<Map<String, dynamic>> result = []; // Default value
-//   try {
-//     database = await myOpenDatabase(xvLangHome);
-//     result = await database.rawQuery(sql);
-//   } catch (e) {
-//     myPrint('Error in getLangData: $e');
-//     rethrow;
-//   } finally {
-//     if (database != null) {
-//       await database.close();
-//     }
-//     dbLangBusy = false;
-//   }
-//   return result;
-// }
 
 // Function to execute a SQL query and return a single value
 Future<String> getDbOne(String sql) async {
