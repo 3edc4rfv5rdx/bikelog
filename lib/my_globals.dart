@@ -33,7 +33,6 @@ String xvExt1Path = '';
 String xvMainHome = '';
 String xvSettHome = '';
 String xvBakDir = '';
-String xvxxxxxxDir = '/storage/emulated/0/Download';
 bool xvBusiness = false;
 
 const String progVersion = '0.9.250317';
