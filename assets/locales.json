@@ -586,5 +586,25 @@
   "and ensure it is not in the future": {
     "ru": "и убедитесь, что она не в будущем",
     "ua": "і переконайтеся, що вона не в майбутньому"
+  },
+  "Execute SQL File": {
+    "ru": "Выполнить SQL файл",
+    "ua": "Виконати SQL файл"
+  },
+  "SQL file executed successfully": {
+    "ru": "SQL файл успешно выполнен",
+    "ua": "SQL файл успішно виконано"
+  },
+  "Error processing SQL file": {
+    "ru": "Ошибка обработки SQL файла",
+    "ua": "Помилка обробки SQL файлу"
+  },
+  "No file selected": {
+    "ru": "Файл не выбран",
+    "ua": "Файл не вибрано"
+  },
+  "Process SQL File": {
+    "ru": "Обработка SQL файла",
+    "ua": "Обробка SQL файлу"
   }
 }
