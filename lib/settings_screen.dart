@@ -1,12 +1,74 @@
 import 'package:flutter/material.dart';
 import 'dart:io';  // Для работы с File и IOSink
 import 'package:file_picker/file_picker.dart';
+import 'package:sqflite/sqflite.dart';
 import 'my_globals.dart';
 
 
 const List<String> appTables = ['actions','types','owners','bikes','events'];
 String currentDate = '';
 String backupDirPath = '';
+
+// Добавьте эту функцию в класс _SettingsScreenState
+Future<void> processSqlFile() async {
+  try {
+    // Выбираем SQL файл
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['sql'],
+    );
+
+    if (result == null || result.files.single.path == null) {
+      myPrint('No file selected');
+      return;
+    }
+
+    String filePath = result.files.single.path!;
+    myPrint('Selected SQL file: $filePath');
+
+    // Считываем содержимое файла
+    File sqlFile = File(filePath);
+    String sqlContent = await sqlFile.readAsString();
+
+    // Очищаем от комментариев и делим на запросы
+    sqlContent = sqlContent.replaceAll(RegExp(r'/\*.*?\*/', dotAll: true), '');
+
+    List<String> queries = sqlContent
+        .split(';')
+        .map((q) => q
+        .split('\n')
+        .where((line) => !line.trim().startsWith('--'))
+        .join(' '))
+        .map((q) => q.trim())
+        .where((q) => q.isNotEmpty)
+        .toList();
+
+    // Выполняем запросы
+    Database? database;
+    try {
+      database = await myOpenDatabase(xvMainHome);
+
+      // Начинаем транзакцию
+      await database.transaction((txn) async {
+        for (String query in queries) {
+          myPrint('Executing query: ${query.length > 50 ? query.substring(0, 50) + "..." : query}');
+          await txn.execute(query);
+        }
+      });
+
+      okInfoBarGreen(lw('SQL file executed successfully'));
+      myPrint('SQL file executed successfully');
+    } finally {
+      if (database != null) {
+        await database.close();
+      }
+    }
+  } catch (e) {
+    String msg = lw('Error processing SQL file');
+    myPrint('Error: $e');
+    okInfoBarRed('$msg: $e');
+  }
+}
 
 Future<String?> selectRestoreDirectory() async {
   try {
@@ -192,10 +254,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: clFon,
+      // Модифицированный AppBar в SettingsScreen
       appBar: AppBar(
         backgroundColor: clUpBar,
         title: GestureDetector(
-          onLongPress: () => okHelp(7), // help_id  for the title
+          onLongPress: () => okHelp(7), // help_id для заголовка
           child: Text(
             lw('Settings'),
             style: TextStyle(color: clText, fontSize: fsLarge, fontWeight: fwNormal,),
@@ -212,6 +275,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
             },
           ),
         ),
+        // Добавляем кнопку в AppBar
+        actions: [
+          GestureDetector(
+            onLongPress: () => okHelp(71), // Добавьте соответствующий ID для справки
+            child: IconButton(
+              icon: Icon(Icons.download, color: clText), // Иконка для SQL
+              onPressed: () {
+                processSqlFile(); // Вызов функции обработки SQL-файла
+              },
+            ),
+          ),
+        ],
       ),
       body: Column(
         children: [

@@ -33,6 +33,7 @@ String xvExt1Path = '';
 String xvMainHome = '';
 String xvSettHome = '';
 String xvBakDir = '';
+String xvxxxxxxDir = '/storage/emulated/0/Download';
 bool xvBusiness = false;
 
 const String progVersion = '0.9.250312';
@@ -898,7 +899,6 @@ String strCleanAndEscape(String input) {
   // Затем экранируем специальные символы SQL
   String escaped = cleaned
       .replaceAll("'", "''")
-  //    .replaceAll('"', "''")
       .replaceAll('\\', '\\\\');
   return escaped;
 }

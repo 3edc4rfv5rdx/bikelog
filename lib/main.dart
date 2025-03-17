@@ -9,7 +9,7 @@ import 'package:flutter/services.dart' show rootBundle;
 import 'package:path_provider/path_provider.dart'; // For getting system paths
 import 'package:sqflite_common_ffi/sqflite_ffi.dart'; // For Linux
 
-// my
+
 import 'my_globals.dart';
 import 'add_action_screen.dart';
 import 'bike_log_screen.dart';
@@ -141,7 +141,6 @@ void main() async {
   await firstRunLanguageSelection(); // === STARTER ===
   await writeRef(); // one at first time
   await initTranslations();
-  await processExtraData();
   if (xdef['.First start'] == 'true') {
     xdef['.First start'] = 'false';
     await setKey('.First start', 'false');
@@ -359,45 +358,4 @@ Future<void> initializeIni() async {
     }
   }
   myPrint("initializeIni finished");
-}
-
-// if first start and was file xxxxx.sql then add it
-Future<void> processExtraData() async {
-  if (xvDebug != true) return; // for debug only
-  if (xdef['.First start'] != 'true') return; // for first start only
-
-  String xxxFilePath = '$xvHomePath/xxxxx.sql';
-  File xxxFile = File(xxxFilePath);
-  if (await xxxFile.exists()) {
-    try {
-      String sql = await xxxFile.readAsString();
-      // Сначала удаляем многострочные комментарии
-      sql = sql.replaceAll(RegExp(r'/\*.*?\*/', dotAll: true), '');
-
-      List<String> queries =
-          sql
-              .split(';')
-              .map(
-                (q) => q
-                    .split('\n')
-                    .where((line) => !line.trim().startsWith('--'))
-                    .join(' '),
-              )
-              .map((q) => q.trim())
-              .where((q) => q.isNotEmpty)
-              .toList();
-
-      Database database = await myOpenDatabase(xvMainHome);
-      try {
-        for (String query in queries) {
-          await database.execute(query);
-        }
-      } finally {
-        await database.close();
-        myPrint("processExtraData finished");
-      }
-    } catch (e) {
-      myPrint('Failed to process xxxxx.sql: $e');
-    }
-  }
 }
