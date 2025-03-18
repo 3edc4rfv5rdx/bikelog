@@ -278,9 +278,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
         // Добавляем кнопку в AppBar
         actions: [
           GestureDetector(
-            onLongPress: () => okHelp(71), // Добавьте соответствующий ID для справки
+            onLongPress: () => okHelp(67), // Добавьте соответствующий ID для справки
             child: IconButton(
-              icon: Icon(Icons.download, color: clText), // Иконка для SQL
+              icon: Icon(Icons.download, color: clUpBar), // Иконка для SQL
               onPressed: () {
                 processSqlFile(); // Вызов функции обработки SQL-файла
               },
