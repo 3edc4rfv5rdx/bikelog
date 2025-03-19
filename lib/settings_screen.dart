@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:io';  // Для работы с File и IOSink
 import 'package:file_picker/file_picker.dart';
 import 'package:sqflite/sqflite.dart';
-import 'my_globals.dart';
+import 'globals.dart';
 
 
 const List<String> appTables = ['actions','types','owners','bikes','events'];

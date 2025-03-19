@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:math';
 import 'package:file_picker/file_picker.dart';
 import 'dart:io' show File;
-import 'my_globals.dart';
+import 'globals.dart';
 
 class BikeSettingsScreen extends StatefulWidget {
   const BikeSettingsScreen({super.key});

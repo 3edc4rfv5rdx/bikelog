@@ -3,7 +3,7 @@ import 'dart:io'; // For File and Directory operations
 import 'filter_screen.dart'; // Import the filter screen
 import 'settings_screen.dart'; // Import the settings screen
 import 'package:flutter/services.dart';
-import 'my_globals.dart'; // Import global variables (xv, xdef, etc.)
+import 'globals.dart'; // Import global variables (xv, xdef, etc.)
 
 class BikeLogScreen extends StatefulWidget {
   const BikeLogScreen({super.key});

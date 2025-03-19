@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:math';
-import 'my_globals.dart'; // Import global variables and functions
+import 'globals.dart'; // Import global variables and functions
 
 class AddActionScreen extends StatefulWidget {
   final int? actionNum; // Action identifier for editing

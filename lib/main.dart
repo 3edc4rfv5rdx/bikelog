@@ -10,7 +10,7 @@ import 'package:path_provider/path_provider.dart'; // For getting system paths
 import 'package:sqflite_common_ffi/sqflite_ffi.dart'; // For Linux
 
 
-import 'my_globals.dart';
+import 'globals.dart';
 import 'add_action_screen.dart';
 import 'bike_log_screen.dart';
 import 'bike_settings_screen.dart';

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'my_globals.dart'; // Import global variables and functions
+import 'globals.dart'; // Import global variables and functions
 
 class OptionsSettingsScreen extends StatefulWidget {
   const OptionsSettingsScreen({super.key});
