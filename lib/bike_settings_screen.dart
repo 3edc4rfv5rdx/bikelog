@@ -685,7 +685,7 @@ class _BikeSettingsScreenState extends State<BikeSettingsScreen> {
                               final DateTime? picked = await showDatePicker(
                                 context: context,
                                 initialDate: DateTime.now(),
-                                firstDate: DateTime(2000),
+                                firstDate: DateTime(1950),
                                 lastDate: DateTime.now(),
                               );
                               if (picked != null) {

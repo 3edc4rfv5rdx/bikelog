@@ -593,7 +593,7 @@ class _FilterScreenState extends State<FilterScreen> {
                           final DateTime? picked = await showDatePicker(
                             context: context,
                             initialDate: _dateFrom ?? DateTime.now(),
-                            firstDate: DateTime(1965),
+                            firstDate: DateTime(1950),
                             lastDate: DateTime(2099),
                           );
                           if (picked != null && picked != _dateFrom) {
@@ -659,7 +659,7 @@ class _FilterScreenState extends State<FilterScreen> {
                           final DateTime? picked = await showDatePicker(
                             context: context,
                             initialDate: _dateTo ?? DateTime.now(),
-                            firstDate: DateTime(1965),
+                            firstDate: DateTime(1950),
                             lastDate: DateTime(2099),
                           );
                           if (picked != null && picked != _dateTo) {
