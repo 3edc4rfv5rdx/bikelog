@@ -483,7 +483,7 @@ class _BikeEditPanelState extends State<BikeEditPanel> {
             child: GestureDetector(
               onTap: () => Navigator.pop(context), // Закрытие при нажатии на фон
               child: Container(
-                color: Colors.black.withOpacity(0.5),
+                color: clText.withAlpha((clText.alpha * 0.35).round()),
               ),
             ),
           ),
@@ -508,15 +508,18 @@ class _BikeEditPanelState extends State<BikeEditPanel> {
               child: Column(
                 children: [
                   // Панель с заголовком и кнопками
+// Панель с заголовком и кнопками (с уменьшенной высотой)
                   Container(
                     decoration: BoxDecoration(
                       color: clUpBar,
                       borderRadius: BorderRadius.vertical(bottom: Radius.circular(0)),
                     ),
-                    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2), // Уменьшенный вертикальный отступ
+                    height: 42, // Фиксированная уменьшенная высота панели
                     child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween, // Равномерное распределение
                       children: [
-                        // Используем Material для обертывания кнопки, чтобы обеспечить корректную обработку нажатий
+                        // Используем Material для обертывания кнопки
                         Material(
                           color: Colors.transparent,
                           child: IconButton(
@@ -944,7 +947,7 @@ class _BikeEditPanelState extends State<BikeEditPanel> {
                     width: 40,
                     height: 5,
                     decoration: BoxDecoration(
-                      color: clText.withOpacity(0.5),
+                      color: clText.withAlpha((clText.alpha * 0.35).round()),
                       borderRadius: BorderRadius.circular(2.5),
                     ),
                   ),
