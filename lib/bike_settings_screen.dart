@@ -15,11 +15,18 @@ class _BikeSettingsScreenState extends State<BikeSettingsScreen> {
   List<Map<String, dynamic>> bikes = [];
   int? selectedBikeIndex;
   int? edBikeId; // Переменная для ID редактируемого велосипеда
+  final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
     _loadBikes();
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose(); // Важно освободить ресурсы
+    super.dispose();
   }
 
   // Загрузка велосипедов из базы данных
@@ -231,29 +238,37 @@ class _BikeSettingsScreenState extends State<BikeSettingsScreen> {
           ),
         ),
       ),
-      body: ListView.builder(
-        itemCount: bikes.length,
-        itemBuilder: (context, index) {
-          final bike = bikes[index];
-          return GestureDetector(
-            onTap: () {
-              setState(() {
-                selectedBikeIndex = index;
-              });
-            },
-            onLongPress: () => _showActionMenu(bike),
-            child: Container(
-              color: selectedBikeIndex == index ? clSel : null,
-              child: ListTile(
-                title: Text(
-                  '${bike['owner']} - ${bike['brand']} - ${bike['model']} - ${bike['type']} - ${bike['sernum']} - ${bike['buydate']} - ${(bike['photo']?.isNotEmpty ?? false) ? ' [o]' : ''}',
-                  style: TextStyle(fontSize: fsNormal, color: clText),
-                  overflow: TextOverflow.ellipsis,
+// В методе build класса _BikeSettingsScreenState:
+      body: Scrollbar(
+        controller: _scrollController, // Явно указываем контроллер
+        thickness: 8,
+        radius: Radius.circular(4),
+        thumbVisibility: true, // Всегда показывать полосу прокрутки
+        child: ListView.builder(
+          controller: _scrollController, // Важно! Используем тот же контроллер
+          itemCount: bikes.length,
+          itemBuilder: (context, index) {
+            final bike = bikes[index];
+            return GestureDetector(
+              onTap: () {
+                setState(() {
+                  selectedBikeIndex = index;
+                });
+              },
+              onLongPress: () => _showActionMenu(bike),
+              child: Container(
+                color: selectedBikeIndex == index ? clSel : null,
+                child: ListTile(
+                  title: Text(
+                    '${bike['owner']} - ${bike['brand']} - ${bike['model']} - ${bike['type']} - ${bike['sernum']} - ${bike['buydate']} - ${(bike['photo']?.isNotEmpty ?? false) ? ' [o]' : ''}',
+                    style: TextStyle(fontSize: fsNormal, color: clText),
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
               ),
-            ),
-          );
-        },
+            );
+          },
+        ),
       ),
     );
   }
@@ -473,7 +488,8 @@ class _BikeEditPanelState extends State<BikeEditPanel> {
   Widget build(BuildContext context) {
     // Получаем высоту экрана для определения размера панели
     final screenHeight = MediaQuery.of(context).size.height;
-    final panelHeight = screenHeight * 0.7; // 70% от высоты экрана
+    final panelHeight = screenHeight * 0.5; // 65% от высоты экрана
+
 
     return Material(
       color: Colors.transparent,
@@ -927,7 +943,7 @@ class _BikeEditPanelState extends State<BikeEditPanel> {
           ),
           // Индикатор для перетаскивания (установлен внизу панели)
           Positioned(
-            top: widget.topPadding + panelHeight - 20, // Размещаем внизу панели
+            top: widget.topPadding + panelHeight - 10,
             left: 0,
             right: 0,
             child: GestureDetector(
@@ -948,7 +964,7 @@ class _BikeEditPanelState extends State<BikeEditPanel> {
                     width: 40,
                     height: 5,
                     decoration: BoxDecoration(
-                      color: clText.withAlpha((clText.alpha * 0.35).round()),
+                      color: clText,
                       borderRadius: BorderRadius.circular(2.5),
                     ),
                   ),
