@@ -491,7 +491,7 @@ class _BikeEditPanelState extends State<BikeEditPanel> {
     final double formFieldsCount = 7; // Owner, Brand, Model, Type, SerialNum, BuyDate, Photo
     final double totalFormHeight = (textFieldHeight + 12) * formFieldsCount; // Высота полей + отступы между ними
     final double headerHeight = 42; // Высота заголовка панели
-    final double paddingHeight = 32; // Отступы сверху и снизу (16*2)
+    final double paddingHeight = 46; // Отступы сверху и снизу
     final double dragHandleHeight = 20; // Высота индикатора перетаскивания
 
     // Общая высота панели
@@ -573,7 +573,7 @@ class _BikeEditPanelState extends State<BikeEditPanel> {
                     child: ListView(
                       physics: NeverScrollableScrollPhysics(),
                       shrinkWrap: true,
-                      padding: EdgeInsets.all(16),
+                      padding: EdgeInsets.only(top: 16, left: 16, right: 16, bottom: 30),
                       children: [
                         // Owner dropdown
                         Row(
@@ -942,6 +942,7 @@ class _BikeEditPanelState extends State<BikeEditPanel> {
                             ),
                           ],
                         ),
+                        const SizedBox(height: 30),
                       ],
                     ),
                   ),
@@ -949,6 +950,7 @@ class _BikeEditPanelState extends State<BikeEditPanel> {
               ),
             ),
           ),
+
           // Индикатор для перетаскивания (установлен внизу панели)
           Positioned(
             top: widget.topPadding + panelHeight - 10,
