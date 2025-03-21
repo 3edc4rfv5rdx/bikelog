@@ -32,6 +32,43 @@ ZIP_NAME="${PROJ_ZIP_DIR}/${PROJ_NAME}-${VER}-${VER_CODE}-${DATE}.zip"
 OLD_DEBUG_VALUE=""
 
 # ============ FUNCTIONS ============
+auto_increment_version() {
+    echo "===== AUTO INCREMENT VERSION ====="
+
+    # Установка глобальной версии, если не задана
+    if [ -z "$VER" ]; then
+        # Получаем текущую дату в формате YYMMDD
+        DATE_SHORT=$(date +"%y%m%d")
+        VER="${GLOBVERS}.${DATE_SHORT}"
+        echo "✓ Version set to $VER based on current date"
+    fi
+
+    # Автоинкремент кода версии, если не задан
+    if [ -z "$VER_CODE" ]; then
+        # Извлекаем текущий код версии из pubspec.yaml
+        CURRENT_VERSION=$(grep -o "version: [0-9]\+\.[0-9]\+\.[0-9]\+\+[0-9]\+" "$PUB_FILE" | grep -o "\+[0-9]\+")
+
+        if [ -z "$CURRENT_VERSION" ]; then
+            # Если не нашли версию с +, пробуем другой формат
+            CURRENT_VERSION=$(grep -o "version: [0-9]\+\.[0-9]\+\.[0-9]\+.*" "$PUB_FILE" | grep -o "\+[0-9]\+")
+        fi
+
+        if [ -n "$CURRENT_VERSION" ]; then
+            # Извлекаем число после + и инкрементируем
+            CURRENT_CODE=${CURRENT_VERSION#+}
+            VER_CODE=$((CURRENT_CODE + 1))
+            echo "✓ Version code incremented from $CURRENT_CODE to $VER_CODE"
+        else
+            # Если не нашли код версии, устанавливаем в 1
+            VER_CODE=1
+            echo "✓ Version code set to $VER_CODE (no previous version found)"
+        fi
+    fi
+
+    # Обновляем FULL_VER с новыми значениями
+    FULL_VER="$VER+$VER_CODE"
+    echo "✓ Full version: $FULL_VER"
+}
 
 update_version() {
     echo "===== UPDATING VERSION INFORMATION ====="
@@ -249,6 +286,9 @@ copy_final_apk() {
 # ============ MAIN EXECUTION ============
 echo "========== STARTING BUILD PROCESS =========="
 echo "Project: $PROJ_NAME"
+
+auto_increment_version
+
 echo "Version: $FULL_VER"
 echo "Date: $DATE"
 echo "=========================================="
