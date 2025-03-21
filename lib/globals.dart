@@ -303,7 +303,7 @@ void showCustomDialog({
               elevation: 4,
               minimumSize: Size(60, 40),
             ),
-            child: Text(lw('Yes')),
+            child: Text(lw('Ok')),
           ),
         ],
         elevation: 10.0,
