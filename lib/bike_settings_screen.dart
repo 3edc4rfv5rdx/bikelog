@@ -172,7 +172,7 @@ class _BikeSettingsScreenState extends State<BikeSettingsScreen> {
             onSaved: () {
               _loadBikes();
             },
-            topPadding: statusBarHeight + appBarHeight + 5, // Передаем отступ сверху
+            topPadding: statusBarHeight + appBarHeight + 5,
           );
         },
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
@@ -486,10 +486,16 @@ class _BikeEditPanelState extends State<BikeEditPanel> {
 
   @override
   Widget build(BuildContext context) {
-    // Получаем высоту экрана для определения размера панели
-    final screenHeight = MediaQuery.of(context).size.height;
-    final panelHeight = screenHeight * 0.5; // 65% от высоты экрана
+    // Вместо процента от высоты экрана, считаем точную высоту содержимого
+    // Количество полей формы (7) * (высота поля + отступ между полями) + высота заголовка + отступы
+    final double formFieldsCount = 7; // Owner, Brand, Model, Type, SerialNum, BuyDate, Photo
+    final double totalFormHeight = (textFieldHeight + 12) * formFieldsCount; // Высота полей + отступы между ними
+    final double headerHeight = 42; // Высота заголовка панели
+    final double paddingHeight = 32; // Отступы сверху и снизу (16*2)
+    final double dragHandleHeight = 20; // Высота индикатора перетаскивания
 
+    // Общая высота панели
+    final double panelHeight = totalFormHeight + headerHeight + paddingHeight + dragHandleHeight;
 
     return Material(
       color: Colors.transparent,
@@ -563,8 +569,10 @@ class _BikeEditPanelState extends State<BikeEditPanel> {
                     ),
                   ),
                   // Контент панели
-                  Expanded(
+                  Container(
                     child: ListView(
+                      physics: NeverScrollableScrollPhysics(),
+                      shrinkWrap: true,
                       padding: EdgeInsets.all(16),
                       children: [
                         // Owner dropdown
