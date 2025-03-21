@@ -276,10 +276,11 @@ class BikeEditPanel extends StatefulWidget {
 }
 
 class _BikeEditPanelState extends State<BikeEditPanel> {
-  final double dropDownHeight = max(fsNormal * 2.0, kMinInteractiveDimension);
-  final double textFieldHeight = fsNormal * 2.2;
-  final double fieldPadding = fsNormal * 0.8;
-  final double textFieldTextHeight = 1.0;
+  final double dropDownHeight = max(fsNormal * 2.4, kMinInteractiveDimension);  // Увеличено с 2.0
+  final double textFieldHeight = fsNormal * 2.6;  // Увеличено с 2.2
+  final double fieldPadding = fsNormal * 1.0;  // Увеличено с 0.8
+  final double textFieldTextHeight = 1.2;  // Увеличено с 1.0
+
 
   List<Map<String, dynamic>> owners = [];
   List<Map<String, dynamic>> types = [];
