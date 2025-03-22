@@ -21,6 +21,8 @@ Map<String, dynamic> xdef = {
   'Several actions': 'false',
   'Back after clear': 'true',
   'Round to integer': 'true',
+  'Use PIN': 'false',
+  '.PIN code': '',
   '.First start': 'false',
   '.Prog version': progVersion,
 };
@@ -902,3 +904,136 @@ String strCleanAndEscape(String input) {
   return escaped;
 }
 
+// Тип диалога: установка или проверка PIN
+enum PinDialogMode { setup, verify }
+
+// Функция для показа диалога PIN-кода
+Future<String?> showPinDialog({
+  required PinDialogMode mode,
+  int maxAttempts = 3,
+}) async {
+  final pinController = TextEditingController();
+  int attempts = 0;
+
+  String? result = await showDialog<String>(
+    context: navigatorKey.currentContext!,
+    barrierDismissible: false,
+    builder: (BuildContext context) {
+      return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              backgroundColor: clFon,
+              shape: RoundedRectangleBorder(
+                side: BorderSide(color: clUpBar, width: 3.0),
+                borderRadius: BorderRadius.circular(8.0),
+              ),
+              title: Text(
+                mode == PinDialogMode.setup ? lw('Set PIN code') : lw('Enter PIN'),
+                style: TextStyle(color: clText, fontSize: fsLarge, fontWeight: fwNormal),
+              ),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextField(
+                    controller: pinController,
+                    keyboardType: TextInputType.number,
+                    maxLength: 4,
+                    obscureText: true,
+                    obscuringCharacter: '*',
+                    autofocus: true,
+                    style: TextStyle(color: clText, fontSize: fsLarge),
+                    decoration: InputDecoration(
+                      labelText: lw('4-digit PIN'),
+                      labelStyle: TextStyle(color: clText),
+                      counterStyle: TextStyle(color: clText),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: clFrame),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: clUpBar),
+                      ),
+                    ),
+                  ),
+                  if (mode == PinDialogMode.verify)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8.0),
+                      child: Text(
+                        "${lw('Attempts left')}: ${maxAttempts - attempts}",
+                        style: TextStyle(
+                            color: (maxAttempts - attempts) <= 1 ? Colors.red : clText,
+                            fontSize: fsNormal
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context, null);
+                  },
+                  style: TextButton.styleFrom(
+                    backgroundColor: clUpBar,
+                    foregroundColor: clText,
+                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    elevation: 4,
+                    minimumSize: Size(60, 40),
+                  ),
+                  child: Text(mode == PinDialogMode.setup ? lw('Cancel') : lw('Exit')),
+                ),
+                TextButton(
+                  onPressed: () {
+                    final pin = pinController.text;
+
+                    // Валидация PIN
+                    bool isValid = pin.length == 4 && RegExp(r'^[0-9]+$').hasMatch(pin);
+
+                    if (mode == PinDialogMode.setup) {
+                      // В режиме установки просто проверяем формат
+                      if (isValid) {
+                        Navigator.pop(context, pin);
+                      } else {
+                        okInfoBarRed(lw('PIN must be exactly 4 digits'));
+                        pinController.clear();
+                      }
+                    } else {
+                      // В режиме проверки сверяем с сохраненным PIN
+                      if (pin == xdef['.PIN code']) {
+                        Navigator.pop(context, pin);
+                      } else {
+                        attempts++;
+                        setState(() {}); // Обновляем состояние для показа количества попыток
+
+                        if (attempts >= maxAttempts) {
+                          Navigator.pop(context, null);
+                        } else {
+                          okInfoBarRed(lw('Incorrect PIN'));
+                          pinController.clear();
+                        }
+                      }
+                    }
+                  },
+                  style: TextButton.styleFrom(
+                    backgroundColor: clUpBar,
+                    foregroundColor: clText,
+                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    elevation: 4,
+                    minimumSize: Size(60, 40),
+                  ),
+                  child: Text(lw('Ok')),
+                ),
+              ],
+            );
+          }
+      );
+    },
+  );
+
+  return result;
+}

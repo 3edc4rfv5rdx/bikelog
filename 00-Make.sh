@@ -1,7 +1,7 @@
 #!/bin/bash
 
 
-COMMENT="bike ref - split screen to edit and list v4"
+COMMENT="bike ref - split edit  screen v5"
 #
 GLOBVERS='0.9'
 VER=''

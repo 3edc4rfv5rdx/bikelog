@@ -16,6 +16,7 @@ class _BikeLogScreenState extends State<BikeLogScreen> with RouteAware {
   List<Map<String, dynamic>> actions = [];
   int? selectedIndex;
   Map<String, dynamic>? currentFilters;
+  bool _pinVerified = false;
 
   final Map<String, String> menuLabels = {
     'filters': lw('Filters'),
@@ -29,7 +30,10 @@ class _BikeLogScreenState extends State<BikeLogScreen> with RouteAware {
   @override
   void initState() {
     super.initState();
-    _loadActions();
+    // Используем addPostFrameCallback для отложенного выполнения
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _checkPinProtection();
+    });
   }
 
   @override
@@ -49,6 +53,24 @@ class _BikeLogScreenState extends State<BikeLogScreen> with RouteAware {
     setState(() {
       _loadActions();
     });
+  }
+
+  Future<void> _checkPinProtection() async {
+    if (xdef['Use PIN'] == 'true' && !_pinVerified) {
+      final pin = await showPinDialog(mode: PinDialogMode.verify);
+
+      if (pin != null) {
+        setState(() {
+          _pinVerified = true;
+        });
+        _loadActions();
+      } else {
+        // Если PIN не прошел проверку (3 неудачные попытки)
+        SystemNavigator.pop(); // Выход из приложения
+      }
+    } else {
+      _loadActions();
+    }
   }
 
   Future<void> _exportActionsToCSV() async {
@@ -130,6 +152,11 @@ class _BikeLogScreenState extends State<BikeLogScreen> with RouteAware {
 
   // Function to load actions from the database
   Future<void> _loadActions() async {
+    // Не загружаем данные, если PIN-защита включена, но PIN не прошел проверку
+    if (xdef['Use PIN'] == 'true' && !_pinVerified) {
+      return;
+    }
+
     // Build the SQL query
     final String dateSort = xdef['Newest first'] == 'true' ? 'desc' : '';
     String sql = '''
