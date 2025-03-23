@@ -1,7 +1,7 @@
 #!/bin/bash
 
 
-COMMENT="bike ref - split edit  screen v5"
+COMMENT="add settings and use PIN-code"
 #
 GLOBVERS='0.9'
 VER=''
@@ -27,7 +27,6 @@ DATE=$(date +"%Y%m%d")
 DATE_SHORT=$(date +"%y%m%d")
 # Archive settings
 TEMP_DIR="/dev/shm/temp_${PROJ_NAME}_${DATE}"
-ZIP_NAME="${PROJ_ZIP_DIR}/${PROJ_NAME}-${VER}-${VER_CODE}-${DATE}.zip"
 # Debug control
 OLD_DEBUG_VALUE=""
 
@@ -94,7 +93,7 @@ update_version() {
     # Create Git commit and tag if in a Git repository
     if [ -d ".git" ] || git rev-parse --is-inside-work-tree > /dev/null 2>&1; then
         # Commit the version changes
-        git add "$PUB_FILE" "$GLOB_FILE"
+        git add "$PUB_FILE" "$GLOB_FILE" "00-Make.sh"
         git commit -m "Version bump to $FULL_VER: $COMMENT"
 
         if [ $? -eq 0 ]; then
@@ -288,6 +287,8 @@ echo "========== STARTING BUILD PROCESS =========="
 echo "Project: $PROJ_NAME"
 
 auto_increment_version
+
+ZIP_NAME="${PROJ_ZIP_DIR}/${PROJ_NAME}-${VER}-${VER_CODE}-${DATE}.zip"
 
 echo "Version: $FULL_VER"
 echo "Date: $DATE"
