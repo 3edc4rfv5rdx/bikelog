@@ -1,7 +1,7 @@
 #!/bin/bash
 
 
-COMMENT="add settings and use PIN-code"
+COMMENT="move up edit panel"
 #
 GLOBVERS='0.9'
 VER=''
