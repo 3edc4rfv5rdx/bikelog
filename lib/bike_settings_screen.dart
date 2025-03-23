@@ -158,11 +158,7 @@ class _BikeSettingsScreenState extends State<BikeSettingsScreen> {
   }
 
   void _showEditPanel() {
-    // Получаем высоту статус-бара и AppBar
-    final statusBarHeight = MediaQuery.of(context).padding.top;
-    final appBarHeight = AppBar().preferredSize.height;
-
-    // Открываем панель редактирования сверху экрана, но под AppBar
+    // Открываем панель редактирования поверх всего экрана
     Navigator.of(context).push(
       PageRouteBuilder(
         opaque: false,
@@ -172,7 +168,7 @@ class _BikeSettingsScreenState extends State<BikeSettingsScreen> {
             onSaved: () {
               _loadBikes();
             },
-            topPadding: statusBarHeight + appBarHeight + 5,
+            topPadding: 0, // Начинаем с самого верха
           );
         },
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
@@ -238,14 +234,13 @@ class _BikeSettingsScreenState extends State<BikeSettingsScreen> {
           ),
         ),
       ),
-// В методе build класса _BikeSettingsScreenState:
       body: Scrollbar(
-        controller: _scrollController, // Явно указываем контроллер
+        controller: _scrollController,
         thickness: 8,
         radius: Radius.circular(4),
-        thumbVisibility: true, // Всегда показывать полосу прокрутки
+        thumbVisibility: true,
         child: ListView.builder(
-          controller: _scrollController, // Важно! Используем тот же контроллер
+          controller: _scrollController,
           itemCount: bikes.length,
           itemBuilder: (context, index) {
             final bike = bikes[index];
@@ -277,7 +272,7 @@ class _BikeSettingsScreenState extends State<BikeSettingsScreen> {
 class BikeEditPanel extends StatefulWidget {
   final int? bikeId; // null для нового велосипеда
   final Function onSaved;
-  final double topPadding; // Отступ сверху для позиционирования под AppBar
+  final double topPadding; // Отступ сверху для позиционирования
 
   const BikeEditPanel({
     Key? key,
@@ -291,11 +286,14 @@ class BikeEditPanel extends StatefulWidget {
 }
 
 class _BikeEditPanelState extends State<BikeEditPanel> {
-  final double dropDownHeight = max(fsNormal * 2.4, kMinInteractiveDimension);  // Увеличено с 2.0
-  final double textFieldHeight = fsNormal * 2.6;  // Увеличено с 2.2
-  final double fieldPadding = fsNormal * 1.0;  // Увеличено с 0.8
-  final double textFieldTextHeight = 1.2;  // Увеличено с 1.0
+  // Уменьшаем размеры элементов и отступы
+  final double dropDownHeight = max(fsNormal * 2.2, kMinInteractiveDimension);
+  final double textFieldHeight = fsNormal * 2.2; // Уменьшено с 2.6
+  final double fieldPadding = fsNormal * 0.8; // Уменьшено с 1.0
+  final double textFieldTextHeight = 1.0; // Уменьшено с 1.2
 
+  // Уменьшаем отступы между полями
+  final double fieldSpacing = 8.0; // Уменьшено с 12.0
 
   List<Map<String, dynamic>> owners = [];
   List<Map<String, dynamic>> types = [];
@@ -316,6 +314,9 @@ class _BikeEditPanelState extends State<BikeEditPanel> {
   final FocusNode buyDateFocusNode = FocusNode();
   final FocusNode photoFocusNode = FocusNode();
 
+  // Контроллер прокрутки для формы
+  final ScrollController _formScrollController = ScrollController();
+
   @override
   void initState() {
     super.initState();
@@ -334,6 +335,7 @@ class _BikeEditPanelState extends State<BikeEditPanel> {
     serialNumFocusNode.dispose();
     buyDateFocusNode.dispose();
     photoFocusNode.dispose();
+    _formScrollController.dispose();
     super.dispose();
   }
 
@@ -486,503 +488,508 @@ class _BikeEditPanelState extends State<BikeEditPanel> {
 
   @override
   Widget build(BuildContext context) {
-    // Вместо процента от высоты экрана, считаем точную высоту содержимого
-    // Количество полей формы (7) * (высота поля + отступ между полями) + высота заголовка + отступы
-    final double formFieldsCount = 7; // Owner, Brand, Model, Type, SerialNum, BuyDate, Photo
-    final double totalFormHeight = (textFieldHeight + 12) * formFieldsCount; // Высота полей + отступы между ними
-    final double headerHeight = 42; // Высота заголовка панели
-    final double paddingHeight = 46; // Отступы сверху и снизу
-    final double dragHandleHeight = 20; // Высота индикатора перетаскивания
-
-    // Общая высота панели
-    final double panelHeight = totalFormHeight + headerHeight + paddingHeight + dragHandleHeight;
-
     return Material(
       color: Colors.transparent,
-      child: Stack(
-        children: [
+      child: SafeArea(
+          child: Stack(
+              children: [
           // Полупрозрачный фон, который закрывает основной экран
           Positioned.fill(
+          child: GestureDetector(
+          onTap: () => Navigator.pop(context), // Закрытие при нажатии на фон
+      child: Container(
+        color: clText.withAlpha((clText.alpha * 0.35).round()),
+      ),
+    ),
+    ),
+    // Выезжающая панель сверху
+    Positioned(
+    top: widget.topPadding,
+    left: 0,
+    right: 0,
+    child: Container(
+    decoration: BoxDecoration(
+    color: clFon,
+    borderRadius: BorderRadius.vertical(bottom: Radius.circular(20)),
+    boxShadow: [
+    BoxShadow(
+    color: Colors.black26,
+    blurRadius: 10,
+    spreadRadius: 5,
+    ),
+    ],
+    ),
+    child: Column(
+    mainAxisSize: MainAxisSize.min,
+    children: [
+    // Панель с заголовком и кнопками
+    Container(
+    decoration: BoxDecoration(
+    color: clUpBar,
+    borderRadius: BorderRadius.vertical(bottom: Radius.circular(0)),
+    ),
+    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+    height: 36, // Уменьшенная высота
+    child: Row(
+    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    children: [
+    Material(
+    color: Colors.transparent,
+    child: IconButton(
+    icon: Icon(Icons.close, color: clText),
+    padding: EdgeInsets.all(4), // Уменьшенный отступ кнопки
+    constraints: BoxConstraints(), // Убираем ограничения размера кнопки
+    onPressed: () => Navigator.pop(context),
+    ),
+    ),
+    Expanded(
+    child: Text(
+    widget.bikeId == null ? lw('Add New Bike') : lw('Edit Bike'),
+    style: TextStyle(fontSize: fsLarge, color: clText, fontWeight: fwNormal),
+    textAlign: TextAlign.center,
+    ),
+    ),
+    Material(
+    color: Colors.transparent,
+    child: IconButton(
+    icon: Icon(Icons.save, color: clText),
+    padding: EdgeInsets.all(4), // Уменьшенный отступ кнопки
+    constraints: BoxConstraints(), // Убираем ограничения размера кнопки
+    onPressed: _saveBike,
+    ),
+    ),
+    ],
+    ),
+    ),
+    // Контент панели - используем ограниченную высоту с прокруткой
+    Container(
+    constraints: BoxConstraints(
+    // Ограничиваем высоту контента до 70% высоты экрана
+    maxHeight: MediaQuery.of(context).size.height * 0.7,
+    ),
+    child: Scrollbar(
+    controller: _formScrollController,
+    thumbVisibility: true,
+    thickness: 6,
+    radius: Radius.circular(3),
+    child: SingleChildScrollView(
+    controller: _formScrollController,
+    padding: EdgeInsets.only(top: 12, left: 16, right: 16, bottom: 16),
+    child: Column(
+    mainAxisSize: MainAxisSize.min,
+    children: [
+    // Owner dropdown
+    Row(
+    children: [
+    Expanded(
+    flex: 35,
+    child: GestureDetector(
+    onLongPress: () => okHelp(50),
+    child: Text(
+    lw('Owner'),
+    style: TextStyle(
+    fontSize: fsNormal,
+    color: clText,
+    fontWeight: fwNormal,
+    ),
+    ),
+    ),
+    ),
+    Expanded(
+    flex: 65,
+    child: Container(
+    height: textFieldHeight,
+    child: DropdownButtonFormField<String>(
+    decoration: InputDecoration(
+    isDense: true,
+    contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+    border: OutlineInputBorder(
+    borderSide: BorderSide(color: clFrame),
+    ),
+    filled: true,
+    fillColor: clFill,
+    ),
+    isExpanded: true,
+    dropdownColor: clMenu,
+    itemHeight: dropDownHeight,
+    style: TextStyle(fontSize: fsNormal, color: clText),
+    value: selectedOwner,
+    hint: Text(xvSelect),
+    items: [
+    DropdownMenuItem<String>(
+    value: '0',
+    child: Text(xvSelect),
+    ),
+    ...owners.map((owner) => DropdownMenuItem<String>(
+    value: owner['num'].toString(),
+    child: Text(owner['name']),
+    )),
+    ],
+    onChanged: (value) => setState(() => selectedOwner = value),
+    ),
+    ),
+    ),
+    ],
+    ),
+    SizedBox(height: fieldSpacing),
+
+    // Brand
+    Row(
+    children: [
+    Expanded(
+    flex: 35,
+    child: GestureDetector(
+    onLongPress: () => okHelp(51),
+    child: Text(
+    lw('Brand'),
+    style: TextStyle(
+    fontSize: fsNormal,
+    color: clText,
+    fontWeight: fwNormal,
+    ),
+    ),
+    ),
+    ),
+    Expanded(
+    flex: 65,
+    child: Container(
+    height: textFieldHeight,
+    child: TextField(
+    controller: brandController,
+    focusNode: brandFocusNode,
+    decoration: InputDecoration(
+    contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: fieldPadding),
+    border: OutlineInputBorder(
+    borderSide: BorderSide(color: clFrame),
+    ),
+    filled: true,
+    fillColor: clFill,
+    ),
+    style: TextStyle(
+    fontSize: fsNormal,
+    color: clText,
+    height: textFieldTextHeight,
+    ),
+    ),
+    ),
+    ),
+    ],
+    ),
+    SizedBox(height: fieldSpacing),
+
+    // Model
+    Row(
+    children: [
+    Expanded(
+    flex: 35,
+    child: GestureDetector(
+    onLongPress: () => okHelp(52),
+    child: Text(
+    lw('Model'),
+    style: TextStyle(
+    fontSize: fsNormal,
+    color: clText,
+    fontWeight: fwNormal,
+    ),
+    ),
+    ),
+    ),
+    Expanded(
+    flex: 65,
+    child: Container(
+    height: textFieldHeight,
+    child: TextField(
+    controller: modelController,
+    focusNode: modelFocusNode,
+    decoration: InputDecoration(
+    contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: fieldPadding),
+    border: OutlineInputBorder(
+    borderSide: BorderSide(color: clFrame),
+    ),
+    filled: true,
+    fillColor: clFill,
+    ),
+    style: TextStyle(
+    fontSize: fsNormal,
+    color: clText,
+    height: textFieldTextHeight,
+    ),
+    ),
+    ),
+    ),
+    ],
+    ),
+    SizedBox(height: fieldSpacing),
+
+    // Type dropdown
+    Row(
+    children: [
+    Expanded(
+    flex: 35,
+    child: GestureDetector(
+    onLongPress: () => okHelp(53),
+    child: Text(
+    lw('Type'),
+    style: TextStyle(
+    fontSize: fsNormal,
+    color: clText,
+    fontWeight: fwNormal,
+    ),
+    ),
+    ),
+    ),
+    Expanded(
+    flex: 65,
+    child: Container(
+    height: textFieldHeight,
+    child: DropdownButtonFormField<String>(
+    decoration: InputDecoration(
+    isDense: true,
+    contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+    border: OutlineInputBorder(
+    borderSide: BorderSide(color: clFrame),
+    ),
+    filled: true,
+    fillColor: clFill,
+    ),
+    dropdownColor: clMenu,
+    isExpanded: true,
+    itemHeight: dropDownHeight,
+    style: TextStyle(fontSize: fsNormal, color: clText),
+    value: selectedType,
+    hint: Text(xvSelect),
+    items: [
+    DropdownMenuItem<String>(
+    value: '0',
+    child: Text(xvSelect),
+    ),
+    ...types.map((type) => DropdownMenuItem<String>(
+    value: type['num'].toString(),
+    child: Text(type['name']),
+    )),
+    ],
+    onChanged: (value) => setState(() => selectedType = value),
+    ),
+    ),
+    ),
+    ],
+    ),
+    SizedBox(height: fieldSpacing),
+
+    // Serial Number
+    Row(
+    children: [
+    Expanded(
+    flex: 35,
+    child: GestureDetector(
+    onLongPress: () => okHelp(54),
+    child: Text(
+    lw('SerialNum'),
+    style: TextStyle(
+    fontSize: fsNormal,
+    color: clText,
+    fontWeight: fwNormal,
+    ),
+    ),
+    ),
+    ),
+    Expanded(
+    flex: 65,
+    child: Container(
+    height: textFieldHeight,
+    child: TextField(
+    controller: serialNumController,
+    focusNode: serialNumFocusNode,
+    decoration: InputDecoration(
+    contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: fieldPadding),
+    border: OutlineInputBorder(
+    borderSide: BorderSide(color: clFrame),
+    ),
+    filled: true,
+    fillColor: clFill,
+    ),
+    style: TextStyle(
+    fontSize: fsNormal,
+    color: clText,
+    height: textFieldTextHeight,
+    ),
+    ),
+    ),
+    ),
+    ],
+    ),
+    SizedBox(height: fieldSpacing),
+
+    // Buy Date
+    Row(
+    children: [
+    Expanded(
+    flex: 35,
+    child: GestureDetector(
+    onLongPress: () => okHelp(55),
+    child: Text(
+    lw('BuyDate'),
+    style: TextStyle(
+    fontSize: fsNormal,
+    color: clText,
+    fontWeight: fwNormal,
+    ),
+    ),
+    ),
+    ),
+    Expanded(
+    flex: 65,
+    child: Row(
+    children: [
+    Expanded(
+    child: Container(
+    height: textFieldHeight,
+    child: TextField(
+    controller: buyDateController,
+    focusNode: buyDateFocusNode,
+    decoration: InputDecoration(
+    contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: fieldPadding),
+    border: OutlineInputBorder(
+    borderSide: BorderSide(color: clFrame),
+    ),
+    filled: true,
+    fillColor: clFill,
+    hintText: lw('YYYY-MM-DD'),
+    ),
+    style: TextStyle(
+    fontSize: fsNormal,color: clText,
+      height: textFieldTextHeight,
+    ),
+    ),
+    ),
+    ),
+      Material(
+        color: Colors.transparent,
+        child: IconButton(
+          icon: Icon(Icons.calendar_today, color: clText, size: 20), // Уменьшен размер иконки
+          padding: EdgeInsets.all(2), // Уменьшенный отступ
+          constraints: BoxConstraints(), // Убираем ограничения размера кнопки
+          onPressed: () async {
+            final DateTime? picked = await showDatePicker(
+              context: context,
+              initialDate: DateTime.now(),
+              firstDate: DateTime(1950),
+              lastDate: DateTime.now(),
+            );
+            if (picked != null) {
+              setState(() {
+                buyDateController.text = "${picked.toLocal()}".split(' ')[0];
+              });
+            }
+          },
+        ),
+      ),
+    ],
+    ),
+    ),
+    ],
+    ),
+      SizedBox(height: fieldSpacing),
+
+      // Photo
+      Row(
+        children: [
+          Expanded(
+            flex: 35,
             child: GestureDetector(
-              onTap: () => Navigator.pop(context), // Закрытие при нажатии на фон
-              child: Container(
-                color: clText.withAlpha((clText.alpha * 0.35).round()),
-              ),
-            ),
-          ),
-          // Выезжающая панель сверху, начиная под AppBar
-          Positioned(
-            top: widget.topPadding, // Используем переданный отступ сверху
-            left: 0,
-            right: 0,
-            height: panelHeight,
-            child: Container(
-              decoration: BoxDecoration(
-                color: clFon,
-                borderRadius: BorderRadius.vertical(bottom: Radius.circular(20)),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black26,
-                    blurRadius: 10,
-                    spreadRadius: 5,
-                  ),
-                ],
-              ),
-              child: Column(
-                children: [
-                  // Панель с заголовком и кнопками
-// Панель с заголовком и кнопками (с уменьшенной высотой)
-                  Container(
-                    decoration: BoxDecoration(
-                      color: clUpBar,
-                      borderRadius: BorderRadius.vertical(bottom: Radius.circular(0)),
-                    ),
-                    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2), // Уменьшенный вертикальный отступ
-                    height: 42, // Фиксированная уменьшенная высота панели
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween, // Равномерное распределение
-                      children: [
-                        // Используем Material для обертывания кнопки
-                        Material(
-                          color: Colors.transparent,
-                          child: IconButton(
-                            icon: Icon(Icons.close, color: clText),
-                            onPressed: () => Navigator.pop(context),
-                          ),
-                        ),
-                        Expanded(
-                          child: Text(
-                            widget.bikeId == null ? lw('Add New Bike') : lw('Edit Bike'),
-                            style: TextStyle(fontSize: fsLarge, color: clText, fontWeight: fwNormal),
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                        // Оборачиваем кнопку сохранения в Material
-                        Material(
-                          color: Colors.transparent,
-                          child: IconButton(
-                            icon: Icon(Icons.save, color: clText),
-                            onPressed: _saveBike,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  // Контент панели
-                  Container(
-                    child: ListView(
-                      physics: NeverScrollableScrollPhysics(),
-                      shrinkWrap: true,
-                      padding: EdgeInsets.only(top: 16, left: 16, right: 16, bottom: 30),
-                      children: [
-                        // Owner dropdown
-                        Row(
-                          children: [
-                            Expanded(
-                              flex: 35,
-                              child: GestureDetector(
-                                onLongPress: () => okHelp(50),
-                                child: Text(
-                                  lw('Owner'),
-                                  style: TextStyle(
-                                    fontSize: fsNormal,
-                                    color: clText,
-                                    fontWeight: fwNormal,
-                                  ),
-                                ),
-                              ),
-                            ),
-                            Expanded(
-                              flex: 65,
-                              child: Container(
-                                height: textFieldHeight,
-                                child: DropdownButtonFormField<String>(
-                                  decoration: InputDecoration(
-                                    isDense: true,
-                                    contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                                    border: OutlineInputBorder(
-                                      borderSide: BorderSide(color: clFrame),
-                                    ),
-                                    filled: true,
-                                    fillColor: clFill,
-                                  ),
-                                  isExpanded: true,
-                                  dropdownColor: clMenu,
-                                  itemHeight: dropDownHeight,
-                                  style: TextStyle(fontSize: fsNormal, color: clText),
-                                  value: selectedOwner,
-                                  hint: Text(xvSelect),
-                                  items: [
-                                    DropdownMenuItem<String>(
-                                      value: '0',
-                                      child: Text(xvSelect),
-                                    ),
-                                    ...owners.map((owner) => DropdownMenuItem<String>(
-                                      value: owner['num'].toString(),
-                                      child: Text(owner['name']),
-                                    )),
-                                  ],
-                                  onChanged: (value) => setState(() => selectedOwner = value),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 12),
-
-                        // Brand
-                        Row(
-                          children: [
-                            Expanded(
-                              flex: 35,
-                              child: GestureDetector(
-                                onLongPress: () => okHelp(51),
-                                child: Text(
-                                  lw('Brand'),
-                                  style: TextStyle(
-                                    fontSize: fsNormal,
-                                    color: clText,
-                                    fontWeight: fwNormal,
-                                  ),
-                                ),
-                              ),
-                            ),
-                            Expanded(
-                              flex: 65,
-                              child: Container(
-                                height: textFieldHeight,
-                                child: TextField(
-                                  controller: brandController,
-                                  focusNode: brandFocusNode,
-                                  decoration: InputDecoration(
-                                    contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: fieldPadding),
-                                    border: OutlineInputBorder(
-                                      borderSide: BorderSide(color: clFrame),
-                                    ),
-                                    filled: true,
-                                    fillColor: clFill,
-                                  ),
-                                  style: TextStyle(
-                                    fontSize: fsNormal,
-                                    color: clText,
-                                    height: textFieldTextHeight,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 12),
-
-                        // Model
-                        Row(
-                          children: [
-                            Expanded(
-                              flex: 35,
-                              child: GestureDetector(
-                                onLongPress: () => okHelp(52),
-                                child: Text(
-                                  lw('Model'),
-                                  style: TextStyle(
-                                    fontSize: fsNormal,
-                                    color: clText,
-                                    fontWeight: fwNormal,
-                                  ),
-                                ),
-                              ),
-                            ),
-                            Expanded(
-                              flex: 65,
-                              child: Container(
-                                height: textFieldHeight,
-                                child: TextField(
-                                  controller: modelController,
-                                  focusNode: modelFocusNode,
-                                  decoration: InputDecoration(
-                                    contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: fieldPadding),
-                                    border: OutlineInputBorder(
-                                      borderSide: BorderSide(color: clFrame),
-                                    ),
-                                    filled: true,
-                                    fillColor: clFill,
-                                  ),
-                                  style: TextStyle(
-                                    fontSize: fsNormal,
-                                    color: clText,
-                                    height: textFieldTextHeight,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 12),
-
-                        // Type dropdown
-                        Row(
-                          children: [
-                            Expanded(
-                              flex: 35,
-                              child: GestureDetector(
-                                onLongPress: () => okHelp(53),
-                                child: Text(
-                                  lw('Type'),
-                                  style: TextStyle(
-                                    fontSize: fsNormal,
-                                    color: clText,
-                                    fontWeight: fwNormal,
-                                  ),
-                                ),
-                              ),
-                            ),
-                            Expanded(
-                              flex: 65,
-                              child: Container(
-                                height: textFieldHeight,
-                                child: DropdownButtonFormField<String>(
-                                  decoration: InputDecoration(
-                                    isDense: true,
-                                    contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                                    border: OutlineInputBorder(
-                                      borderSide: BorderSide(color: clFrame),
-                                    ),
-                                    filled: true,
-                                    fillColor: clFill,
-                                  ),
-                                  dropdownColor: clMenu,
-                                  isExpanded: true,
-                                  itemHeight: dropDownHeight,
-                                  style: TextStyle(fontSize: fsNormal, color: clText),
-                                  value: selectedType,
-                                  hint: Text(xvSelect),
-                                  items: [
-                                    DropdownMenuItem<String>(
-                                      value: '0',
-                                      child: Text(xvSelect),
-                                    ),
-                                    ...types.map((type) => DropdownMenuItem<String>(
-                                      value: type['num'].toString(),
-                                      child: Text(type['name']),
-                                    )),
-                                  ],
-                                  onChanged: (value) => setState(() => selectedType = value),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 12),
-
-                        // Serial Number
-                        Row(
-                          children: [
-                            Expanded(
-                              flex: 35,
-                              child: GestureDetector(
-                                onLongPress: () => okHelp(54),
-                                child: Text(
-                                  lw('SerialNum'),
-                                  style: TextStyle(
-                                    fontSize: fsNormal,
-                                    color: clText,
-                                    fontWeight: fwNormal,
-                                  ),
-                                ),
-                              ),
-                            ),
-                            Expanded(
-                              flex: 65,
-                              child: Container(
-                                height: textFieldHeight,
-                                child: TextField(
-                                  controller: serialNumController,
-                                  focusNode: serialNumFocusNode,
-                                  decoration: InputDecoration(
-                                    contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: fieldPadding),
-                                    border: OutlineInputBorder(
-                                      borderSide: BorderSide(color: clFrame),
-                                    ),
-                                    filled: true,
-                                    fillColor: clFill,
-                                  ),
-                                  style: TextStyle(
-                                    fontSize: fsNormal,
-                                    color: clText,
-                                    height: textFieldTextHeight,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 12),
-
-                        // Buy Date
-                        Row(
-                          children: [
-                            Expanded(
-                              flex: 35,
-                              child: GestureDetector(
-                                onLongPress: () => okHelp(55),
-                                child: Text(
-                                  lw('BuyDate'),
-                                  style: TextStyle(
-                                    fontSize: fsNormal,
-                                    color: clText,
-                                    fontWeight: fwNormal,
-                                  ),
-                                ),
-                              ),
-                            ),
-                            Expanded(
-                              flex: 65,
-                              child: Row(
-                                children: [
-                                  Expanded(
-                                    child: Container(
-                                      height: textFieldHeight,
-                                      child: TextField(
-                                        controller: buyDateController,
-                                        focusNode: buyDateFocusNode,
-                                        decoration: InputDecoration(
-                                          contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: fieldPadding),
-                                          border: OutlineInputBorder(
-                                            borderSide: BorderSide(color: clFrame),
-                                          ),
-                                          filled: true,
-                                          fillColor: clFill,
-                                          hintText: lw('YYYY-MM-DD'),
-                                        ),
-                                        style: TextStyle(
-                                          fontSize: fsNormal,
-                                          color: clText,
-                                          height: textFieldTextHeight,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  Material(
-                                    color: Colors.transparent,
-                                    child: IconButton(
-                                      icon: Icon(Icons.calendar_today, color: clText),
-                                      onPressed: () async {
-                                        final DateTime? picked = await showDatePicker(
-                                          context: context,
-                                          initialDate: DateTime.now(),
-                                          firstDate: DateTime(1950),
-                                          lastDate: DateTime.now(),
-                                        );
-                                        if (picked != null) {
-                                          setState(() {
-                                            buyDateController.text = "${picked.toLocal()}".split(' ')[0];
-                                          });
-                                        }
-                                      },
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 12),
-
-                        // Photo
-                        Row(
-                          children: [
-                            Expanded(
-                              flex: 35,
-                              child: GestureDetector(
-                                onLongPress: () => okHelp(57),
-                                child: Text(
-                                  lw('Photo'),
-                                  style: TextStyle(
-                                    fontSize: fsNormal,
-                                    color: clText,
-                                    fontWeight: fwNormal,
-                                  ),
-                                ),
-                              ),
-                            ),
-                            Expanded(
-                              flex: 65,
-                              child: Row(
-                                children: [
-                                  Expanded(
-                                    child: Container(
-                                      height: textFieldHeight,
-                                      child: TextField(
-                                        controller: photoController,
-                                        focusNode: photoFocusNode,
-                                        decoration: InputDecoration(
-                                          contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: fieldPadding),
-                                          border: OutlineInputBorder(
-                                            borderSide: BorderSide(color: clFrame),
-                                          ),
-                                          filled: true,
-                                          fillColor: clFill,
-                                        ),
-                                        style: TextStyle(
-                                          fontSize: fsNormal,
-                                          color: clText,
-                                          height: textFieldTextHeight,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  Material(
-                                    color: Colors.transparent,
-                                    child: IconButton(
-                                      icon: Icon(Icons.camera_alt, color: clText),
-                                      onPressed: _pickFile,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 30),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-
-          // Индикатор для перетаскивания (установлен внизу панели)
-          Positioned(
-            top: widget.topPadding + panelHeight - 10,
-            left: 0,
-            right: 0,
-            child: GestureDetector(
-              onVerticalDragEnd: (details) {
-                if (details.primaryVelocity != null && details.primaryVelocity! > 500) {
-                  // Если скорость свайпа вниз достаточно большая, закрываем панель
-                  Navigator.pop(context);
-                }
-              },
-              child: Container(
-                height: 20,
-                decoration: BoxDecoration(
-                  color: clUpBar,
-                  borderRadius: BorderRadius.vertical(bottom: Radius.circular(20)),
+              onLongPress: () => okHelp(57),
+              child: Text(
+                lw('Photo'),
+                style: TextStyle(
+                  fontSize: fsNormal,
+                  color: clText,
+                  fontWeight: fwNormal,
                 ),
-                child: Center(
+              ),
+            ),
+          ),
+          Expanded(
+            flex: 65,
+            child: Row(
+              children: [
+                Expanded(
                   child: Container(
-                    width: 40,
-                    height: 5,
-                    decoration: BoxDecoration(
-                      color: clText,
-                      borderRadius: BorderRadius.circular(2.5),
+                    height: textFieldHeight,
+                    child: TextField(
+                      controller: photoController,
+                      focusNode: photoFocusNode,
+                      decoration: InputDecoration(
+                        contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: fieldPadding),
+                        border: OutlineInputBorder(
+                          borderSide: BorderSide(color: clFrame),
+                        ),
+                        filled: true,
+                        fillColor: clFill,
+                      ),
+                      style: TextStyle(
+                        fontSize: fsNormal,
+                        color: clText,
+                        height: textFieldTextHeight,
+                      ),
                     ),
                   ),
                 ),
-              ),
+                Material(
+                  color: Colors.transparent,
+                  child: IconButton(
+                    icon: Icon(Icons.camera_alt, color: clText, size: 20), // Уменьшен размер иконки
+                    padding: EdgeInsets.all(2), // Уменьшенный отступ
+                    constraints: BoxConstraints(), // Убираем ограничения размера кнопки
+                    onPressed: _pickFile,
+                  ),
+                ),
+              ],
             ),
           ),
         ],
+      ),
+      // Добавляем дополнительный отступ внизу чтобы обеспечить доступ к полям даже когда клавиатура открыта
+      SizedBox(height: MediaQuery.of(context).viewInsets.bottom > 0
+          ? MediaQuery.of(context).viewInsets.bottom + 120 // Когда клавиатура открыта - больше отступ
+          : 16), // Когда клавиатура закрыта - стандартный отступ
+    ],
+    ),
+    ),
+    ),
+    ),
+      // Индикатор для перетаскивания (свайп вниз для закрытия)
+      GestureDetector(
+        onVerticalDragEnd: (details) {
+          if (details.primaryVelocity != null && details.primaryVelocity! > 300) {
+            // Если скорость свайпа вниз достаточно большая, закрываем панель
+            Navigator.pop(context);
+          }
+        },
+        child: Container(
+          height: 16, // Уменьшили с 20
+          decoration: BoxDecoration(
+            color: clUpBar,
+            borderRadius: BorderRadius.vertical(bottom: Radius.circular(20)),
+          ),
+          child: Center(
+            child: Container(
+              width: 40,
+              height: 4, // Уменьшили с 5
+              margin: EdgeInsets.only(bottom: 4), // Добавили отступ снизу
+              decoration: BoxDecoration(
+                color: clText,
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+          ),
+        ),
+      ),
+    ],
+    ),
+    ),
+    ),
+              ],
+          ),
       ),
     );
   }
