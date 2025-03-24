@@ -1,4 +1,5 @@
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter/services.dart';
 import 'dart:async'; // For Completer
 import 'dart:io'; // For File and Directory operations
 import 'dart:convert'; // Для работы с JSON (json.decode)
@@ -149,7 +150,13 @@ void main() async {
   currentThemeIndex = getThemeIndex(xdef['Color theme']);
   initThemeColors(currentThemeIndex);
   // run!
-  runApp(const BikeLogApp());
+  // Устанавливаем только портретную ориентацию
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]).then((_) {
+    runApp(const BikeLogApp());
+  });
 }
 
 String _getLocaleCode(String language) {
