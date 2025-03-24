@@ -130,7 +130,8 @@ create_archive() {
     for dir in lib assets android .git; do
         if [ -d "$dir" ]; then
             mkdir -p "$TEMP_DIR/$dir"
-            rsync -a "$dir/" "$TEMP_DIR/$dir/"
+#            rsync -a "$dir/" "$TEMP_DIR/$dir/"
+cp -r "$dir" "$TEMP_DIR/$dir"
         fi
     done
 
@@ -306,6 +307,9 @@ mkdir -p "$PROJ_ZIP_DIR"
 # Execute each step
 update_version
 create_archive
+
+exit
+
 # Disable debug, store value in global variable
 disable_debug
 # Build the app with debug disabled
