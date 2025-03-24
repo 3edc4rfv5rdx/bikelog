@@ -129,7 +129,7 @@ create_archive() {
     # Copy project files
     for dir in lib assets android .git; do
         if [ -d "$dir" ]; then
-            mkdir -p "$TEMP_DIR/$dir"
+#            mkdir -p "$TEMP_DIR/$dir"
 #            rsync -a "$dir/" "$TEMP_DIR/$dir/"
 cp -r "$dir" "$TEMP_DIR/$dir"
         fi
