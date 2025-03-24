@@ -26,7 +26,7 @@ TAG_MSG="Release $FULL_VER: $COMMENT"
 DATE=$(date +"%Y%m%d")
 DATE_SHORT=$(date +"%y%m%d")
 # Archive settings
-TEMP_DIR="/dev/shm/temp_${PROJ_NAME}_${DATE}"
+TEMP_DIR="/tmp"
 # Debug control
 OLD_DEBUG_VALUE=""
 
@@ -98,9 +98,7 @@ update_version() {
 
         if [ $? -eq 0 ]; then
             echo "✓ Git commit successfully created for version $FULL_VER"
-
             git tag -a "v$FULL_VER" -m "$TAG_MSG"
-
             if [ $? -eq 0 ]; then
                 echo "✓ Git tag v$FULL_VER successfully created"
             else
@@ -116,39 +114,26 @@ update_version() {
 
 create_archive() {
     echo "===== CREATING PROJECT ARCHIVE ====="
-    
     # Create archive directory structure if it doesn't exist
     mkdir -p "$PROJ_ZIP_DIR"
-    
-    # Get script name from $0
+    # Create temporary file with list of files to archive
+    FILE_LIST="$TEMP_DIR/zip-temp.txt"
     SELF_NAME=$(basename "$0")
-    
-    # Create temporary directory
-    rm -rf "$TEMP_DIR" && mkdir -p "$TEMP_DIR"
-    
-    # Copy project files
-    for dir in lib assets android .git; do
-        if [ -d "$dir" ]; then
-#            mkdir -p "$TEMP_DIR/$dir"
-#            rsync -a "$dir/" "$TEMP_DIR/$dir/"
-cp -r "$dir" "$TEMP_DIR/$dir"
-        fi
-    done
-
-    # Copy pubspec file and other specific files
-    [ -f "$PUB_FILE" ] && cp "$PUB_FILE" "$TEMP_DIR/"
-    [ -f ".gitignore" ] && cp ".gitignore" "$TEMP_DIR/"
-    cp "$SELF_NAME" "$TEMP_DIR/"
-
-    # Create archive
-    (cd "$TEMP_DIR" && zip -9 -r "$ZIP_NAME" *)
-
-    # Clean up
-    rm -rf "$TEMP_DIR"
-
+    # Add directories
+    find lib -type f > "$FILE_LIST"
+    find assets -type f 2>/dev/null >> "$FILE_LIST"
+    find android -type f ! -name "*.apk" >> "$FILE_LIST"
+    find .git -type f >> "$FILE_LIST"
+    # Add specific files
+    [ -f "$PUB_FILE" ] && echo "$PUB_FILE" >> "$FILE_LIST"
+    [ -f ".gitignore" ] && echo ".gitignore" >> "$FILE_LIST"
+    echo "$SELF_NAME" >> "$FILE_LIST"
+    # Create archive using the file list
+    (cd "$PROJ_PATH" && zip -9 -@ "$ZIP_NAME" < "$FILE_LIST")
+    # Remove temporary file list
+    rm "$FILE_LIST"
     echo "✓ Archive created: $ZIP_NAME"
 }
-
 
 disable_debug() {
     echo "===== DISABLING DEBUG MODE ====="
@@ -307,9 +292,6 @@ mkdir -p "$PROJ_ZIP_DIR"
 # Execute each step
 update_version
 create_archive
-
-exit
-
 # Disable debug, store value in global variable
 disable_debug
 # Build the app with debug disabled
