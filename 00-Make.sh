@@ -120,28 +120,34 @@ create_archive() {
     # Create archive directory structure if it doesn't exist
     mkdir -p "$PROJ_ZIP_DIR"
     
+    # Get script name from $0
+    SELF_NAME=$(basename "$0")
+    
     # Create temporary directory
     rm -rf "$TEMP_DIR" && mkdir -p "$TEMP_DIR"
     
     # Copy project files
-    for dir in lib assets android; do
+    for dir in lib assets android .git; do
         if [ -d "$dir" ]; then
             mkdir -p "$TEMP_DIR/$dir"
-            rsync -a --exclude=".*" "$dir/" "$TEMP_DIR/$dir/"
+            rsync -a "$dir/" "$TEMP_DIR/$dir/"
         fi
     done
 
-    # Copy pubspec file
+    # Copy pubspec file and other specific files
     [ -f "$PUB_FILE" ] && cp "$PUB_FILE" "$TEMP_DIR/"
-    
+    [ -f ".gitignore" ] && cp ".gitignore" "$TEMP_DIR/"
+    cp "$SELF_NAME" "$TEMP_DIR/"
+
     # Create archive
     (cd "$TEMP_DIR" && zip -9 -r "$ZIP_NAME" *)
-    
+
     # Clean up
     rm -rf "$TEMP_DIR"
 
     echo "✓ Archive created: $ZIP_NAME"
 }
+
 
 disable_debug() {
     echo "===== DISABLING DEBUG MODE ====="
