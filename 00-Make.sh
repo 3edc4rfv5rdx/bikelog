@@ -10,7 +10,7 @@ VER_CODE=''
 #
 PROJ_NAME="bikelog"
 # Project paths
-OUT_PATH="/home/e"
+OUT_PATH="$HOME"
 PROJ_PATH="$OUT_PATH/AndroidStudioProjects/$PROJ_NAME"
 APK_PATH="$PROJ_PATH/build/app/outputs/flutter-apk"
 # Archive directory structure
