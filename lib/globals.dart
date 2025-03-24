@@ -11,6 +11,9 @@ final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey = GlobalKey<Scaffol
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
 
+const List<String> DATE_FORMATS = ['DD-MM-YYYY', 'MM-DD-YYYY', 'YYYY-MM-DD'];
+const List<String> DATE_SEPARATORS = ['.', '/', '-'];
+
 // Global Map for settings
 Map<String, dynamic> xdef = {
   'Program language': 'EN',
@@ -22,6 +25,8 @@ Map<String, dynamic> xdef = {
   'Back after clear': 'true',
   'Round to integer': 'true',
   'Use PIN': 'false',
+  '.Date format': 'YYYY-MM-DD',
+  '.Date separator': '-',
   '.PIN code': '',
   '.First start': 'false',
   '.Prog version': progVersion,
@@ -54,7 +59,23 @@ int get progOwners => prgEditions[currVers].$2;
 int get progBikes => prgEditions[currVers].$3;
 
 // all program landuages,
-const List<String> appLANGUAGES = ['EN','RU','UA',]; // if change, look at main/_getLocaleCode
+const List<String> appLANGUAGES = ['EN','RU','UA',];
+
+String getLocaleCode(String language) {
+  // Словарь только для исключений, где код страны отличается
+  final Map<String, String> exceptions = {
+    'UA': 'uk',  // ukraine
+    'GR': 'el',  // greek
+    'CN': 'zh',  // china
+    'JP': 'ja',  // japan
+    'SE': 'sv',  // sveden
+    'DK': 'da',  // Датский
+    'CZ': 'cs',  // cheska
+  };
+  String langCode = language.toUpperCase();
+  return exceptions[langCode] ?? langCode.toLowerCase();
+}
+
 // color themes names
 const List<String> appTHEMES = ['Light','Dark','Green','Blue','Brown','Purple','Orange',];
 
@@ -143,6 +164,8 @@ Color clText = curTHEME[0][4];
 Color clFill = curTHEME[0][5];
 Color clFrame = curTHEME[0][6];
 
+Color clRed = Colors.red;
+
 const double fsSmall = 13;  // Small font size
 const double fsNormal = 15; // Main font size
 const double fsLarge = 18;  // Font size for headers
@@ -160,6 +183,12 @@ const String settDb = '${prgName}_sett.db';
 const String helpFile = 'assets/help.json';
 const String langFile = 'assets/locales.json';
 const String refFile = 'assets/references.json';
+
+extension StringExtension on String {
+  String replace(String from, String to) {
+    return replaceAll(from, to);
+  }
+}
 
 int currentThemeIndex = 0;
 void initThemeColors(int themeIndex) {
@@ -433,49 +462,7 @@ Future<void> initTranslations() async {
 String lw(String wrd) {
   String lang = xdef['Program language']; // was .toUpperCase();
   if (lang == 'EN') { return wrd; }
-  return _translationCache[wrd] ?? '<( $wrd )>'; // Возвращаем текст, если перевод не найден
-}
-
-// Function to validate the date format (YYYY-MM-DD)
-bool isValidDateFormat(String input) {
-  final RegExp dateRegex = RegExp(r'^\d{4}-\d{2}-\d{2}$');
-  return dateRegex.hasMatch(input);
-}
-
-// Function to check if the date is valid (e.g., not February 30)
-bool isValidDate(String input) {
-  try {
-    final parts = input.split('-');
-    if (parts.length != 3) return false;
-
-    final year = int.parse(parts[0]);
-    final month = int.parse(parts[1]);
-    final day = int.parse(parts[2]);
-
-    final date = DateTime(year, month, day);
-    return date.year == year && date.month == month && date.day == day;
-  } catch (e) {
-    return false;
-  }
-}
-
-// Function to check if the date is not in the future
-bool isDateNotInFuture(String input) {
-  try {
-    final parts = input.split('-');
-    if (parts.length != 3) return false;
-
-    final year = int.parse(parts[0]);
-    final month = int.parse(parts[1]);
-    final day = int.parse(parts[2]);
-
-    final inputDate = DateTime(year, month, day);
-    final currentDate = DateTime.now();
-
-    return inputDate.isBefore(currentDate) || inputDate.isAtSameMomentAs(currentDate);
-  } catch (e) {
-    return false;
-  }
+  return _translationCache[wrd] ?? '(( $wrd ))'; // Возвращаем текст, если перевод не найден
 }
 
 // Function to validate the date input (format, validity, and not in the future)
@@ -499,17 +486,6 @@ bool validatePriceInput(String input) {
   }
   final RegExp priceRegex = RegExp(r'^\d+(\.\d{1,2})?$');
   return priceRegex.hasMatch(input);
-}
-
-// Function to check if date-from is not greater than date-to
-bool isDateFromBeforeDateTo(String dateFrom, String dateTo) {
-  try {
-    final from = DateTime.parse(dateFrom);
-    final to = DateTime.parse(dateTo);
-    return from.isBefore(to) || from.isAtSameMomentAs(to);
-  } catch (e) {
-    return false;
-  }
 }
 
 // Function to execute a SQL query and return a single value
@@ -1036,4 +1012,244 @@ Future<String?> showPinDialog({
   );
 
   return result;
+}
+
+String dateToStorageFormat(String displayDate) {
+  if (displayDate.isEmpty) return '';
+
+  String format = xdef['Date format'];
+  String separator = xdef['Date separator'];
+
+  List<String> parts = displayDate.split(separator);
+  if (parts.length != 3) return displayDate; // Invalid format
+
+  String year, month, day;
+
+  switch (format) {
+    case 'DD-MM-YYYY':
+      day = parts[0].padLeft(2, '0');
+      month = parts[1].padLeft(2, '0');
+      year = parts[2];
+      break;
+
+    case 'MM-DD-YYYY':
+      month = parts[0].padLeft(2, '0');
+      day = parts[1].padLeft(2, '0');
+      year = parts[2];
+      break;
+
+    case 'YYYY-MM-DD':
+    default:
+    // Already in ISO format, just standardize separators
+      year = parts[0];
+      month = parts[1].padLeft(2, '0');
+      day = parts[2].padLeft(2, '0');
+      break;
+  }
+
+  return '$year-$month-$day'; // Always use - for storage
+}
+
+// Convert from storage format (YYYY-MM-DD) to display format
+String dateFromStorageFormat(String storageDate) {
+  if (storageDate.isEmpty) return '';
+
+  String format = xdef['Date format'];
+  String separator = xdef['Date separator'];
+
+  List<String> parts = storageDate.split('-');
+  if (parts.length != 3) return storageDate; // Invalid format
+
+  String year = parts[0];
+  String month = parts[1];
+  String day = parts[2];
+
+  switch (format) {
+    case 'DD-MM-YYYY':
+      return day + separator + month + separator + year;
+
+    case 'MM-DD-YYYY':
+      return month + separator + day + separator + year;
+
+    case 'YYYY-MM-DD':
+    default:
+      return year + separator + month + separator + day;
+  }
+}
+
+// Get hint text for date input fields based on current settings
+String getDateFormatHint() {
+  String format = xdef['Date format'];
+  String separator = xdef['Date separator'];
+  return format.replaceAll('-', separator);
+}
+
+// Helper to get an example date in the current format
+String getDateFormatExample() {
+  final today = DateTime.now();
+  final day = today.day.toString().padLeft(2, '0');
+  final month = today.month.toString().padLeft(2, '0');
+  final year = today.year.toString();
+
+  String format = xdef['Date format'];
+  String separator = xdef['Date separator'];
+
+  switch (format) {
+    case 'DD-MM-YYYY':
+      return '$day$separator$month$separator$year';
+    case 'MM-DD-YYYY':
+      return '$month$separator$day$separator$year';
+    case 'YYYY-MM-DD':
+    default:
+      return '$year$separator$month$separator$day';
+  }
+}
+
+// Update these existing date validation functions
+bool isValidDateFormat(String input) {
+  if (input.isEmpty) return false;
+
+  String format = xdef['Date format'];
+  String separator = xdef['Date separator'];
+
+  // Escape the separator for regex
+  String escapedSeparator = separator.replaceAll('.', '\\.');
+
+  String pattern;
+  switch (format) {
+    case 'DD-MM-YYYY':
+      pattern = '^\\d{1,2}$escapedSeparator\\d{1,2}$escapedSeparator\\d{4}\$';
+      break;
+    case 'MM-DD-YYYY':
+      pattern = '^\\d{1,2}$escapedSeparator\\d{1,2}$escapedSeparator\\d{4}\$';
+      break;
+    case 'YYYY-MM-DD':
+    default:
+      pattern = '^\\d{4}$escapedSeparator\\d{1,2}$escapedSeparator\\d{1,2}\$';
+      break;
+  }
+
+  return RegExp(pattern).hasMatch(input);
+}
+
+bool isValidDate(String input) {
+  try {
+    // Convert to storage format first
+    String storageFormat = dateToStorageFormat(input);
+
+    // Split using ISO separator
+    final parts = storageFormat.split('-');
+    if (parts.length != 3) return false;
+
+    final year = int.parse(parts[0]);
+    final month = int.parse(parts[1]);
+    final day = int.parse(parts[2]);
+
+    final date = DateTime(year, month, day);
+    return date.year == year && date.month == month && date.day == day;
+  } catch (e) {
+    return false;
+  }
+}
+
+bool isDateNotInFuture(String input) {
+  try {
+    // Convert to storage format first
+    String storageFormat = dateToStorageFormat(input);
+
+    // Split using ISO separator
+    final parts = storageFormat.split('-');
+    if (parts.length != 3) return false;
+
+    final year = int.parse(parts[0]);
+    final month = int.parse(parts[1]);
+    final day = int.parse(parts[2]);
+
+    final inputDate = DateTime(year, month, day);
+    final currentDate = DateTime.now();
+
+    return inputDate.isBefore(currentDate) || inputDate.isAtSameMomentAs(currentDate);
+  } catch (e) {
+    return false;
+  }
+}
+
+bool isDateFromBeforeDateTo(String dateFrom, String dateTo) {
+  try {
+    // Convert both to storage format
+    String fromStorage = dateToStorageFormat(dateFrom);
+    String toStorage = dateToStorageFormat(dateTo);
+
+    final from = DateTime.parse(fromStorage);
+    final to = DateTime.parse(toStorage);
+    return from.isBefore(to) || from.isAtSameMomentAs(to);
+  } catch (e) {
+    return false;
+  }
+}
+
+// Add to initializeIni() function
+// Make sure to find and update this function in your code
+Future<void> initializeIni() async {
+  final dbFile = File(xvSettHome);
+  if (!await dbFile.exists()) {
+    Database? database;
+    xdef['.First start'] = 'true';
+    try {
+      database = await myOpenDatabase(xvSettHome);
+      await database.execute('''
+        CREATE TABLE IF NOT EXISTS settings (
+          key TEXT PRIMARY KEY NOT NULL,
+          value TEXT NOT NULL)
+      ''');
+    } catch (e) {
+      myPrint('Error creating database: $e');
+    } finally {
+      await database?.close();
+    }
+  }
+
+  // Make sure date format settings have defaults
+  for (var key in xdef.keys) {
+    String saved = await getKey(key);
+    if (saved == '') {
+      await setKey(key, xdef[key]); // default
+    } else {
+      xdef[key] = saved;
+    }
+  }
+
+  myPrint("initializeIni finished");
+}
+
+// Helper function to show a localized date picker
+Future<DateTime?> showLocalizedDatePicker({
+  required BuildContext context,
+  required DateTime initialDate,
+  required DateTime firstDate,
+  required DateTime lastDate,
+}) async {
+  String lang = xdef['Program language'];
+  Locale locale = Locale(getLocaleCode(lang));
+
+  return showDatePicker(
+    context: context,
+    initialDate: initialDate,
+    firstDate: firstDate,
+    lastDate: lastDate,
+    locale: locale,
+    builder: (BuildContext context, Widget? child) {
+      return Theme(
+        data: ThemeData.light().copyWith(
+          colorScheme: ColorScheme.light(
+            primary: clUpBar,
+            onPrimary: clText,
+            surface: clFill,
+            onSurface: clText,
+          ),
+        ),
+        child: child!,
+      );
+    },
+  );
 }

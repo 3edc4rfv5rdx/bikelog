@@ -6,7 +6,6 @@ import 'dart:convert'; // Для работы с JSON (json.decode)
 import 'package:flutter/foundation.dart'
     show defaultTargetPlatform, TargetPlatform;
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart' show rootBundle;
 import 'package:path_provider/path_provider.dart'; // For getting system paths
 import 'package:sqflite_common_ffi/sqflite_ffi.dart'; // For Linux
 
@@ -159,21 +158,6 @@ void main() async {
   });
 }
 
-String _getLocaleCode(String language) {
-  // Словарь только для исключений, где код страны отличается
-  final Map<String, String> exceptions = {
-    'UA': 'uk',  // ukraine
-    'GR': 'el',  // greek
-    'CN': 'zh',  // china
-    'JP': 'ja',  // japan
-    'SE': 'sv',  // sveden
-    'DK': 'da',  // Датский
-    'CZ': 'cs',  // cheska
-  };
-  String langCode = language.toUpperCase();
-  return exceptions[langCode] ?? langCode.toLowerCase();
-}
-
 class BikeLogApp extends StatelessWidget {
   const BikeLogApp({super.key});
 
@@ -191,8 +175,8 @@ class BikeLogApp extends StatelessWidget {
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
-      supportedLocales: appLANGUAGES.map((lang) => Locale(_getLocaleCode(lang))).toList(),
-      locale: Locale(_getLocaleCode(xdef['Program language'])),
+      supportedLocales: appLANGUAGES.map((lang) => Locale(getLocaleCode(lang))).toList(),
+      locale: Locale(getLocaleCode(xdef['Program language'])),
 
       initialRoute: '/bike_log',
       routes: {
