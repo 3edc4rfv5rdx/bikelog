@@ -465,20 +465,6 @@ String lw(String wrd) {
   return _translationCache[wrd] ?? '(( $wrd ))'; // Возвращаем текст, если перевод не найден
 }
 
-// Function to validate the date input (format, validity, and not in the future)
-bool validateDateInput(String input) {
-  if (!isValidDateFormat(input)) {
-    return false; // Invalid format
-  }
-  if (!isValidDate(input)) {
-    return false; // Invalid date
-  }
-  if (!isDateNotInFuture(input)) {
-    return false; // Date is in the future
-  }
-  return true; // Date is valid
-}
-
 // Function to validate the price input
 bool validatePriceInput(String input) {
   if (input.isEmpty) {
@@ -1247,4 +1233,184 @@ Future<DateTime?> showLocalizedDatePicker({
       );
     },
   );
+}
+
+// Convert display date string to integer format YYYYMMDD for storage
+int dateToStorageInt(String displayDate) {
+  if (displayDate.isEmpty) return 0;
+
+  // First convert to standard format
+  String isoDate = dateToStorageFormat(displayDate);
+
+  try {
+    // Parse the ISO date (YYYY-MM-DD)
+    List<String> parts = isoDate.split('-');
+    if (parts.length != 3) return 0;
+
+    int year = int.parse(parts[0]);
+    int month = int.parse(parts[1]);
+    int day = int.parse(parts[2]);
+
+    // Format as YYYYMMDD integer
+    return year * 10000 + month * 100 + day;
+  } catch (e) {
+    myPrint('Error converting date to int: $e');
+    return 0;
+  }
+}
+
+// Convert integer YYYYMMDD from storage to formatted display date
+String dateFromStorageInt(int dateInt) {
+  if (dateInt <= 0) return '';
+
+  try {
+    // Extract year, month, day from YYYYMMDD format
+    int year = dateInt ~/ 10000;
+    int month = (dateInt % 10000) ~/ 100;
+    int day = dateInt % 100;
+
+    // Format to YYYY-MM-DD
+    String isoDate = '$year-${month.toString().padLeft(2, '0')}-${day.toString().padLeft(2, '0')}';
+
+    // Convert to display format based on user settings
+    return dateFromStorageFormat(isoDate);
+  } catch (e) {
+    myPrint('Error converting int to date: $e');
+    return '';
+  }
+}
+
+// Get today's date as YYYYMMDD integer
+int getTodayAsInt() {
+  final now = DateTime.now();
+  return now.year * 10000 + now.month * 100 + now.day;
+}
+
+// Validate integer date format
+bool isValidDateInt(int dateInt) {
+  if (dateInt <= 0) return false;
+
+  try {
+    int year = dateInt ~/ 10000;
+    int month = (dateInt % 10000) ~/ 100;
+    int day = dateInt % 100;
+
+    // Check if date is valid
+    if (year < 1900 || year > 2100) return false;
+    if (month < 1 || month > 12) return false;
+    if (day < 1 || day > 31) return false;
+
+    // Check specific month lengths
+    if (month == 2) {
+      bool isLeapYear = (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0);
+      if (day > (isLeapYear ? 29 : 28)) return false;
+    } else if ([4, 6, 9, 11].contains(month) && day > 30) {
+      return false;
+    }
+
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
+// Check if a date is in the future (for validation)
+bool isDateIntInFuture(int dateInt) {
+  if (dateInt <= 0) return false;
+
+  int todayInt = getTodayAsInt();
+  return dateInt > todayInt;
+}
+
+// Compare two dates (returns true if dateFrom is before or equal to dateTo)
+bool isDateIntFromBeforeDateIntTo(int dateFromInt, int dateToInt) {
+  if (dateFromInt <= 0 || dateToInt <= 0) return false;
+  return dateFromInt <= dateToInt;
+}
+
+// Helper function for SQL queries with date comparison
+String sqlDateCondition(String fieldName, String displayDate) {
+  int dateInt = dateToStorageInt(displayDate);
+  return "$fieldName = $dateInt";
+}
+
+// Create a range condition for dates
+String sqlDateRangeCondition(String fieldName, String fromDate, String toDate) {
+  int fromDateInt = dateToStorageInt(fromDate);
+  int toDateInt = dateToStorageInt(toDate);
+  return "$fieldName BETWEEN $fromDateInt AND $toDateInt";
+}
+
+// Updated validator for date input field
+bool validateDateInput(String input) {
+  if (!isValidDateFormat(input)) {
+    return false; // Invalid format
+  }
+
+  int dateInt = dateToStorageInt(input);
+  if (!isValidDateInt(dateInt)) {
+    return false; // Invalid date
+  }
+
+  if (isDateIntInFuture(dateInt)) {
+    return false; // Date is in the future
+  }
+
+  return true; // Date is valid
+}
+
+// Convert DateTime object to int format YYYYMMDD
+int dateTimeToInt(DateTime dateTime) {
+  return dateTime.year * 10000 + dateTime.month * 100 + dateTime.day;
+}
+
+// Convert int format YYYYMMDD to DateTime object
+DateTime intToDateTime(int dateInt) {
+  if (dateInt <= 0) {
+    return DateTime.now(); // Default to today if invalid
+  }
+
+  int year = dateInt ~/ 10000;
+  int month = (dateInt % 10000) ~/ 100;
+  int day = dateInt % 100;
+
+  return DateTime(year, month, day);
+}
+
+// Updated function for date picker to work with new format
+Future<String> showDatePickerWithFormat({
+  required BuildContext context,
+  required String currentDate,
+}) async {
+  DateTime initialDate;
+
+  // Convert current date string to DateTime
+  if (currentDate.isEmpty) {
+    initialDate = DateTime.now();
+  } else {
+    int dateInt = dateToStorageInt(currentDate);
+    initialDate = intToDateTime(dateInt);
+  }
+
+  // Ensure initialDate is valid and not in the future
+  if (initialDate.isAfter(DateTime.now())) {
+    initialDate = DateTime.now();
+  }
+
+  // Show date picker
+  final DateTime? pickedDate = await showLocalizedDatePicker(
+    context: context,
+    initialDate: initialDate,
+    firstDate: DateTime(1900),
+    lastDate: DateTime.now(),
+  );
+
+  // Return formatted date if user selected one
+  if (pickedDate != null) {
+    int dateInt = dateTimeToInt(pickedDate);
+    return dateFromStorageInt(dateInt);
+  }
+
+  // Return original date if canceled
+  return currentDate;
 }
