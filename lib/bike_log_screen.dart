@@ -160,16 +160,16 @@ class _BikeLogScreenState extends State<BikeLogScreen> with RouteAware {
     // Build the SQL query
     final String dateSort = xdef['Newest first'] == 'true' ? 'desc' : '';
     String sql = '''
-      select actions.num as num, actions.date as date, owners.name as owner,
-             bikes.brand as brand, bikes.model as model, actions.price as price, 
-             events.name as event, actions.comment as comment
-      from actions
-      inner join owners on bikes.owner = owners.num
-      inner join events on actions.event = events.num
-      inner join bikes on actions.bike = bikes.num
-      $xvFilter
-      order by date $dateSort, owner, brand, model, price, event, num
-    ''';
+    select actions.num as num, actions.date as date, owners.name as owner,
+           bikes.brand as brand, bikes.model as model, actions.price as price, 
+           events.name as event, actions.comment as comment
+    from actions
+    inner join owners on bikes.owner = owners.num
+    inner join events on actions.event = events.num
+    inner join bikes on actions.bike = bikes.num
+    $xvFilter
+    order by date $dateSort, owner, brand, model, price, event, num
+  ''';
 
     // Add LIMIT clause if lines > 0
     // Convert xdef['Last actions'] to an integer
@@ -178,11 +178,26 @@ class _BikeLogScreenState extends State<BikeLogScreen> with RouteAware {
       sql += ' limit $lines offset 0';
     }
     sql += ';';
+
     // Execute the query using your getDbData function
     final actionsFromDb = await getDbData(sql);
+
+    // Format dates according to user's preferences before setting state
+    final formattedActions = actionsFromDb.map((action) {
+      // Create a copy of the action map
+      Map<String, dynamic> formattedAction = Map<String, dynamic>.from(action);
+
+      // Format the date field if it exists
+      if (formattedAction.containsKey('date') && formattedAction['date'] != null) {
+        formattedAction['date'] = dateFromStorageFormat(formattedAction['date']);
+      }
+
+      return formattedAction;
+    }).toList();
+
     // Update the state with the fetched data
     setState(() {
-      actions = actionsFromDb; // Update the state with fetched actions
+      actions = formattedActions; // Use formatted actions
     });
   }
 
@@ -432,33 +447,44 @@ class _BikeLogScreenState extends State<BikeLogScreen> with RouteAware {
         ],
       ),
 
-      body: ListView.builder(
-        itemCount: actions.length,
-        itemBuilder: (context, index) {
-          final action = actions[index];
-          return GestureDetector(
-            onTap: () => _handleShortTap(index),
-            onLongPress: () => _handleLongTap(index),
-            child: Container(
-              color: selectedIndex == index
-                  ? clSel
-                  : null,
-              child: ListTile(
-                title: Text(
-                  '${action['date'] ?? lw('Unknown')} - ' +
-                      '${action['owner'] ?? lw('Unknown')} - ' +
-                      '${action['brand'] ?? lw('Unknown')} - ' +
-                      '${action['model'] ?? lw('Unknown')} - ' +
-                      '${action['price'] ?? '0.0'} - ' +
-                      '${action['event'] ?? lw('Unknown')} - ' +
-                      '${action['comment'] ?? lw('No comment')}',
-                  style: TextStyle(color: clText,fontSize: fsNormal),
+      body: Scrollbar(
+        // Установка thumbVisibility: true делает скролл-бар постоянно видимым
+        thumbVisibility: true,
+        // Радиус закругления для скролл-бара
+        radius: const Radius.circular(15),
+        // Толщина скролл-бара
+        thickness: 6,
+        // Делаем скролл-бар интерактивным для перетаскивания
+        interactive: true,
+        child: ListView.builder(
+          itemCount: actions.length,
+          itemBuilder: (context, index) {
+            final action = actions[index];
+            return GestureDetector(
+              onTap: () => _handleShortTap(index),
+              onLongPress: () => _handleLongTap(index),
+              child: Container(
+                color: selectedIndex == index
+                    ? clSel
+                    : null,
+                child: ListTile(
+                  title: Text(
+                    '${action['date'] ?? lw('Unknown')} - ' +
+                        '${action['owner'] ?? lw('Unknown')} - ' +
+                        '${action['brand'] ?? lw('Unknown')} - ' +
+                        '${action['model'] ?? lw('Unknown')} - ' +
+                        '${action['price'] ?? '0.0'} - ' +
+                        '${action['event'] ?? lw('Unknown')} - ' +
+                        '${action['comment'] ?? lw('No comment')}',
+                    style: TextStyle(color: clText,fontSize: fsNormal),
+                  ),
                 ),
               ),
-            ),
-          );
-        },
+            );
+          },
+        ),
       ),
+
       floatingActionButton: GestureDetector(
         onLongPress: () => okHelp(8), // help_id = 8 for the FAB
         child: FloatingActionButton(
