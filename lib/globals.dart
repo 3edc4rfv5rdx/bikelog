@@ -1203,7 +1203,7 @@ Future<void> initializeIni() async {
   myPrint("initializeIni finished");
 }
 
-// Вспомогательная функция для показа локализованного выбора даты
+// Updated helper function for showing localized date picker with proper colors
 Future<DateTime?> showLocalizedDatePicker({
   required BuildContext context,
   required DateTime initialDate,
@@ -1228,10 +1228,19 @@ Future<DateTime?> showLocalizedDatePicker({
             surface: clFill,
             onSurface: clText,
           ),
+          dialogBackgroundColor: clFon,
+          textButtonTheme: TextButtonThemeData(
+            style: TextButton.styleFrom(
+              foregroundColor: clText,
+              backgroundColor: clUpBar,
+            ),
+          ),
         ),
         child: child!,
       );
     },
+    // Add a simple note to guide users about the format
+    helpText: '${lw('Select date')} (${getDateFormatHint()})',
   );
 }
 

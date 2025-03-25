@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'globals.dart';
 
 enum FilterMode { byOwner, byBike }
@@ -55,10 +54,10 @@ class _FilterScreenState extends State<FilterScreen> {
     String? priceTo,
     String? comment,
   }) {
-    // Сначала очищаем глобальный фильтр
+    // First clear the global filter
     xvFilter = '';
 
-    // Проверяем есть ли хоть одно заполненное поле
+    // Check if any field is filled
     if ((owner != null && owner != '0') ||
         (bike != null && bike != '0') ||
         (event != null && event != '0') ||
@@ -70,24 +69,33 @@ class _FilterScreenState extends State<FilterScreen> {
 
       List<String> s = [];
       if (_filterMode == FilterMode.byOwner && owner != null && owner != '0')
-        {s.add('bikes.owner = $owner');}
+      {s.add('bikes.owner = $owner');}
       if (_filterMode == FilterMode.byBike && bike != null && bike != '0')
-        {s.add('actions.bike = $bike');}
+      {s.add('actions.bike = $bike');}
 
       if (event != null && event != '0') s.add('actions.event = $event');
-      if (dateFrom != null) s.add('actions.date >= "$dateFrom"');
-      if (dateTo != null) s.add('actions.date <= "$dateTo"');
+
+      // Convert dates to integer format for the database query
+      if (dateFrom != null) {
+        int dateInt = dateToStorageInt(dateFrom);
+        s.add('actions.date >= $dateInt');
+      }
+
+      if (dateTo != null) {
+        int dateInt = dateToStorageInt(dateTo);
+        s.add('actions.date <= $dateInt');
+      }
+
       if (priceFrom != null && priceFrom.isNotEmpty) s.add('actions.price >= $priceFrom');
       if (priceTo != null && priceTo.isNotEmpty) s.add('actions.price <= $priceTo');
       if (comment != null && comment.isNotEmpty) s.add('actions.comment LIKE "%$comment%"');
 
-      // Формируем строку фильтра
+      // Form the filter string
       if (s.isNotEmpty) {
         xvFilter = ' WHERE ' + s.join(' and ');
       }
     }
   }
-
 
   void _onDateFromChanged() {
     String text = _dateFromController.text;
@@ -97,13 +105,16 @@ class _FilterScreenState extends State<FilterScreen> {
     }
 
     // Only validate if we have a complete date format
-    if (text.length == 10) {
+    if (text.length == getDateFormatHint().length) {
       if (validateDateInput(text)) {
-        setState(() => _dateFrom = DateTime.parse(text));
+        // Convert to DateTime for state storage
+        int dateInt = dateToStorageInt(text);
+        DateTime dateTime = intToDateTime(dateInt);
+        setState(() => _dateFrom = dateTime);
       } else {
         // Revert to previous valid date if validation fails
         _dateFromController.text = _dateFrom != null ?
-        DateFormat('yyyy-MM-dd').format(_dateFrom!) : '';
+        dateFromStorageInt(dateTimeToInt(_dateFrom!)) : '';
       }
     }
     // Allow partial input without validation
@@ -117,17 +128,19 @@ class _FilterScreenState extends State<FilterScreen> {
     }
 
     // Only validate if we have a complete date format
-    if (text.length == 10) {
+    if (text.length == getDateFormatHint().length) {
       if (validateDateInput(text)) {
-        setState(() => _dateTo = DateTime.parse(text));
+        // Convert to DateTime for state storage
+        int dateInt = dateToStorageInt(text);
+        DateTime dateTime = intToDateTime(dateInt);
+        setState(() => _dateTo = dateTime);
       } else {
         // Revert to previous valid date if validation fails
         _dateToController.text = _dateTo != null ?
-        DateFormat('yyyy-MM-dd').format(_dateTo!) : '';
+        dateFromStorageInt(dateTimeToInt(_dateTo!)) : '';
       }
     }
   }
-
 
   @override
   void initState() {
@@ -139,17 +152,16 @@ class _FilterScreenState extends State<FilterScreen> {
         _filterMode = FilterMode.byOwner;
       }
 
-      // Загружаем bikes перед проверкой существования велосипеда
+      // Load bikes before checking existence
       _loadDataSequentially().then((_) {
         setState(() {
-
           String? ownerId = widget.initialFilters!['owner'];
           if (ownerId != null) {
             bool ownerExists = owners.any((owner) => owner['num'].toString() == ownerId);
             _selectedOwner = ownerExists ? ownerId : '0';
           }
 
-          // Устанавливаем значения только если соответствующие записи существуют
+          // Set values only if corresponding records exist
           String? bikeId = widget.initialFilters!['bike'];
           if (bikeId != null) {
             bool bikeExists = bikes.any((bike) => bike['num'].toString() == bikeId);
@@ -179,10 +191,15 @@ class _FilterScreenState extends State<FilterScreen> {
           _comment = _commentController.text;
 
           if (_dateFrom != null) {
-            _dateFromController.text = DateFormat('yyyy-MM-dd').format(_dateFrom!);
+            // Convert DateTime to integer, then to display format
+            int dateInt = dateTimeToInt(_dateFrom!);
+            _dateFromController.text = dateFromStorageInt(dateInt);
           }
+
           if (_dateTo != null) {
-            _dateToController.text = DateFormat('yyyy-MM-dd').format(_dateTo!);
+            // Convert DateTime to integer, then to display format
+            int dateInt = dateTimeToInt(_dateTo!);
+            _dateToController.text = dateFromStorageInt(dateInt);
           }
         });
       });
@@ -582,7 +599,7 @@ class _FilterScreenState extends State<FilterScreen> {
                             decoration: InputDecoration(
                               contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
                               border: InputBorder.none,
-                              hintText: lw('YYYY-MM-DD'),
+                              hintText: getDateFormatHint(), // Use the global date format hint
                             ),
                           ),
                         ),
@@ -590,7 +607,7 @@ class _FilterScreenState extends State<FilterScreen> {
                       IconButton(
                         icon: Icon(Icons.calendar_today, color: clText),
                         onPressed: () async {
-                          final DateTime? picked = await showDatePicker(
+                          final DateTime? picked = await showLocalizedDatePicker(
                             context: context,
                             initialDate: _dateFrom ?? DateTime.now(),
                             firstDate: DateTime(1950),
@@ -599,7 +616,9 @@ class _FilterScreenState extends State<FilterScreen> {
                           if (picked != null && picked != _dateFrom) {
                             setState(() {
                               _dateFrom = picked;
-                              _dateFromController.text = DateFormat('yyyy-MM-dd').format(picked);
+                              // Convert DateTime to integer and then to display format
+                              int dateInt = dateTimeToInt(picked);
+                              _dateFromController.text = dateFromStorageInt(dateInt);
                             });
                           }
                         },
@@ -648,7 +667,7 @@ class _FilterScreenState extends State<FilterScreen> {
                             decoration: InputDecoration(
                               contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
                               border: InputBorder.none,
-                              hintText: lw('YYYY-MM-DD'),
+                              hintText: getDateFormatHint(), // Use the global date format hint
                             ),
                           ),
                         ),
@@ -656,7 +675,7 @@ class _FilterScreenState extends State<FilterScreen> {
                       IconButton(
                         icon: Icon(Icons.calendar_today, color: clText),
                         onPressed: () async {
-                          final DateTime? picked = await showDatePicker(
+                          final DateTime? picked = await showLocalizedDatePicker(
                             context: context,
                             initialDate: _dateTo ?? DateTime.now(),
                             firstDate: DateTime(1950),
@@ -665,7 +684,9 @@ class _FilterScreenState extends State<FilterScreen> {
                           if (picked != null && picked != _dateTo) {
                             setState(() {
                               _dateTo = picked;
-                              _dateToController.text = DateFormat('yyyy-MM-dd').format(picked);
+                              // Convert DateTime to integer and then to display format
+                              int dateInt = dateTimeToInt(picked);
+                              _dateToController.text = dateFromStorageInt(dateInt);
                             });
                           }
                         },
@@ -893,91 +914,93 @@ class _FilterScreenState extends State<FilterScreen> {
                 GestureDetector(
                   onLongPress: () => okHelp(77),
                   child: ElevatedButton(
-                  onPressed: () {
-                    // Validate dates
-                    if (_dateFromController.text.isNotEmpty && !validateDateInput(_dateFromController.text)) {
-                      okInfoBarRed(lw('Invalid date FROM. Please enter a valid date not in the future'));
-                      _dateFromFocusNode.requestFocus();
-                      return;
-                    }
-
-                    if (_dateToController.text.isNotEmpty && !validateDateInput(_dateToController.text)) {
-                      okInfoBarRed(lw('Invalid date TO. Please enter a valid date not in the future'));
-                      _dateToFocusNode.requestFocus();
-                      return;
-                    }
-
-                    if (_dateFromController.text.isNotEmpty && _dateToController.text.isNotEmpty) {
-                      if (!isDateFromBeforeDateTo(_dateFromController.text, _dateToController.text)) {
-                        okInfoBarRed(lw('Date from must be before or equal to date to'));
+                    onPressed: () {
+                      // Validate dates
+                      if (_dateFromController.text.isNotEmpty && !validateDateInput(_dateFromController.text)) {
+                        okInfoBarRed(lw('Invalid date FROM. Please enter a valid date not in the future'));
                         _dateFromFocusNode.requestFocus();
                         return;
                       }
-                    }
 
-                    // Convert prices if they're in foreign currency
-                    double? priceFrom = double.tryParse(_priceFromController.text);
-                    double? priceTo = double.tryParse(_priceToController.text);
-
-                    if (_isPriceFromForeign && priceFrom != null) {
-                      priceFrom = priceFrom * double.parse(xdef['Exchange rate']);
-                      if (xdef['Round to integer'] == 'true') {
-                        priceFrom = priceFrom.roundToDouble();
-                      } else {
-                        priceFrom = double.parse(priceFrom.toStringAsFixed(2));
+                      if (_dateToController.text.isNotEmpty && !validateDateInput(_dateToController.text)) {
+                        okInfoBarRed(lw('Invalid date TO. Please enter a valid date not in the future'));
+                        _dateToFocusNode.requestFocus();
+                        return;
                       }
-                    }
 
-                    if (_isPriceToForeign && priceTo != null) {
-                      priceTo = priceTo * double.parse(xdef['Exchange rate']);
-                      if (xdef['Round to integer'] == 'true') {
-                        priceTo = priceTo.roundToDouble();
-                      } else {
-                        priceTo = double.parse(priceTo.toStringAsFixed(2));
+                      if (_dateFromController.text.isNotEmpty && _dateToController.text.isNotEmpty) {
+                        // Convert to integer format for date comparison
+                        int dateFromInt = dateToStorageInt(_dateFromController.text);
+                        int dateToInt = dateToStorageInt(_dateToController.text);
+
+                        if (dateFromInt > dateToInt) {
+                          okInfoBarRed(lw('Date from must be before or equal to date to'));
+                          _dateFromFocusNode.requestFocus();
+                          return;
+                        }
                       }
-                    }
 
-                    // Проверяем, что цена-от меньше или равна цене-до
-                    if (priceFrom != null && priceTo != null && priceFrom > priceTo) {
-                      okInfoBarRed(lw('Price FROM must be less than or equal TO price to'));
-                      _priceFromFocusNode.requestFocus();
-                      return;
-                    }
+                      // Convert prices if they're in foreign currency
+                      double? priceFrom = double.tryParse(_priceFromController.text);
+                      double? priceTo = double.tryParse(_priceToController.text);
 
-                    // Convert string dates to DateTime
-                    DateTime? dateFrom = _dateFromController.text.isNotEmpty ?
-                    DateTime.parse(_dateFromController.text) : null;
-                    DateTime? dateTo = _dateToController.text.isNotEmpty ?
-                    DateTime.parse(_dateToController.text) : null;
+                      if (_isPriceFromForeign && priceFrom != null) {
+                        priceFrom = priceFrom * double.parse(xdef['Exchange rate']);
+                        if (xdef['Round to integer'] == 'true') {
+                          priceFrom = priceFrom.roundToDouble();
+                        } else {
+                          priceFrom = double.parse(priceFrom.toStringAsFixed(2));
+                        }
+                      }
 
-                    String normComment = strCleanAndEscape(_commentController.text);
+                      if (_isPriceToForeign && priceTo != null) {
+                        priceTo = priceTo * double.parse(xdef['Exchange rate']);
+                        if (xdef['Round to integer'] == 'true') {
+                          priceTo = priceTo.roundToDouble();
+                        } else {
+                          priceTo = double.parse(priceTo.toStringAsFixed(2));
+                        }
+                      }
 
-                    buildFilter(
-                      owner: _selectedOwner,
-                      bike: _selectedBike,
-                      event: _selectedEvent,
-                      dateFrom: dateFrom?.toString().split(' ')[0],
-                      dateTo: dateTo?.toString().split(' ')[0],
-                      priceFrom: priceFrom?.toString(),
-                      priceTo: priceTo?.toString(),
-                      comment: normComment,
-                    );
+                      // Check that price-from is less than or equal to price-to
+                      if (priceFrom != null && priceTo != null && priceFrom > priceTo) {
+                        okInfoBarRed(lw('Price FROM must be less than or equal TO price to'));
+                        _priceFromFocusNode.requestFocus();
+                        return;
+                      }
 
-                    // Return data to the calling widget
-                    Navigator.pop(context, {
-                      'owner': _selectedOwner,
-                      'bike': _selectedBike,
-                      'event': _selectedEvent,
-                      'dateFrom': dateFrom,
-                      'dateTo': dateTo,
-                      'priceFrom': priceFrom,
-                      'priceTo': priceTo,
-                      'comment': normComment,
-                      'isPriceFromForeign': false,
-                      'isPriceToForeign': false,
-                    });
-                   },
+                      // Use display format for filter building - these will be converted to integers in buildFilter
+                      String? dateFromStr = _dateFromController.text.isNotEmpty ? _dateFromController.text : null;
+                      String? dateToStr = _dateToController.text.isNotEmpty ? _dateToController.text : null;
 
+                      String normComment = strCleanAndEscape(_commentController.text);
+
+                      buildFilter(
+                        owner: _selectedOwner,
+                        bike: _selectedBike,
+                        event: _selectedEvent,
+                        dateFrom: dateFromStr,
+                        dateTo: dateToStr,
+                        priceFrom: priceFrom?.toString(),
+                        priceTo: priceTo?.toString(),
+                        comment: normComment,
+                      );
+
+                      // Return data to the calling widget
+                      Navigator.pop(context, {
+                        'owner': _selectedOwner,
+                        'bike': _selectedBike,
+                        'event': _selectedEvent,
+                        'dateFrom': _dateFrom,
+                        'dateTo': _dateTo,
+                        'priceFrom': priceFrom,
+                        'priceTo': priceTo,
+                        'comment': normComment,
+                        'isPriceFromForeign': false,
+                        'isPriceToForeign': false,
+                      });
+                    },
+                    // Button styling remains the same
                     style: ElevatedButton.styleFrom(
                       backgroundColor: clUpBar,
                       foregroundColor: clText,
@@ -985,7 +1008,7 @@ class _FilterScreenState extends State<FilterScreen> {
                       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                       minimumSize: const Size(100, 40),
                     ),
-                  child: Text(lw('Apply')),
+                    child: Text(lw('Apply')),
                   )
                 ),
               ],
