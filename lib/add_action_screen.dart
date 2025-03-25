@@ -165,11 +165,10 @@ class _AddActionScreenState extends State<AddActionScreen> {
     selectedBike = '0';
     selectedEvent = '0';
 
-    // Set the current date in the date field using user's preferred format
+    // Set the current date in the date field using integer format
     final currentDate = DateTime.now();
-    final storageDate =
-        "${currentDate.year}-${currentDate.month.toString().padLeft(2, '0')}-${currentDate.day.toString().padLeft(2, '0')}";
-    final formattedDate = dateFromStorageFormat(storageDate);
+    final dateInt = currentDate.year * 10000 + currentDate.month * 100 + currentDate.day;
+    final formattedDate = dateFromStorageInt(dateInt);
     dateController.text = formattedDate;
 
     // Load data on initialization
@@ -267,9 +266,9 @@ class _AddActionScreenState extends State<AddActionScreen> {
           // Convert bike to string and check for null
           selectedBike = action['bike']?.toString() ?? '0';
 
-          // Format the date from storage format to display format
-          String storageDate = action['date'] ?? '';
-          dateController.text = dateFromStorageFormat(storageDate);
+          // Format the date from integer format to display format
+          int dateInt = action['date'] ?? 0;
+          dateController.text = dateFromStorageInt(dateInt);
 
           selectedEvent = action['event']?.toString() ?? '0';
           priceController.text = action['price'].toString();
@@ -320,144 +319,126 @@ class _AddActionScreenState extends State<AddActionScreen> {
             child: IconButton(
               icon: Icon(Icons.save, color: clText), // Save icon color
               onPressed: () async {
-                // Проверка, что поле Bike заполнено
+                // Check that Bike field is filled
                 if (selectedBike == null || selectedBike == '0') {
                   okInfoBarYellow(lw('Please select a bike'));
-                  bikeFocusNode.requestFocus(); // Установить фокус на поле Bike
+                  bikeFocusNode.requestFocus();
                   return;
                 }
 
-                // Проверка, что поле Event заполнено
+                // Check that Event field is filled
                 if (selectedEvent == null || selectedEvent == '0') {
                   okInfoBarYellow(lw('Please select an event'));
-                  eventFocusNode
-                      .requestFocus(); // Установить фокус на поле Event
+                  eventFocusNode.requestFocus();
                   return;
                 }
 
-                // Проверка даты
+                // Date validation
                 if (!validateDateInput(dateController.text)) {
                   String msg = lw('Invalid date');
-                  msg +=
-                      ' ' +
-                      lw('Please enter a valid date in the format') +
-                      ' ' +
-                      getDateFormatHint();
+                  msg += ' ' + lw('Please enter a valid date in the format') + ' ' + getDateFormatHint();
                   msg += ' ' + lw('and ensure it is not in the future');
                   okInfoBarYellow(msg);
                   return;
                 }
 
-                // Проверка цены
+                // Price validation
                 if (!isValidCalculatorExpression(priceController.text)) {
                   okInfoBarYellow(
-                    lw(
-                      'Invalid price. Please enter a valid number (with optional decimal point)',
-                    ),
+                    lw('Invalid price. Please enter a valid number (with optional decimal point)'),
                   );
-                  priceFocusNode.requestFocus(); // фокус на поле Price
+                  priceFocusNode.requestFocus();
                   return;
                 }
 
-                // Обработка цены
+                // Process price
                 String priceText = priceController.text.trim();
                 double price = 0.0;
                 if (priceText.isNotEmpty) {
-                  // Проверка на наличие математических операторов
+                  // Check for mathematical operators
                   bool isExpression = priceText.contains(RegExp(r'[+\-*/]'));
 
                   if (isExpression) {
-                    // Вычисляем выражение
+                    // Calculate the expression
                     price = evaluateExpression(priceText);
 
-                    // Добавляем выражение в комментарий
+                    // Add expression to comment
                     String expressionComment = ' (=' + priceText + ')';
                     if (!commentController.text.contains(expressionComment)) {
                       commentController.text += expressionComment;
                     }
                   } else {
-                    // Обычная цена
+                    // Regular price
                     price = double.tryParse(priceText) ?? 0.0;
                   }
 
-                  // Если валюта доллар, умножаем на курс обмена
+                  // If dollar currency, multiply by exchange rate
                   if (isDollar) {
-                    // Для выражений сначала добавляем результат вычисления в долларах
+                    // For expressions, first add the dollar result
                     if (isExpression) {
-                      String dollarValueComment =
-                          ' (\$' + price.toString() + ')';
-                      if (!commentController.text.contains(
-                        dollarValueComment,
-                      )) {
+                      String dollarValueComment = ' (\$' + price.toString() + ')';
+                      if (!commentController.text.contains(dollarValueComment)) {
                         commentController.text += dollarValueComment;
                       }
                     } else {
-                      // Для обычной цены добавляем исходное значение
+                      // For regular price, add the original value
                       String dollarComment = ' (\$' + priceText + ')';
                       if (!commentController.text.contains(dollarComment)) {
                         commentController.text += dollarComment;
                       }
                     }
 
-                    // Конвертируем в локальную валюту
-                    final exchangeRate =
-                        double.tryParse(xdef['Exchange rate']) ?? 1.0;
+                    // Convert to local currency
+                    final exchangeRate = double.tryParse(xdef['Exchange rate']) ?? 1.0;
                     price *= exchangeRate;
                   }
 
-                  // Округляем цену согласно настройке
+                  // Round price according to settings
                   if (xdef['Round to integer'] == 'true') {
-                    price = price.round().toDouble(); // Округляем до целого
+                    price = price.round().toDouble(); // Round to integer
                   } else {
-                    price = double.parse(
-                      price.toStringAsFixed(2),
-                    ); // Округляем до 2 знаков
+                    price = double.parse(price.toStringAsFixed(2)); // Round to 2 decimal places
                   }
                 }
 
-                String originalComment = strCleanAndEscape(
-                  commentController.text,
-                );
+                String originalComment = strCleanAndEscape(commentController.text);
 
-                // Преобразуем отображаемую дату в формат хранения
-                String dbDateFormat = dateToStorageFormat(dateController.text);
+                // Convert display date to integer format for storage
+                int dbDateInt = dateToStorageInt(dateController.text);
 
                 try {
                   String sql;
                   if (widget.actionNum != null) {
                     // Update existing record
                     sql = '''
-                      UPDATE actions
-                      SET bike = $selectedBike,
-                          date = '$dbDateFormat',
-                          event = $selectedEvent,
-                          price = $price,
-                          comment = '$originalComment'
-                      WHERE num = ${widget.actionNum};
-                    ''';
+          UPDATE actions
+          SET bike = $selectedBike,
+              date = $dbDateInt,
+              event = $selectedEvent,
+              price = $price,
+              comment = '$originalComment'
+          WHERE num = ${widget.actionNum};
+        ''';
                   } else {
                     // Insert new record
                     sql = '''
-                      INSERT INTO actions
-                      (bike, date, event, price, comment)
-                      VALUES
-                      ($selectedBike, '$dbDateFormat',
-                      $selectedEvent, $price, '$originalComment');
-                    ''';
+          INSERT INTO actions
+          (bike, date, event, price, comment)
+          VALUES
+          ($selectedBike, $dbDateInt, $selectedEvent, $price, '$originalComment');
+        ''';
                   }
                   await setDbData(sql);
 
-                  if (widget.actionNum == null &&
-                      xdef['Several actions'] == 'true') {
+                  if (widget.actionNum == null && xdef['Several actions'] == 'true') {
                     // Clear the form and stay on screen
                     setState(() {
                       selectedBike = '0';
                       selectedEvent = '0';
                       // Reset date to current
                       final currentDate = DateTime.now();
-                      final storageDate =
-                          "${currentDate.year}-${currentDate.month.toString().padLeft(2, '0')}-${currentDate.day.toString().padLeft(2, '0')}";
-                      final formattedDate = dateFromStorageFormat(storageDate);
+                      final dateInt = currentDate.year * 10000 + currentDate.month * 100 + currentDate.day;
+                      final formattedDate = dateFromStorageInt(dateInt);
                       dateController.text = formattedDate;
                       priceController.text = '';
                       commentController.text = '';
@@ -599,30 +580,27 @@ class _AddActionScreenState extends State<AddActionScreen> {
                           DateTime initialDate;
                           try {
                             // Try to parse the current value in the field
-                            final storageFormat = dateToStorageFormat(
-                              dateController.text,
-                            );
-                            initialDate = DateTime.parse(storageFormat);
+                            int dateInt = dateToStorageInt(dateController.text);
+                            int year = dateInt ~/ 10000;
+                            int month = (dateInt % 10000) ~/ 100;
+                            int day = dateInt % 100;
+                            initialDate = DateTime(year, month, day);
                           } catch (e) {
                             // If parsing fails, use current date
                             initialDate = DateTime.now();
                           }
 
-                          final DateTime? pickedDate =
-                              await showLocalizedDatePicker(
-                                context: context,
-                                initialDate: initialDate,
-                                firstDate: DateTime(1950),
-                                lastDate: DateTime.now(),
-                              );
+                          final DateTime? pickedDate = await showLocalizedDatePicker(
+                            context: context,
+                            initialDate: initialDate,
+                            firstDate: DateTime(1950),
+                            lastDate: DateTime.now(),
+                          );
 
                           if (pickedDate != null) {
-                            // Convert to storage format then to display format
-                            final storageFormat =
-                                "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
-                            final displayFormat = dateFromStorageFormat(
-                              storageFormat,
-                            );
+                            // Convert directly to integer format
+                            final dateInt = pickedDate.year * 10000 + pickedDate.month * 100 + pickedDate.day;
+                            final displayFormat = dateFromStorageInt(dateInt);
 
                             setState(() {
                               dateController.text = displayFormat;
