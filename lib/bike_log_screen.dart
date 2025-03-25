@@ -78,21 +78,40 @@ class _BikeLogScreenState extends State<BikeLogScreen> with RouteAware {
       // Create the directory for reports if it doesn't exist
       String reportDir = '$xvBakDir/reports';
       await newMakeDir(reportDir);
+
       // Generate a timestamp for the filename
       DateTime now = DateTime.now();
       String timestamp = "${now.year}${now.month.toString().padLeft(2, '0')}${now.day.toString().padLeft(2, '0')}";
       timestamp += "${now.hour.toString().padLeft(2, '0')}${now.minute.toString().padLeft(2, '0')}";
+
       // Create the file with a timestamp
       File csvFile = File('$reportDir/actions-$timestamp.csv');
       IOSink sink = csvFile.openWrite();
+
       // Write header row if there's data
       if (actions.isNotEmpty) {
         // Get the keys from the first item for the header
         sink.writeln(actions.first.keys.join(','));
+
         // Write each row of data
         for (var row in actions) {
+          // Create a copy of the row for export
+          Map<String, dynamic> exportRow = Map<String, dynamic>.from(row);
+
+          // Convert display date to ISO format (YYYY-MM-DD) for export
+          if (exportRow.containsKey('date') && exportRow['date'] != null) {
+            // Convert the display date back to integer format
+            int dateInt = dateToStorageInt(exportRow['date'].toString());
+
+            // Convert integer to ISO format string (YYYY-MM-DD)
+            int year = dateInt ~/ 10000;
+            int month = (dateInt % 10000) ~/ 100;
+            int day = dateInt % 100;
+            exportRow['date'] = '$year-${month.toString().padLeft(2, '0')}-${day.toString().padLeft(2, '0')}';
+          }
+
           // Process each value properly for CSV format
-          List<String> formattedValues = row.values.map((value) {
+          List<String> formattedValues = exportRow.values.map((value) {
             // If value is a string, enclose in quotes and escape any existing quotes
             if (value is String) {
               String escapedValue = value.replaceAll('"', '""');
@@ -103,12 +122,14 @@ class _BikeLogScreenState extends State<BikeLogScreen> with RouteAware {
               return value.toString(); // Numbers don't need quotes
             }
           }).toList();
+
           sink.writeln(formattedValues.join(','));
         }
       } else {
         // If no data, just write a header row with standard fields
         sink.writeln('num,date,owner,brand,model,price,event,comment');
       }
+
       await sink.flush();
       await sink.close();
       String msg = 'Report exported to CSV';
@@ -150,9 +171,8 @@ class _BikeLogScreenState extends State<BikeLogScreen> with RouteAware {
     okInfo(txt);
   }
 
-  // Function to load actions from the database
   Future<void> _loadActions() async {
-    // Не загружаем данные, если PIN-защита включена, но PIN не прошел проверку
+    // Don't load data if PIN protection is enabled but PIN hasn't been verified
     if (xdef['Use PIN'] == 'true' && !_pinVerified) {
       return;
     }
@@ -172,7 +192,6 @@ class _BikeLogScreenState extends State<BikeLogScreen> with RouteAware {
   ''';
 
     // Add LIMIT clause if lines > 0
-    // Convert xdef['Last actions'] to an integer
     int lines = int.tryParse(xdef['Last actions']) ?? 0;
     if (lines > 0) {
       sql += ' limit $lines offset 0';
@@ -187,9 +206,21 @@ class _BikeLogScreenState extends State<BikeLogScreen> with RouteAware {
       // Create a copy of the action map
       Map<String, dynamic> formattedAction = Map<String, dynamic>.from(action);
 
-      // Format the date field if it exists
+      // Format the date field if it exists (from integer YYYYMMDD to display format)
       if (formattedAction.containsKey('date') && formattedAction['date'] != null) {
-        formattedAction['date'] = dateFromStorageFormat(formattedAction['date']);
+        // Handle both string and integer formats for backward compatibility
+        if (formattedAction['date'] is int) {
+          formattedAction['date'] = dateFromStorageInt(formattedAction['date']);
+        } else if (formattedAction['date'] is String) {
+          // Try to parse as int first
+          int? dateInt = int.tryParse(formattedAction['date']);
+          if (dateInt != null) {
+            formattedAction['date'] = dateFromStorageInt(dateInt);
+          } else {
+            // Handle old format if unable to parse as integer
+            formattedAction['date'] = dateFromStorageFormat(formattedAction['date']);
+          }
+        }
       }
 
       return formattedAction;
