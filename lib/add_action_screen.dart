@@ -1,5 +1,7 @@
-import 'package:flutter/material.dart';
 import 'dart:math';
+
+import 'package:flutter/material.dart';
+
 import 'globals.dart'; // Import global variables and functions
 
 class AddActionScreen extends StatefulWidget {
@@ -40,7 +42,6 @@ class _AddActionScreenState extends State<AddActionScreen> {
   // Checkbox state for currency
   bool isDollar = false;
 
-
   // Функции для оценки математических выражений
   double evaluateExpression(String expression) {
     try {
@@ -56,7 +57,7 @@ class _AddActionScreenState extends State<AddActionScreen> {
     }
   }
 
-// Helper function to tokenize the expression
+  // Helper function to tokenize the expression
   List<String> _tokenize(String expression) {
     List<String> tokens = [];
     String currentNumber = '';
@@ -84,14 +85,15 @@ class _AddActionScreenState extends State<AddActionScreen> {
     return tokens;
   }
 
-// Helper function to evaluate tokenized expression
+  // Helper function to evaluate tokenized expression
   double _evaluate(List<String> tokens) {
     // First pass: Handle multiplication and division
     List<String> secondPassTokens = [];
 
     int i = 0;
     while (i < tokens.length) {
-      if (i + 2 < tokens.length && (tokens[i + 1] == '*' || tokens[i + 1] == '/')) {
+      if (i + 2 < tokens.length &&
+          (tokens[i + 1] == '*' || tokens[i + 1] == '/')) {
         double leftOperand = double.parse(tokens[i]);
         String operator = tokens[i + 1];
         double rightOperand = double.parse(tokens[i + 2]);
@@ -99,7 +101,8 @@ class _AddActionScreenState extends State<AddActionScreen> {
         double result;
         if (operator == '*') {
           result = leftOperand * rightOperand;
-        } else { // operator == '/'
+        } else {
+          // operator == '/'
           if (rightOperand == 0) {
             throw FormatException('Division by zero');
           }
@@ -131,7 +134,7 @@ class _AddActionScreenState extends State<AddActionScreen> {
     return result;
   }
 
-// Функция проверки ввода цены (включая выражения)
+  // Функция проверки ввода цены (включая выражения)
   bool isValidCalculatorExpression(String input) {
     if (input.isEmpty) {
       return true; // Allow empty price
@@ -154,7 +157,6 @@ class _AddActionScreenState extends State<AddActionScreen> {
     }
   }
 
-
   @override
   void initState() {
     super.initState();
@@ -163,9 +165,11 @@ class _AddActionScreenState extends State<AddActionScreen> {
     selectedBike = '0';
     selectedEvent = '0';
 
-    // Set the current date in the date field
+    // Set the current date in the date field using user's preferred format
     final currentDate = DateTime.now();
-    final formattedDate = "${currentDate.toLocal()}".split(' ')[0];
+    final storageDate =
+        "${currentDate.year}-${currentDate.month.toString().padLeft(2, '0')}-${currentDate.day.toString().padLeft(2, '0')}";
+    final formattedDate = dateFromStorageFormat(storageDate);
     dateController.text = formattedDate;
 
     // Load data on initialization
@@ -216,14 +220,14 @@ class _AddActionScreenState extends State<AddActionScreen> {
       bikes =
           bikesFromDb.map((bike) {
             return {
-              'num':
-                  bike['num']?.toString() ?? '0', // Use 'Num' from the query
-              'owner':
-                  bike['owner'] ?? lw('Unknown'), // Use 'Owner' from the query
-              'brand':
-                  bike['brand'] ?? lw('Unknown'), // Use 'Brand' from the query
-              'model':
-                  bike['model'] ?? lw('Unknown'), // Use 'Model' from the query
+              'num': bike['num']?.toString() ?? '0',
+              // Use 'Num' from the query
+              'owner': bike['owner'] ?? lw('Unknown'),
+              // Use 'Owner' from the query
+              'brand': bike['brand'] ?? lw('Unknown'),
+              // Use 'Brand' from the query
+              'model': bike['model'] ?? lw('Unknown'),
+              // Use 'Model' from the query
             };
           }).toList();
     });
@@ -240,10 +244,10 @@ class _AddActionScreenState extends State<AddActionScreen> {
       events =
           eventsFromDb.map((event) {
             return {
-              'num':
-                  event['num']?.toString() ?? '0', // Use 'Num' from the query
-              'name':
-                  event['name'] ?? lw('Unknown'), // Use 'Name' from the query
+              'num': event['num']?.toString() ?? '0',
+              // Use 'Num' from the query
+              'name': event['name'] ?? lw('Unknown'),
+              // Use 'Name' from the query
             };
           }).toList();
     });
@@ -262,7 +266,11 @@ class _AddActionScreenState extends State<AddActionScreen> {
         setState(() {
           // Convert bike to string and check for null
           selectedBike = action['bike']?.toString() ?? '0';
-          dateController.text = action['date'] ?? '';
+
+          // Format the date from storage format to display format
+          String storageDate = action['date'] ?? '';
+          dateController.text = dateFromStorageFormat(storageDate);
+
           selectedEvent = action['event']?.toString() ?? '0';
           priceController.text = action['price'].toString();
           commentController.text = action['comment'] ?? '';
@@ -271,7 +279,6 @@ class _AddActionScreenState extends State<AddActionScreen> {
             selectedBike = '0'; // Set default value
           }
         });
-        // Debug logging
       }
     } catch (e) {
       String msg = lw('Failed to load action data');
@@ -331,8 +338,12 @@ class _AddActionScreenState extends State<AddActionScreen> {
                 // Проверка даты
                 if (!validateDateInput(dateController.text)) {
                   String msg = lw('Invalid date');
-                  msg += lw('Please enter a valid date in the format YYYY-MM-DD ',);
-                  msg += lw('and ensure it is not in the future');
+                  msg +=
+                      ' ' +
+                      lw('Please enter a valid date in the format') +
+                      ' ' +
+                      getDateFormatHint();
+                  msg += ' ' + lw('and ensure it is not in the future');
                   okInfoBarYellow(msg);
                   return;
                 }
@@ -340,7 +351,9 @@ class _AddActionScreenState extends State<AddActionScreen> {
                 // Проверка цены
                 if (!isValidCalculatorExpression(priceController.text)) {
                   okInfoBarYellow(
-                    lw('Invalid price. Please enter a valid number (with optional decimal point)'),
+                    lw(
+                      'Invalid price. Please enter a valid number (with optional decimal point)',
+                    ),
                   );
                   priceFocusNode.requestFocus(); // фокус на поле Price
                   return;
@@ -371,8 +384,11 @@ class _AddActionScreenState extends State<AddActionScreen> {
                   if (isDollar) {
                     // Для выражений сначала добавляем результат вычисления в долларах
                     if (isExpression) {
-                      String dollarValueComment = ' (\$' + price.toString() + ')';
-                      if (!commentController.text.contains(dollarValueComment)) {
+                      String dollarValueComment =
+                          ' (\$' + price.toString() + ')';
+                      if (!commentController.text.contains(
+                        dollarValueComment,
+                      )) {
                         commentController.text += dollarValueComment;
                       }
                     } else {
@@ -384,7 +400,8 @@ class _AddActionScreenState extends State<AddActionScreen> {
                     }
 
                     // Конвертируем в локальную валюту
-                    final exchangeRate = double.tryParse(xdef['Exchange rate']) ?? 1.0;
+                    final exchangeRate =
+                        double.tryParse(xdef['Exchange rate']) ?? 1.0;
                     price *= exchangeRate;
                   }
 
@@ -392,30 +409,39 @@ class _AddActionScreenState extends State<AddActionScreen> {
                   if (xdef['Round to integer'] == 'true') {
                     price = price.round().toDouble(); // Округляем до целого
                   } else {
-                    price = double.parse(price.toStringAsFixed(2)); // Округляем до 2 знаков
+                    price = double.parse(
+                      price.toStringAsFixed(2),
+                    ); // Округляем до 2 знаков
                   }
                 }
 
-                String originalComment = strCleanAndEscape(commentController.text);
+                String originalComment = strCleanAndEscape(
+                  commentController.text,
+                );
+
+                // Преобразуем отображаемую дату в формат хранения
+                String dbDateFormat = dateToStorageFormat(dateController.text);
 
                 try {
                   String sql;
-                  if (widget.actionNum != null) { // Update existing record
+                  if (widget.actionNum != null) {
+                    // Update existing record
                     sql = '''
-                      UPDATE actions 
+                      UPDATE actions
                       SET bike = $selectedBike,
-                          date = '${dateController.text}',
+                          date = '$dbDateFormat',
                           event = $selectedEvent,
                           price = $price,
                           comment = '$originalComment'
                       WHERE num = ${widget.actionNum};
                     ''';
-                  } else { // Insert new record
-                      sql = '''
-                      INSERT INTO actions 
+                  } else {
+                    // Insert new record
+                    sql = '''
+                      INSERT INTO actions
                       (bike, date, event, price, comment)
-                      VALUES 
-                      ($selectedBike, '${dateController.text}', 
+                      VALUES
+                      ($selectedBike, '$dbDateFormat',
                       $selectedEvent, $price, '$originalComment');
                     ''';
                   }
@@ -429,8 +455,9 @@ class _AddActionScreenState extends State<AddActionScreen> {
                       selectedEvent = '0';
                       // Reset date to current
                       final currentDate = DateTime.now();
-                      final formattedDate =
-                          "${currentDate.toLocal()}".split(' ')[0];
+                      final storageDate =
+                          "${currentDate.year}-${currentDate.month.toString().padLeft(2, '0')}-${currentDate.day.toString().padLeft(2, '0')}";
+                      final formattedDate = dateFromStorageFormat(storageDate);
                       dateController.text = formattedDate;
                       priceController.text = '';
                       commentController.text = '';
@@ -553,7 +580,7 @@ class _AddActionScreenState extends State<AddActionScreen> {
                           controller: dateController,
                           decoration: InputDecoration(
                             border: OutlineInputBorder(),
-                            hintText: lw('YYYY-MM-DD'),
+                            hintText: getDateFormatHint(),
                             filled: true,
                             fillColor: clFill,
                           ),
@@ -569,17 +596,36 @@ class _AddActionScreenState extends State<AddActionScreen> {
                       IconButton(
                         icon: Icon(Icons.calendar_today, color: clText),
                         onPressed: () async {
-                          final DateTime? pickedDate = await showDatePicker(
-                            context: context,
-                            initialDate: DateTime.now(),
-                            firstDate: DateTime(1950),
-                            lastDate: DateTime.now(),
-                          );
+                          DateTime initialDate;
+                          try {
+                            // Try to parse the current value in the field
+                            final storageFormat = dateToStorageFormat(
+                              dateController.text,
+                            );
+                            initialDate = DateTime.parse(storageFormat);
+                          } catch (e) {
+                            // If parsing fails, use current date
+                            initialDate = DateTime.now();
+                          }
+
+                          final DateTime? pickedDate =
+                              await showLocalizedDatePicker(
+                                context: context,
+                                initialDate: initialDate,
+                                firstDate: DateTime(1950),
+                                lastDate: DateTime.now(),
+                              );
+
                           if (pickedDate != null) {
-                            final formattedDate =
-                                "${pickedDate.toLocal()}".split(' ')[0];
+                            // Convert to storage format then to display format
+                            final storageFormat =
+                                "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
+                            final displayFormat = dateFromStorageFormat(
+                              storageFormat,
+                            );
+
                             setState(() {
-                              dateController.text = formattedDate;
+                              dateController.text = displayFormat;
                             });
                           }
                         },

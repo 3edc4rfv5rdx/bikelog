@@ -1017,11 +1017,11 @@ Future<String?> showPinDialog({
 String dateToStorageFormat(String displayDate) {
   if (displayDate.isEmpty) return '';
 
-  String format = xdef['Date format'];
-  String separator = xdef['Date separator'];
+  String format = xdef['.Date format'];
+  String separator = xdef['.Date separator'];
 
   List<String> parts = displayDate.split(separator);
-  if (parts.length != 3) return displayDate; // Invalid format
+  if (parts.length != 3) return displayDate; // Неверный формат
 
   String year, month, day;
 
@@ -1040,25 +1040,25 @@ String dateToStorageFormat(String displayDate) {
 
     case 'YYYY-MM-DD':
     default:
-    // Already in ISO format, just standardize separators
+    // Уже в ISO формате, просто стандартизируем разделители
       year = parts[0];
       month = parts[1].padLeft(2, '0');
       day = parts[2].padLeft(2, '0');
       break;
   }
 
-  return '$year-$month-$day'; // Always use - for storage
+  return '$year-$month-$day'; // Всегда используем - для хранения
 }
 
-// Convert from storage format (YYYY-MM-DD) to display format
+// Преобразование из формата хранения (YYYY-MM-DD) в формат отображения
 String dateFromStorageFormat(String storageDate) {
   if (storageDate.isEmpty) return '';
 
-  String format = xdef['Date format'];
-  String separator = xdef['Date separator'];
+  String format = xdef['.Date format'];
+  String separator = xdef['.Date separator'];
 
   List<String> parts = storageDate.split('-');
-  if (parts.length != 3) return storageDate; // Invalid format
+  if (parts.length != 3) return storageDate; // Неверный формат
 
   String year = parts[0];
   String month = parts[1];
@@ -1077,22 +1077,22 @@ String dateFromStorageFormat(String storageDate) {
   }
 }
 
-// Get hint text for date input fields based on current settings
+// Получение текста подсказки для полей ввода даты на основе текущих настроек
 String getDateFormatHint() {
-  String format = xdef['Date format'];
-  String separator = xdef['Date separator'];
+  String format = xdef['.Date format'];
+  String separator = xdef['.Date separator'];
   return format.replaceAll('-', separator);
 }
 
-// Helper to get an example date in the current format
+// Вспомогательная функция для получения примера даты в текущем формате
 String getDateFormatExample() {
   final today = DateTime.now();
   final day = today.day.toString().padLeft(2, '0');
   final month = today.month.toString().padLeft(2, '0');
   final year = today.year.toString();
 
-  String format = xdef['Date format'];
-  String separator = xdef['Date separator'];
+  String format = xdef['.Date format'];
+  String separator = xdef['.Date separator'];
 
   switch (format) {
     case 'DD-MM-YYYY':
@@ -1105,14 +1105,14 @@ String getDateFormatExample() {
   }
 }
 
-// Update these existing date validation functions
+// Обновим существующие функции проверки даты
 bool isValidDateFormat(String input) {
   if (input.isEmpty) return false;
 
-  String format = xdef['Date format'];
-  String separator = xdef['Date separator'];
+  String format = xdef['.Date format'];
+  String separator = xdef['.Date separator'];
 
-  // Escape the separator for regex
+  // Экранируем разделитель для регулярного выражения
   String escapedSeparator = separator.replaceAll('.', '\\.');
 
   String pattern;
@@ -1134,10 +1134,10 @@ bool isValidDateFormat(String input) {
 
 bool isValidDate(String input) {
   try {
-    // Convert to storage format first
+    // Сначала преобразуем в формат хранения
     String storageFormat = dateToStorageFormat(input);
 
-    // Split using ISO separator
+    // Разбиваем по ISO разделителю
     final parts = storageFormat.split('-');
     if (parts.length != 3) return false;
 
@@ -1154,10 +1154,10 @@ bool isValidDate(String input) {
 
 bool isDateNotInFuture(String input) {
   try {
-    // Convert to storage format first
+    // Сначала преобразуем в формат хранения
     String storageFormat = dateToStorageFormat(input);
 
-    // Split using ISO separator
+    // Разбиваем по ISO разделителю
     final parts = storageFormat.split('-');
     if (parts.length != 3) return false;
 
@@ -1176,7 +1176,7 @@ bool isDateNotInFuture(String input) {
 
 bool isDateFromBeforeDateTo(String dateFrom, String dateTo) {
   try {
-    // Convert both to storage format
+    // Преобразуем обе даты в формат хранения
     String fromStorage = dateToStorageFormat(dateFrom);
     String toStorage = dateToStorageFormat(dateTo);
 
@@ -1188,8 +1188,6 @@ bool isDateFromBeforeDateTo(String dateFrom, String dateTo) {
   }
 }
 
-// Add to initializeIni() function
-// Make sure to find and update this function in your code
 Future<void> initializeIni() async {
   final dbFile = File(xvSettHome);
   if (!await dbFile.exists()) {
@@ -1208,21 +1206,18 @@ Future<void> initializeIni() async {
       await database?.close();
     }
   }
-
-  // Make sure date format settings have defaults
   for (var key in xdef.keys) {
     String saved = await getKey(key);
     if (saved == '') {
-      await setKey(key, xdef[key]); // default
+      await setKey(key, xdef[key]); // defaults
     } else {
       xdef[key] = saved;
     }
   }
-
   myPrint("initializeIni finished");
 }
 
-// Helper function to show a localized date picker
+// Вспомогательная функция для показа локализованного выбора даты
 Future<DateTime?> showLocalizedDatePicker({
   required BuildContext context,
   required DateTime initialDate,
