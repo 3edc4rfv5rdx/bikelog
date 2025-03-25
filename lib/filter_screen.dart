@@ -298,185 +298,184 @@ class _FilterScreenState extends State<FilterScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: GestureDetector(
-            onLongPress: () => okHelp(3),
-            child: Text(
-              lw('Actions Filters'),
-              style: TextStyle(
-                fontSize: fsLarge,
-                fontWeight: fwNormal,
-                color: clText,
-              ),
+      appBar: AppBar(
+        title: GestureDetector(
+          onLongPress: () => okHelp(3),
+          child: Text(
+            lw('Actions Filters'),
+            style: TextStyle(
+              fontSize: fsLarge,
+              fontWeight: fwNormal,
+              color: clText,
             ),
           ),
-          backgroundColor: clUpBar,
-          leading: GestureDetector(
-            onLongPress: () => okHelp(9),
+        ),
+        backgroundColor: clUpBar,
+        leading: GestureDetector(
+          onLongPress: () => okHelp(9),
+          child: IconButton(
+            icon: Icon(Icons.arrow_back, color: clText),
+            iconSize: fsLarge,
+            color: clText,
+            onPressed: () {
+              Navigator.pop(context, {
+                'owner': _selectedOwner,
+                'bike': _selectedBike,
+                'event': _selectedEvent,
+                'dateFrom': _dateFrom,
+                'dateTo': _dateTo,
+                'priceFrom': _priceFrom != null ? double.tryParse(_priceFrom!) : null,
+                'priceTo': _priceTo != null ? double.tryParse(_priceTo!) : null,
+                'comment': _comment,
+                'isPriceFromForeign': _isPriceFromForeign,
+                'isPriceToForeign': _isPriceToForeign,
+              });
+            },
+          ),
+        ),
+        actions: [
+          // Clear button
+          GestureDetector(
+            onLongPress: () => okHelp(76),
             child: IconButton(
-              icon: Icon(Icons.arrow_back, color: clText),
-              iconSize: fsLarge,
-              color: clText,
+              icon: Icon(Icons.delete_sweep, color: clText),
               onPressed: () {
+                setState(() {
+                  _selectedOwner = '0';
+                  _selectedBike = '0';
+                  _selectedEvent = '0';
+                  _dateFrom = null;
+                  _dateTo = null;
+                  _priceFrom = '';
+                  _priceTo = '';
+                  _comment = '';
+                  _dateFromController.text = '';
+                  _dateToController.text = '';
+                  _priceFromController.text = '';
+                  _priceToController.text = '';
+                  _commentController.text = '';
+                  _isPriceFromForeign = false;
+                  _isPriceToForeign = false;
+                });
+                xvFilter = '';
+
+                // Only navigate back if 'Back after clear' is true
+                if (xdef['Back after clear'] == 'true') {
+                  Navigator.pop(context, {
+                    'owner': null,
+                    'bike': null,
+                    'event': null,
+                    'dateFrom': null,
+                    'dateTo': null,
+                    'priceFrom': null,
+                    'priceTo': null,
+                    'comment': '',
+                    'isPriceFromForeign': false,
+                    'isPriceToForeign': false,
+                  });
+                }
+              },
+              tooltip: lw('Clear'),
+            ),
+          ),
+
+          // Apply button
+          GestureDetector(
+            onLongPress: () => okHelp(77),
+            child: IconButton(
+              icon: Icon(Icons.check, color: clText),
+              onPressed: () {
+                // Validate dates
+                if (_dateFromController.text.isNotEmpty && !validateDateInput(_dateFromController.text)) {
+                  okInfoBarRed(lw('Invalid date FROM. Please enter a valid date not in the future'));
+                  _dateFromFocusNode.requestFocus();
+                  return;
+                }
+
+                if (_dateToController.text.isNotEmpty && !validateDateInput(_dateToController.text)) {
+                  okInfoBarRed(lw('Invalid date TO. Please enter a valid date not in the future'));
+                  _dateToFocusNode.requestFocus();
+                  return;
+                }
+
+                if (_dateFromController.text.isNotEmpty && _dateToController.text.isNotEmpty) {
+                  // Compare dates using integer format
+                  int dateFromInt = dateToStorageInt(_dateFromController.text);
+                  int dateToInt = dateToStorageInt(_dateToController.text);
+
+                  if (dateFromInt > dateToInt) {
+                    okInfoBarRed(lw('Date from must be before or equal to date to'));
+                    _dateFromFocusNode.requestFocus();
+                    return;
+                  }
+                }
+
+                // Convert prices if they're in foreign currency
+                double? priceFrom = double.tryParse(_priceFromController.text);
+                double? priceTo = double.tryParse(_priceToController.text);
+
+                if (_isPriceFromForeign && priceFrom != null) {
+                  priceFrom = priceFrom * double.parse(xdef['Exchange rate']);
+                  if (xdef['Round to integer'] == 'true') {
+                    priceFrom = priceFrom.roundToDouble();
+                  } else {
+                    priceFrom = double.parse(priceFrom.toStringAsFixed(2));
+                  }
+                }
+
+                if (_isPriceToForeign && priceTo != null) {
+                  priceTo = priceTo * double.parse(xdef['Exchange rate']);
+                  if (xdef['Round to integer'] == 'true') {
+                    priceTo = priceTo.roundToDouble();
+                  } else {
+                    priceTo = double.parse(priceTo.toStringAsFixed(2));
+                  }
+                }
+
+                // Check that price-from is less than or equal to price-to
+                if (priceFrom != null && priceTo != null && priceFrom > priceTo) {
+                  okInfoBarRed(lw('Price FROM must be less than or equal TO price to'));
+                  _priceFromFocusNode.requestFocus();
+                  return;
+                }
+
+                String? dateFromStr = _dateFromController.text.isNotEmpty ?
+                _dateFromController.text : null;
+                String? dateToStr = _dateToController.text.isNotEmpty ?
+                _dateToController.text : null;
+
+                String normComment = strCleanAndEscape(_commentController.text);
+
+                buildFilter(
+                  owner: _selectedOwner,
+                  bike: _selectedBike,
+                  event: _selectedEvent,
+                  dateFrom: dateFromStr,
+                  dateTo: dateToStr,
+                  priceFrom: priceFrom?.toString(),
+                  priceTo: priceTo?.toString(),
+                  comment: normComment,
+                );
+
+                // Return data to the calling widget
                 Navigator.pop(context, {
                   'owner': _selectedOwner,
                   'bike': _selectedBike,
                   'event': _selectedEvent,
                   'dateFrom': _dateFrom,
                   'dateTo': _dateTo,
-                  'priceFrom': _priceFrom != null ? double.tryParse(_priceFrom!) : null,
-                  'priceTo': _priceTo != null ? double.tryParse(_priceTo!) : null,
-                  'comment': _comment,
-                  'isPriceFromForeign': _isPriceFromForeign,
-                  'isPriceToForeign': _isPriceToForeign,
+                  'priceFrom': priceFrom,
+                  'priceTo': priceTo,
+                  'comment': normComment,
+                  'isPriceFromForeign': false,
+                  'isPriceToForeign': false,
                 });
               },
+              tooltip: lw('Apply'),
             ),
           ),
-          // Add actions (buttons) to the AppBar
-          actions: [
-            // Clear button
-            GestureDetector(
-              onLongPress: () => okHelp(76),
-              child: IconButton(
-                icon: Icon(Icons.delete_sweep, color: clText),
-                onPressed: () {
-                  setState(() {
-                    _selectedOwner = '0';
-                    _selectedBike = '0';
-                    _selectedEvent = '0';
-                    _dateFrom = null;
-                    _dateTo = null;
-                    _priceFrom = '';
-                    _priceTo = '';
-                    _comment = '';
-                    _dateFromController.text = '';
-                    _dateToController.text = '';
-                    _priceFromController.text = '';
-                    _priceToController.text = '';
-                    _commentController.text = '';
-                    _isPriceFromForeign = false;
-                    _isPriceToForeign = false;
-                  });
-                  xvFilter = '';
-
-                  // Only navigate back if 'Back after clear' is true
-                  if (xdef['Back after clear'] == 'true') {
-                    Navigator.pop(context, {
-                      'owner': null,
-                      'bike': null,
-                      'event': null,
-                      'dateFrom': null,
-                      'dateTo': null,
-                      'priceFrom': null,
-                      'priceTo': null,
-                      'comment': '',
-                      'isPriceFromForeign': false,
-                      'isPriceToForeign': false,
-                    });
-                  }
-                },
-                tooltip: lw('Clear'),
-              ),
-            ),
-
-            // Apply button
-            GestureDetector(
-              onLongPress: () => okHelp(77),
-              child: IconButton(
-                icon: Icon(Icons.check, color: clText),
-                onPressed: () {
-                  // Validate dates
-                  if (_dateFromController.text.isNotEmpty && !validateDateInput(_dateFromController.text)) {
-                    okInfoBarRed(lw('Invalid date FROM. Please enter a valid date not in the future'));
-                    _dateFromFocusNode.requestFocus();
-                    return;
-                  }
-
-                  if (_dateToController.text.isNotEmpty && !validateDateInput(_dateToController.text)) {
-                    okInfoBarRed(lw('Invalid date TO. Please enter a valid date not in the future'));
-                    _dateToFocusNode.requestFocus();
-                    return;
-                  }
-
-                  if (_dateFromController.text.isNotEmpty && _dateToController.text.isNotEmpty) {
-                    // Compare dates using integer format
-                    int dateFromInt = dateToStorageInt(_dateFromController.text);
-                    int dateToInt = dateToStorageInt(_dateToController.text);
-
-                    if (dateFromInt > dateToInt) {
-                      okInfoBarRed(lw('Date from must be before or equal to date to'));
-                      _dateFromFocusNode.requestFocus();
-                      return;
-                    }
-                  }
-
-                  // Convert prices if they're in foreign currency
-                  double? priceFrom = double.tryParse(_priceFromController.text);
-                  double? priceTo = double.tryParse(_priceToController.text);
-
-                  if (_isPriceFromForeign && priceFrom != null) {
-                    priceFrom = priceFrom * double.parse(xdef['Exchange rate']);
-                    if (xdef['Round to integer'] == 'true') {
-                      priceFrom = priceFrom.roundToDouble();
-                    } else {
-                      priceFrom = double.parse(priceFrom.toStringAsFixed(2));
-                    }
-                  }
-
-                  if (_isPriceToForeign && priceTo != null) {
-                    priceTo = priceTo * double.parse(xdef['Exchange rate']);
-                    if (xdef['Round to integer'] == 'true') {
-                      priceTo = priceTo.roundToDouble();
-                    } else {
-                      priceTo = double.parse(priceTo.toStringAsFixed(2));
-                    }
-                  }
-
-                  // Check that price-from is less than or equal to price-to
-                  if (priceFrom != null && priceTo != null && priceFrom > priceTo) {
-                    okInfoBarRed(lw('Price FROM must be less than or equal TO price to'));
-                    _priceFromFocusNode.requestFocus();
-                    return;
-                  }
-
-                  String? dateFromStr = _dateFromController.text.isNotEmpty ?
-                  _dateFromController.text : null;
-                  String? dateToStr = _dateToController.text.isNotEmpty ?
-                  _dateToController.text : null;
-
-                  String normComment = strCleanAndEscape(_commentController.text);
-
-                  buildFilter(
-                    owner: _selectedOwner,
-                    bike: _selectedBike,
-                    event: _selectedEvent,
-                    dateFrom: dateFromStr,
-                    dateTo: dateToStr,
-                    priceFrom: priceFrom?.toString(),
-                    priceTo: priceTo?.toString(),
-                    comment: normComment,
-                  );
-
-                  // Return data to the calling widget
-                  Navigator.pop(context, {
-                    'owner': _selectedOwner,
-                    'bike': _selectedBike,
-                    'event': _selectedEvent,
-                    'dateFrom': _dateFrom,
-                    'dateTo': _dateTo,
-                    'priceFrom': priceFrom,
-                    'priceTo': priceTo,
-                    'comment': normComment,
-                    'isPriceFromForeign': false,
-                    'isPriceToForeign': false,
-                  });
-                },
-                tooltip: lw('Apply'),
-              ),
-            ),
-          ],
-        ),
+        ],
+      ),
 
       backgroundColor: clFon,
       body: Padding(
@@ -488,7 +487,7 @@ class _FilterScreenState extends State<FilterScreen> {
             Row(
               children: [
                 Expanded(
-                  flex: 1,
+                  flex: 32,
                   child: GestureDetector(
                     onLongPress: () => okHelp(40),
                     child: Text(lw('Owner'), style: TextStyle(fontSize: fsNormal, color: clText, fontWeight: fwNormal,)),
@@ -511,69 +510,69 @@ class _FilterScreenState extends State<FilterScreen> {
                   },
                 ),
                 Expanded(
-                  flex: 2,
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Container(
-                          decoration: BoxDecoration(
-                            border: Border.all(color: clFrame),
-                          ),
-                          child: DropdownButtonFormField<String>(
-                            decoration: InputDecoration(
-                              hintText: xvSelect,
-                              contentPadding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
-                              filled: true,
-                              fillColor: clFill,
-                              border: InputBorder.none,
+                  flex: 58,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(color: clFrame),
+                    ),
+                    child: DropdownButtonFormField<String>(
+                      decoration: InputDecoration(
+                        hintText: xvSelect,
+                        contentPadding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+                        filled: true,
+                        fillColor: clFill,
+                        border: InputBorder.none,
+                      ),
+                      dropdownColor: clMenu,
+                      value: _selectedOwner,
+                      items: [
+                        DropdownMenuItem<String>(
+                          value: '0',
+                          child: Text(
+                            xvSelect,
+                            style: TextStyle(
+                                color: _filterMode == FilterMode.byOwner ? clText : clFill,
+                                fontSize: fsNormal
                             ),
-                            dropdownColor: clMenu,
-                            value: _selectedOwner,
-                            items: [
-                              DropdownMenuItem<String>(
-                                value: '0',
-                                child: Text(
-                                  xvSelect,
-                                  style: TextStyle(
-                                      color: _filterMode == FilterMode.byOwner ? clText : clFill,
-                                      fontSize: fsNormal
-                                  ),
-                                ),
-                              ),
-                              if (owners.isNotEmpty)
-                                ...owners.map((Map<String, dynamic> owner) {
-                                  final name = owner['name'] ?? lw('Unknown');
-                                  return DropdownMenuItem<String>(
-                                    value: owner['num'],
-                                    child: Text(
-                                      name,
-                                      style: TextStyle(
-                                          color: _filterMode == FilterMode.byOwner ? clText : clFill,
-                                          fontSize: fsNormal
-                                      ),
-                                    ),
-                                  );
-                                }),
-                            ],
-                            onChanged: _filterMode == FilterMode.byOwner ?
-                                (value) {
-                              setState(() {
-                                _selectedOwner = value;
-                              });
-                            } : null,
                           ),
                         ),
-                      ),
-                      // Clear button for Owner dropdown
-                      IconButton(
-                        icon: Icon(Icons.clear, color: clText, size: 20),
-                        onPressed: _filterMode == FilterMode.byOwner ? () {
-                          setState(() {
-                            _selectedOwner = '0';
-                          });
-                        } : null,
-                      ),
-                    ],
+                        if (owners.isNotEmpty)
+                          ...owners.map((Map<String, dynamic> owner) {
+                            final name = owner['name'] ?? lw('Unknown');
+                            return DropdownMenuItem<String>(
+                              value: owner['num'],
+                              child: Text(
+                                name,
+                                style: TextStyle(
+                                    color: _filterMode == FilterMode.byOwner ? clText : clFill,
+                                    fontSize: fsNormal
+                                ),
+                              ),
+                            );
+                          }),
+                      ],
+                      onChanged: _filterMode == FilterMode.byOwner ?
+                          (value) {
+                        setState(() {
+                          _selectedOwner = value;
+                        });
+                      } : null,
+                    ),
+                  ),
+                ),
+                Expanded(
+                  flex: 10,
+                  child: Center(
+                    child: IconButton(
+                      icon: Icon(Icons.clear, color: clText, size: 16),
+                      padding: EdgeInsets.zero,
+                      constraints: BoxConstraints(minWidth: 24, minHeight: 24),
+                      onPressed: _filterMode == FilterMode.byOwner ? () {
+                        setState(() {
+                          _selectedOwner = '0';
+                        });
+                      } : null,
+                    ),
                   ),
                 ),
               ],
@@ -584,7 +583,7 @@ class _FilterScreenState extends State<FilterScreen> {
             Row(
               children: [
                 Expanded(
-                  flex: 1,
+                  flex: 32,
                   child: GestureDetector(
                     onLongPress: () => okHelp(40),
                     child: Text(lw('Bike'), style: TextStyle(fontSize: fsNormal, color: clText, fontWeight: fwNormal,)),
@@ -607,67 +606,67 @@ class _FilterScreenState extends State<FilterScreen> {
                   },
                 ),
                 Expanded(
-                  flex: 2,
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Container(
-                          decoration: BoxDecoration(
-                            border: Border.all(color: clFrame),
-                          ),
-                          child: DropdownButtonFormField<String>(
-                            decoration: InputDecoration(
-                              hintText: xvSelect,
-                              contentPadding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
-                              filled: true,
-                              fillColor: clFill,
-                              border: InputBorder.none,
-                            ),
-                            dropdownColor: clMenu,
-                            value: _selectedBike,
-                            items: [
-                              DropdownMenuItem<String>(
-                                value: '0',
-                                child: Text(
-                                  xvSelect,
-                                  style: TextStyle(
-                                      color: _filterMode == FilterMode.byBike ? clText : clFill,
-                                      fontSize: fsNormal),
-                                ),
-                              ),
-                              if (bikes.isNotEmpty)
-                                ...bikes.map((Map<String, dynamic> bike) {
-                                  final owner = bike['owner'] ?? lw('Unknown');
-                                  final brand = bike['brand'] ?? lw('Unknown');
-                                  final model = bike['model'] ?? lw('Unknown');
-                                  return DropdownMenuItem<String>(
-                                    value: bike['num'],
-                                    child: Text(
-                                      '$owner-$brand-$model',
-                                      style: TextStyle(color: clText, fontSize: fsNormal),
-                                    ),
-                                  );
-                                }),
-                            ],
-                            onChanged: _filterMode == FilterMode.byBike ?
-                                (value) {
-                              setState(() {
-                                _selectedBike = value;
-                              });
-                            } : null,
+                  flex: 58,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(color: clFrame),
+                    ),
+                    child: DropdownButtonFormField<String>(
+                      decoration: InputDecoration(
+                        hintText: xvSelect,
+                        contentPadding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+                        filled: true,
+                        fillColor: clFill,
+                        border: InputBorder.none,
+                      ),
+                      dropdownColor: clMenu,
+                      value: _selectedBike,
+                      items: [
+                        DropdownMenuItem<String>(
+                          value: '0',
+                          child: Text(
+                            xvSelect,
+                            style: TextStyle(
+                                color: _filterMode == FilterMode.byBike ? clText : clFill,
+                                fontSize: fsNormal),
                           ),
                         ),
-                      ),
-                      // Clear button for Bike dropdown
-                      IconButton(
-                        icon: Icon(Icons.clear, color: clText, size: 20),
-                        onPressed: _filterMode == FilterMode.byBike ? () {
-                          setState(() {
-                            _selectedBike = '0';
-                          });
-                        } : null,
-                      ),
-                    ],
+                        if (bikes.isNotEmpty)
+                          ...bikes.map((Map<String, dynamic> bike) {
+                            final owner = bike['owner'] ?? lw('Unknown');
+                            final brand = bike['brand'] ?? lw('Unknown');
+                            final model = bike['model'] ?? lw('Unknown');
+                            return DropdownMenuItem<String>(
+                              value: bike['num'],
+                              child: Text(
+                                '$owner-$brand-$model',
+                                style: TextStyle(color: clText, fontSize: fsNormal),
+                              ),
+                            );
+                          }),
+                      ],
+                      onChanged: _filterMode == FilterMode.byBike ?
+                          (value) {
+                        setState(() {
+                          _selectedBike = value;
+                        });
+                      } : null,
+                    ),
+                  ),
+                ),
+                Expanded(
+                  flex: 10,
+                  child: Center(
+                    child: IconButton(
+                      icon: Icon(Icons.clear, color: clText, size: 16),
+                      padding: EdgeInsets.zero,
+                      constraints: BoxConstraints(minWidth: 24, minHeight: 24),
+                      onPressed: _filterMode == FilterMode.byBike ? () {
+                        setState(() {
+                          _selectedBike = '0';
+                        });
+                      } : null,
+                    ),
                   ),
                 ),
               ],
@@ -675,150 +674,76 @@ class _FilterScreenState extends State<FilterScreen> {
             const SizedBox(height: 8),
 
             // Event Dropdown with clear button
-            Row(
-              children: [
-                Expanded(
-                  flex: 1,
-                  child: GestureDetector(
-                    onLongPress: () => okHelp(42),
-                    child: Text(lw('Event'), style: TextStyle(fontSize: fsNormal, color: clText, fontWeight: fwNormal,)),
-                  ),
-                ),
-                Expanded(
-                  flex: 2,
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Container(
-                          decoration: BoxDecoration(
-                            border: Border.all(color: clFrame),
-                          ),
-                          child: DropdownButtonFormField<String>(
-                            decoration: InputDecoration(
-                              hintText: xvSelect,
-                              contentPadding: const EdgeInsets.symmetric(horizontal: 8.0),
-                              filled: true,
-                              fillColor: clFill,
-                              border: InputBorder.none,
-                            ),
-                            dropdownColor: clMenu,
-                            value: _selectedEvent,
-                            items: [
-                              DropdownMenuItem<String>(
-                                value: '0',
-                                child: Text(
-                                  xvSelect,
-                                  style: TextStyle(fontSize: fsNormal, color: clText, fontWeight: fwNormal,),
-                                ),
-                              ),
-                              if (events.isNotEmpty)
-                                ...events.map((Map<String, dynamic> event) {
-                                  final name = event['name'] ?? 'Unknown';
-                                  return DropdownMenuItem<String>(
-                                    value: event['num'],
-                                    child: Text(
-                                      name,
-                                      style: TextStyle(fontSize: fsNormal, color: clText, fontWeight: fwNormal,),
-                                    ),
-                                  );
-                                }),
-                            ],
-                            onChanged: (value) {
-                              setState(() {
-                                _selectedEvent = value;
-                              });
-                            },
-                          ),
-                        ),
-                      ),
-                      // Clear button for Event dropdown
-                      IconButton(
-                        icon: Icon(Icons.clear, color: clText, size: 20),
-                        onPressed: () {
-                          setState(() {
-                            _selectedEvent = '0';
-                          });
-                        },
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-
-            const SizedBox(height: 8),
-
-            // Date From with clear button
+// Event Dropdown with clear button
         Row(
           children: [
             Expanded(
-              flex: 1,
+              flex: 32,
               child: GestureDetector(
-                onLongPress: () => okHelp(72),
-                child: Text(lw('Date from'),
-                    style: TextStyle(
-                      fontSize: fsNormal,
-                      color: clText,
-                      fontWeight: fwNormal,
-                    )),
+                onLongPress: () => okHelp(42),
+                child: Text(lw('Event'), style: TextStyle(fontSize: fsNormal, color: clText, fontWeight: fwNormal,)),
+              ),
+            ),
+            SizedBox(width: 48), // Space for the radio button alignment
+            Expanded(
+              flex: 58, // Keep the same as the Bike field
+              child: Container(
+                decoration: BoxDecoration(
+                  border: Border.all(color: clFrame),
+                ),
+                child: DropdownButtonFormField<String>(
+                  isExpanded: true, // Add this to ensure the dropdown fits in its container
+                  decoration: InputDecoration(
+                    hintText: xvSelect,
+                    contentPadding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4), // Match the Bike field padding
+                    filled: true,
+                    fillColor: clFill,
+                    border: InputBorder.none,
+                  ),
+                  dropdownColor: clMenu,
+                  value: _selectedEvent,
+                  items: [
+                    DropdownMenuItem<String>(
+                      value: '0',
+                      child: Text(
+                        xvSelect,
+                        style: TextStyle(fontSize: fsNormal, color: clText, fontWeight: fwNormal,),
+                      ),
+                    ),
+                    if (events.isNotEmpty)
+                      ...events.map((Map<String, dynamic> event) {
+                        final name = event['name'] ?? 'Unknown';
+                        return DropdownMenuItem<String>(
+                          value: event['num'],
+                          child: Text(
+                            name,
+                            style: TextStyle(fontSize: fsNormal, color: clText, fontWeight: fwNormal,),
+                            overflow: TextOverflow.ellipsis, // Add this to handle long text
+                          ),
+                        );
+                      }),
+                  ],
+                  onChanged: (value) {
+                    setState(() {
+                      _selectedEvent = value;
+                    });
+                  },
+                ),
               ),
             ),
             Expanded(
-              flex: 2,
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Container(
-                      decoration: BoxDecoration(
-                        border: Border.all(color: clFrame),
-                        color: clFill,
-                      ),
-                      child: TextField(
-                        controller: _dateFromController,
-                        focusNode: _dateFromFocusNode,
-                        keyboardType: TextInputType.text,
-                        style: TextStyle(
-                          fontSize: fsNormal,
-                          color: clText,
-                        ),
-                        decoration: InputDecoration(
-                          contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                          border: InputBorder.none,
-                          hintText: getDateFormatHint(),
-                        ),
-                      ),
-                    ),
-                  ),
-                  // Date picker button comes before clear button
-                  IconButton(
-                    icon: Icon(Icons.calendar_today, color: clText),
-                    onPressed: () async {
-                      final DateTime? picked = await showLocalizedDatePicker(
-                        context: context,
-                        initialDate: _dateFrom ?? DateTime.now(),
-                        firstDate: DateTime(1950),
-                        lastDate: DateTime(2099),
-                      );
-                      if (picked != null && picked != _dateFrom) {
-                        setState(() {
-                          _dateFrom = picked;
-                          int dateInt = dateTimeToInt(picked);
-                          _dateFromController.text = dateFromStorageInt(dateInt);
-                        });
-                      }
-                    },
-                  ),
-                  // Clear button comes last
-                  IconButton(
-                    icon: Icon(Icons.clear, color: clText, size: 20),
-                    onPressed: () {
-                      setState(() {
-                        _dateFromController.clear();
-                        _dateFrom = null;
-                      });
-                    },
-                  ),
-                ],
+              flex: 10, // Keep the same as the Bike field
+              child: Center(
+                child: IconButton(
+                  icon: Icon(Icons.clear, color: clText, size: 16),
+                  padding: EdgeInsets.zero,
+                  constraints: BoxConstraints(minWidth: 24, minHeight: 24),
+                  onPressed: () {
+                    setState(() {
+                      _selectedEvent = '0';
+                    });
+                  },
+                ),
               ),
             ),
           ],
@@ -826,11 +751,98 @@ class _FilterScreenState extends State<FilterScreen> {
 
             const SizedBox(height: 8),
 
+            // Date From with clear button
+            Row(
+              children: [
+                Expanded(
+                  flex: 32,
+                  child: GestureDetector(
+                    onLongPress: () => okHelp(72),
+                    child: Text(lw('Date from'),
+                        style: TextStyle(
+                          fontSize: fsNormal,
+                          color: clText,
+                          fontWeight: fwNormal,
+                        )),
+                  ),
+                ),
+                SizedBox(width: 48), // Space for alignment
+                Expanded(
+                  flex: 58,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(color: clFrame),
+                      color: clFill,
+                    ),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: TextField(
+                            controller: _dateFromController,
+                            focusNode: _dateFromFocusNode,
+                            keyboardType: TextInputType.text,
+                            style: TextStyle(
+                              fontSize: fsNormal,
+                              color: clText,
+                            ),
+                            decoration: InputDecoration(
+                              contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                              border: InputBorder.none,
+                              hintText: getDateFormatHint(),
+                            ),
+                          ),
+                        ),
+                        // Date picker button
+                        IconButton(
+                          icon: Icon(Icons.calendar_today, color: clText, size: 16),
+                          padding: EdgeInsets.zero,
+                          constraints: BoxConstraints(minWidth: 24, minHeight: 24),
+                          onPressed: () async {
+                            final DateTime? picked = await showLocalizedDatePicker(
+                              context: context,
+                              initialDate: _dateFrom ?? DateTime.now(),
+                              firstDate: DateTime(1950),
+                              lastDate: DateTime(2099),
+                            );
+                            if (picked != null && picked != _dateFrom) {
+                              setState(() {
+                                _dateFrom = picked;
+                                int dateInt = dateTimeToInt(picked);
+                                _dateFromController.text = dateFromStorageInt(dateInt);
+                              });
+                            }
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                Expanded(
+                  flex: 10,
+                  child: Center(
+                    child: IconButton(
+                      icon: Icon(Icons.clear, color: clText, size: 16),
+                      padding: EdgeInsets.zero,
+                      constraints: BoxConstraints(minWidth: 24, minHeight: 24),
+                      onPressed: () {
+                        setState(() {
+                          _dateFromController.clear();
+                          _dateFrom = null;
+                        });
+                      },
+                    ),
+                  ),
+                ),
+              ],
+            ),
+
+            const SizedBox(height: 8),
+
             // Date To with clear button
             Row(
               children: [
                 Expanded(
-                  flex: 1,
+                  flex: 32,
                   child: GestureDetector(
                     onLongPress: () => okHelp(73),
                     child: Text(lw('Date to'),
@@ -841,16 +853,17 @@ class _FilterScreenState extends State<FilterScreen> {
                         )),
                   ),
                 ),
+                SizedBox(width: 48), // Space for alignment
                 Expanded(
-                  flex: 2,
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Container(
-                          decoration: BoxDecoration(
-                            border: Border.all(color: clFrame),
-                            color: clFill,
-                          ),
+                  flex: 58,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(color: clFrame),
+                      color: clFill,
+                    ),
+                    child: Row(
+                      children: [
+                        Expanded(
                           child: TextField(
                             controller: _dateToController,
                             focusNode: _dateToFocusNode,
@@ -866,37 +879,45 @@ class _FilterScreenState extends State<FilterScreen> {
                             ),
                           ),
                         ),
-                      ),
-                      // Date picker button comes before clear button
-                      IconButton(
-                        icon: Icon(Icons.calendar_today, color: clText),
-                        onPressed: () async {
-                          final DateTime? picked = await showLocalizedDatePicker(
-                            context: context,
-                            initialDate: _dateTo ?? DateTime.now(),
-                            firstDate: DateTime(1950),
-                            lastDate: DateTime(2099),
-                          );
-                          if (picked != null && picked != _dateTo) {
-                            setState(() {
-                              _dateTo = picked;
-                              int dateInt = dateTimeToInt(picked);
-                              _dateToController.text = dateFromStorageInt(dateInt);
-                            });
-                          }
-                        },
-                      ),
-                      // Clear button comes last
-                      IconButton(
-                        icon: Icon(Icons.clear, color: clText, size: 20),
-                        onPressed: () {
-                          setState(() {
-                            _dateToController.clear();
-                            _dateTo = null;
-                          });
-                        },
-                      ),
-                    ],
+                        // Date picker button
+                        IconButton(
+                          icon: Icon(Icons.calendar_today, color: clText, size: 16),
+                          padding: EdgeInsets.zero,
+                          constraints: BoxConstraints(minWidth: 24, minHeight: 24),
+                          onPressed: () async {
+                            final DateTime? picked = await showLocalizedDatePicker(
+                              context: context,
+                              initialDate: _dateTo ?? DateTime.now(),
+                              firstDate: DateTime(1950),
+                              lastDate: DateTime(2099),
+                            );
+                            if (picked != null && picked != _dateTo) {
+                              setState(() {
+                                _dateTo = picked;
+                                int dateInt = dateTimeToInt(picked);
+                                _dateToController.text = dateFromStorageInt(dateInt);
+                              });
+                            }
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                Expanded(
+                  flex: 10,
+                  child: Center(
+                    child: IconButton(
+                      icon: Icon(Icons.clear, color: clText, size: 16),
+                      padding: EdgeInsets.zero,
+                      constraints: BoxConstraints(minWidth: 24, minHeight: 24),
+                      onPressed: () {
+                        setState(() {
+                          _dateToController.clear();
+                          _dateTo = null;
+                        });
+                      },
+                    ),
                   ),
                 ),
               ],
@@ -908,71 +929,66 @@ class _FilterScreenState extends State<FilterScreen> {
             Row(
               children: [
                 Expanded(
-                  flex: 1,
+                  flex: 32,
                   child: GestureDetector(
                     onLongPress: () => okHelp(74),
                     child: Text(lw('Price from'), style: TextStyle(fontSize: fsNormal, color: clText, fontWeight: fwNormal,)),
                   ),
                 ),
-                GestureDetector(
-                  onLongPress: () => okHelp(45),
-                  child: Checkbox(
-                    value: _isPriceFromForeign,
-                    activeColor: clFill,      // light background
-                    checkColor: clText,       // dark checkmark
-                    side: BorderSide(
-                      color: clFrame,
-                      width: 2.0,
+                Checkbox(
+                  value: _isPriceFromForeign,
+                  activeColor: clFill,
+                  checkColor: clText,
+                  side: BorderSide(
+                    color: clFrame,
+                    width: 2.0,
+                  ),
+                  onChanged: (bool? value) {
+                    setState(() {
+                      _isPriceFromForeign = value!;
+                    });
+                  },
+                ),
+                Text('\$', style: TextStyle(fontSize: fsNormal, color: clText)),
+                Expanded(
+                  flex: 58,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(color: clFrame),
+                      color: clFill,
                     ),
-                    onChanged: (bool? value) {
-                      setState(() {
-                        _isPriceFromForeign = value!;
-                      });
-                    },
+                    padding: const EdgeInsets.symmetric(horizontal: 4),
+                    child: TextField(
+                      controller: _priceFromController,
+                      focusNode: _priceFromFocusNode,
+                      keyboardType: TextInputType.number,
+                      style: TextStyle(fontSize: fsNormal, color: clText),
+                      onChanged: (value) {
+                        setState(() {
+                          _priceFrom = value;
+                        });
+                      },
+                      decoration: const InputDecoration(
+                        contentPadding: EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+                        border: InputBorder.none,
+                      ),
+                    ),
                   ),
                 ),
-                const SizedBox(width: 4),
-                Text('\$', style: TextStyle(fontSize: fsNormal, color: clText)),
-                const SizedBox(width: 8),
                 Expanded(
-                  flex: 2,
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Container(
-                          decoration: BoxDecoration(
-                            border: Border.all(color: clFrame),
-                            color: clFill,
-                          ),
-                          padding: const EdgeInsets.symmetric(horizontal: 4),
-                          child: TextField(
-                            controller: _priceFromController,
-                            focusNode: _priceFromFocusNode,
-                            keyboardType: TextInputType.number,
-                            style: TextStyle(fontSize: fsNormal, color: clText),
-                            onChanged: (value) {
-                              setState(() {
-                                _priceFrom = value;
-                              });
-                            },
-                            decoration: const InputDecoration(
-                              contentPadding: EdgeInsets.symmetric(vertical: 8, horizontal: 4),
-                              border: InputBorder.none,
-                            ),
-                          ),
-                        ),
-                      ),
-                      // Clear button for Price From
-                      IconButton(
-                        icon: Icon(Icons.clear, color: clText, size: 20),
-                        onPressed: () {
-                          setState(() {
-                            _priceFromController.clear();
-                            _priceFrom = '';
-                          });
-                        },
-                      ),
-                    ],
+                  flex: 10,
+                  child: Center(
+                    child: IconButton(
+                      icon: Icon(Icons.clear, color: clText, size: 16),
+                      padding: EdgeInsets.zero,
+                      constraints: BoxConstraints(minWidth: 24, minHeight: 24),
+                      onPressed: () {
+                        setState(() {
+                          _priceFromController.clear();
+                          _priceFrom = '';
+                        });
+                      },
+                    ),
                   ),
                 ),
               ],
@@ -983,71 +999,66 @@ class _FilterScreenState extends State<FilterScreen> {
             Row(
               children: [
                 Expanded(
-                  flex: 1,
+                  flex: 32,
                   child: GestureDetector(
                     onLongPress: () => okHelp(75),
                     child: Text(lw('Price to'), style: TextStyle(fontSize: fsNormal, color: clText, fontWeight: fwNormal,)),
                   ),
                 ),
-                GestureDetector(
-                  onLongPress: () => okHelp(45),
-                  child: Checkbox(
-                    value: _isPriceToForeign,
-                    activeColor: clFill,      // light background
-                    checkColor: clText,       // dark checkmark
-                    side: BorderSide(
-                      color: clFrame,
-                      width: 2.0,
+                Checkbox(
+                  value: _isPriceToForeign,
+                  activeColor: clFill,
+                  checkColor: clText,
+                  side: BorderSide(
+                    color: clFrame,
+                    width: 2.0,
+                  ),
+                  onChanged: (bool? value) {
+                    setState(() {
+                      _isPriceToForeign = value!;
+                    });
+                  },
+                ),
+                Text('\$', style: TextStyle(fontSize: fsNormal, color: clText)),
+                Expanded(
+                  flex: 58,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(color: clFrame),
+                      color: clFill,
                     ),
-                    onChanged: (bool? value) {
-                      setState(() {
-                        _isPriceToForeign = value!;
-                      });
-                    },
+                    padding: const EdgeInsets.symmetric(horizontal: 4),
+                    child: TextField(
+                      controller: _priceToController,
+                      focusNode: _priceToFocusNode,
+                      keyboardType: TextInputType.number,
+                      style: TextStyle(fontSize: fsNormal, color: clText),
+                      onChanged: (value) {
+                        setState(() {
+                          _priceTo = value;
+                        });
+                      },
+                      decoration: const InputDecoration(
+                        contentPadding: EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+                        border: InputBorder.none,
+                      ),
+                    ),
                   ),
                 ),
-                const SizedBox(width: 4),
-                Text('\$', style: TextStyle(fontSize: fsNormal, color: clText)),
-                const SizedBox(width: 8),
                 Expanded(
-                  flex: 2,
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Container(
-                          decoration: BoxDecoration(
-                            border: Border.all(color: clFrame),
-                            color: clFill,
-                          ),
-                          padding: const EdgeInsets.symmetric(horizontal: 4),
-                          child: TextField(
-                            controller: _priceToController,
-                            focusNode: _priceToFocusNode,
-                            keyboardType: TextInputType.number,
-                            style: TextStyle(fontSize: fsNormal, color: clText),
-                            onChanged: (value) {
-                              setState(() {
-                                _priceTo = value;
-                              });
-                            },
-                            decoration: const InputDecoration(
-                              contentPadding: EdgeInsets.symmetric(vertical: 8, horizontal: 4),
-                              border: InputBorder.none,
-                            ),
-                          ),
-                        ),
-                      ),
-                      // Clear button for Price To
-                      IconButton(
-                        icon: Icon(Icons.clear, color: clText, size: 20),
-                        onPressed: () {
-                          setState(() {
-                            _priceToController.clear();
-                            _priceTo = '';
-                          });
-                        },
-                      ),
-                    ],
+                  flex: 10,
+                  child: Center(
+                    child: IconButton(
+                      icon: Icon(Icons.clear, color: clText, size: 16),
+                      padding: EdgeInsets.zero,
+                      constraints: BoxConstraints(minWidth: 24, minHeight: 24),
+                      onPressed: () {
+                        setState(() {
+                          _priceToController.clear();
+                          _priceTo = '';
+                        });
+                      },
+                    ),
                   ),
                 ),
               ],
@@ -1058,50 +1069,51 @@ class _FilterScreenState extends State<FilterScreen> {
             Row(
               children: [
                 Expanded(
-                  flex: 1,
+                  flex: 32,
                   child: GestureDetector(
                     onLongPress: () => okHelp(44),
                     child: Text(lw('Comment'), style: TextStyle(fontSize: fsNormal, color: clText, fontWeight: fwNormal,)),
                   ),
                 ),
+                SizedBox(width: 48), // Space for alignment
                 Expanded(
-                  flex: 2,
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Container(
-                          decoration: BoxDecoration(
-                            border: Border.all(color: clFrame),
-                            color: clFill,
-                          ),
-                          padding: const EdgeInsets.symmetric(horizontal: 4),
-                          child: TextField(
-                            controller: _commentController,
-                            keyboardType: TextInputType.text,
-                            style: TextStyle(fontSize: fsNormal, color: clText),
-                            decoration: const InputDecoration(
-                              contentPadding: EdgeInsets.symmetric(vertical: 8, horizontal: 4),
-                              border: InputBorder.none,
-                            ),
-                            onChanged: (value) {
-                              setState(() {
-                                _comment = value;
-                              });
-                            },
-                          ),
-                        ),
+                  flex: 58,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(color: clFrame),
+                      color: clFill,
+                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 4),
+                    child: TextField(
+                      controller: _commentController,
+                      keyboardType: TextInputType.text,
+                      style: TextStyle(fontSize: fsNormal, color: clText),
+                      decoration: const InputDecoration(
+                        contentPadding: EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+                        border: InputBorder.none,
                       ),
-                      // Clear button for Comment
-                      IconButton(
-                        icon: Icon(Icons.clear, color: clText, size: 20),
-                        onPressed: () {
-                          setState(() {
-                            _commentController.clear();
-                            _comment = '';
-                          });
-                        },
-                      ),
-                    ],
+                      onChanged: (value) {
+                        setState(() {
+                          _comment = value;
+                        });
+                      },
+                    ),
+                  ),
+                ),
+                Expanded(
+                  flex: 10,
+                  child: Center(
+                    child: IconButton(
+                      icon: Icon(Icons.clear, color: clText, size: 16),
+                      padding: EdgeInsets.zero,
+                      constraints: BoxConstraints(minWidth: 24, minHeight: 24),
+                      onPressed: () {
+                        setState(() {
+                          _commentController.clear();
+                          _comment = '';
+                        });
+                      },
+                    ),
                   ),
                 ),
               ],
