@@ -1,26 +1,33 @@
 create table if not exists owners (
     num integer primary key autoincrement,
-    name text not null
+    del integer not null default 0,
+    name text not null,
+    comment text
 );
 
 create table if not exists types (
     num integer primary key autoincrement,
-    name text not null
+    del integer not null default 0,
+    name text not null,
+    comment text
 );
 
 create table if not exists events (
     num integer primary key autoincrement,
-    name text not null
+    del integer not null default 0,
+    name text not null,
+    comment text
 );
 
 create table if not exists bikes (
     num integer primary key autoincrement,
+    del integer not null default 0,
     owner integer,
     brand text,
     model text,
     type integer,
     serialnum text,
-    buydate text,
+    buydate integer,
     photo text,
     foreign key (owner) references owners(num),
     foreign key (type) references types(num)
@@ -28,8 +35,9 @@ create table if not exists bikes (
 
 create table if not exists actions (
     num integer primary key autoincrement,
+    del integer not null default 0,
     bike integer,
-    date text,
+    date integer,
     event integer,
     price real,
     comment text,
