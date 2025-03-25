@@ -1,7 +1,7 @@
 #!/bin/bash
 
 
-COMMENT="move up edit panel"
+COMMENT="integer date fields"
 #
 GLOBVERS='0.9'
 VER=''
