@@ -674,7 +674,7 @@ class _FilterScreenState extends State<FilterScreen> {
             const SizedBox(height: 8),
 
             // Event Dropdown with clear button
-// Event Dropdown with clear button
+        // Event Dropdown with clear button
         Row(
           children: [
             Expanded(
