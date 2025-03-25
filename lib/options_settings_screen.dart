@@ -110,6 +110,11 @@ class _OptionsSettingsScreenState extends State<OptionsSettingsScreen> {
     }
   }
 
+  // Метод для получения текущего примера даты для кнопки
+  String _getCurrentDateExample() {
+    return _getDateFormatExample(_dateFormat, _dateSeparator);
+  }
+
   @override
   Widget build(BuildContext context) {
     // Создаем список виджетов для ListView
@@ -290,7 +295,7 @@ class _OptionsSettingsScreenState extends State<OptionsSettingsScreen> {
               Expanded(
                 flex: 5,
                 child: GestureDetector(
-                  onLongPress: () => okHelp(80),
+                  onLongPress: () => okHelp(29),
                   child: Text(
                     lw('Date Format'),
                     style: TextStyle(fontWeight: fwNormal, fontSize: fsNormal, color: clText),
@@ -314,13 +319,12 @@ class _OptionsSettingsScreenState extends State<OptionsSettingsScreen> {
                           final result = await _showDateFormatDialog(context);
                           if (result == true) {
                             setState(() {
-                              // Обновляем только локальные переменные
-                              // Данные будут сохранены только при нажатии кнопки Save
+                              // Обновится текст на кнопке
                             });
                           }
                         },
                         child: Text(
-                          lw('Configure'),
+                          _getCurrentDateExample(), // Показываем пример даты вместо "Configure"
                           style: TextStyle(fontSize: fsNormal, fontWeight: fwNormal),
                         ),
                       ),
@@ -377,7 +381,6 @@ class _OptionsSettingsScreenState extends State<OptionsSettingsScreen> {
     );
   }
 
-  // Метод для отображения диалога настройки формата даты
   Future<bool?> _showDateFormatDialog(BuildContext context) {
     // Используем локальные переменные класса для временного хранения
     String selectedFormat = _dateFormat;
@@ -386,25 +389,42 @@ class _OptionsSettingsScreenState extends State<OptionsSettingsScreen> {
     return showDialog<bool?>(
       context: context,
       builder: (BuildContext context) {
-        return StatefulBuilder(
-          builder: (context, setState) {
-            return AlertDialog(
-              backgroundColor: clFon,
-              title: Text(
-                lw('Date Format Settings'),
-                style: TextStyle(color: clText, fontSize: fsLarge),
-              ),
-              content: SingleChildScrollView(
+        // Получаем размеры экрана
+        final screenWidth = MediaQuery.of(context).size.width;
+        final screenHeight = MediaQuery.of(context).size.height;
+
+        // Центрируем диалог повыше на экране и делаем его уже
+        return Dialog(
+          insetPadding: EdgeInsets.symmetric(
+            // Делаем диалог уже, увеличивая горизонтальные отступы
+            horizontal: screenWidth * 0.2, // 20% ширины экрана с каждой стороны
+            vertical: screenHeight * 0.15, // 15% высоты экрана с каждой стороны
+          ),
+          backgroundColor: clFon,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          child: StatefulBuilder(
+            builder: (context, setState) {
+              return Padding(
+                padding: const EdgeInsets.all(16.0),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    // Заголовок
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 8.0),
+                      child: Text(
+                        lw('Settings'),
+                        style: TextStyle(color: clText, fontSize: fsLarge, fontWeight: fwBold),
+                      ),
+                    ),
+
                     // Format section
                     Text(
-                      lw('Format:'),
+                      lw('Format'),
                       style: TextStyle(color: clText, fontSize: fsNormal, fontWeight: fwBold),
                     ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: 4),
                     // Форматы в виде радио-кнопок (вертикально)
                     ...DATE_FORMATS.map((String format) {
                       // Показываем формат с текущим разделителем
@@ -422,6 +442,8 @@ class _OptionsSettingsScreenState extends State<OptionsSettingsScreen> {
                                 });
                               }
                             },
+                            materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                            visualDensity: VisualDensity.compact,
                           ),
                           const SizedBox(width: 8),
                           Text(
@@ -432,14 +454,14 @@ class _OptionsSettingsScreenState extends State<OptionsSettingsScreen> {
                       );
                     }).toList(),
 
-                    const SizedBox(height: 8),
+                    const SizedBox(height: 4),
 
                     // Separator section
                     Text(
-                      lw('Separator:'),
+                      lw('Separator'),
                       style: TextStyle(color: clText, fontSize: fsNormal, fontWeight: fwBold),
                     ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: 4),
 
                     // Разделители в виде радио-кнопок с крупными значками рядом
                     Row(
@@ -458,13 +480,15 @@ class _OptionsSettingsScreenState extends State<OptionsSettingsScreen> {
                                   });
                                 }
                               },
+                              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                              visualDensity: VisualDensity.compact,
                             ),
                             Text(
                               separator,
                               style: TextStyle(
                                 color: clText,
-                                fontSize: fsLarge * 1.2,
-                                fontWeight: FontWeight.bold,
+                                fontSize: fsLarge * 1.333,
+                                fontWeight: fwBold,
                               ),
                             ),
                           ],
@@ -472,12 +496,12 @@ class _OptionsSettingsScreenState extends State<OptionsSettingsScreen> {
                       }).toList(),
                     ),
 
-                    const SizedBox(height: 8),
+                    const SizedBox(height: 4),
 
                     // Example section
                     Container(
                       width: double.infinity,
-                      padding: EdgeInsets.all(12),
+                      padding: EdgeInsets.all(8),
                       decoration: BoxDecoration(
                         color: clFill,
                         borderRadius: BorderRadius.circular(4),
@@ -487,10 +511,9 @@ class _OptionsSettingsScreenState extends State<OptionsSettingsScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            lw('Example:'),
+                            lw('Example'),
                             style: TextStyle(color: clText, fontSize: fsNormal),
                           ),
-                          const SizedBox(height: 4),
                           Center(
                             child: Text(
                               _getDateFormatExample(selectedFormat, selectedSeparator),
@@ -504,38 +527,48 @@ class _OptionsSettingsScreenState extends State<OptionsSettingsScreen> {
                         ],
                       ),
                     ),
+
+                    const SizedBox(height: 12),
+
+                    // Кнопки OK/Cancel в одной строке, обе справа
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end, // Выравниваем по правому краю
+                      children: [
+                        TextButton(
+                          style: TextButton.styleFrom(
+                            backgroundColor: clUpBar,
+                            foregroundColor: clText,
+                            padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                          ),
+                          onPressed: () {
+                            Navigator.of(context).pop(false);
+                          },
+                          child: Text(lw('Cancel')),
+                        ),
+                        const SizedBox(width: 8), // Добавляем отступ между кнопками
+                        TextButton(
+                          style: TextButton.styleFrom(
+                            backgroundColor: clUpBar,
+                            foregroundColor: clText,
+                            padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                          ),
+                          onPressed: () {
+                            // Обновляем только локальные переменные класса
+                            _dateFormat = selectedFormat;
+                            _dateSeparator = selectedSeparator;
+
+                            // Реальное сохранение будет происходить при нажатии Save в основном экране
+                            Navigator.of(context).pop(true);
+                          },
+                          child: Text(lw('Ok')),
+                        ),
+                      ],
+                    ),
                   ],
                 ),
-              ),
-              actions: [
-                TextButton(
-                  style: TextButton.styleFrom(
-                    backgroundColor: clUpBar,
-                    foregroundColor: clText,
-                  ),
-                  onPressed: () {
-                    Navigator.of(context).pop(false);
-                  },
-                  child: Text(lw('Cancel')),
-                ),
-                TextButton(
-                  style: TextButton.styleFrom(
-                    backgroundColor: clUpBar,
-                    foregroundColor: clText,
-                  ),
-                  onPressed: () {
-                    // Обновляем только локальные переменные класса
-                    _dateFormat = selectedFormat;
-                    _dateSeparator = selectedSeparator;
-
-                    // Реальное сохранение будет происходить при нажатии Save в основном экране
-                    Navigator.of(context).pop(true);
-                  },
-                  child: Text(lw('Ok')),
-                ),
-              ],
-            );
-          },
+              );
+            },
+          ),
         );
       },
     );

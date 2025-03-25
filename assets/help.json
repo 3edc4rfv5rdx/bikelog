@@ -1,4 +1,9 @@
 {
+  "999": {
+    "en": "Exit",
+    "ru": "Выход",
+    "ua": "Вихід"
+  },
   "1": {
     "en": "This program is a digital diary for tracking the maintenance and repair of your bicycles. It is suitable for:\n1) Owners of one or more bicycles.\n2) Families where each member has their own bicycle.\n3) Entrepreneurs or enthusiasts who assist with repairs.\nThe program allows you to record all actions for each bicycle and owner. Data can be exported to CSV for analysis in spreadsheet editors.\nGetting started:\n1) Add or select an owner.\n2) Add a bicycle and enter its details.\nImportant:\n1) The program is not a financial tool. Prices are for reference only.\n2) It works without an internet connection. All data is stored locally and is not shared with third parties",
     "ru": "Эта программа — цифровой дневник для отслеживания обслуживания и ремонта ваших велосипедов. Она подходит для:\n1) Владельцев одного или нескольких велосипедов.\n2) Семей, где каждый член имеет свой велосипед.\n3)Предпринимателей или энтузиастов, помогающих в ремонте.\n Программа позволяет фиксировать все действия по каждому велосипеду и владельцу. Данные можно экспортировать в CSV для анализа в табличных редакторах.\n Как начать:\n 1) Добавьте или выберите владельца.\n 2) Добавьте велосипед и введите данные о нём.\n Важно:\n 1) Программа не является финансовым инструментом. Цены носят справочный характер.\n 2) Работает без интернета. Все данные хранятся локально и не передаются третьим лицам",
@@ -133,6 +138,11 @@
     "en": "Enable PIN protection to secure your data. When enabled, you'll need to enter a 4-digit PIN each time you start the app. This provides basic protection from unauthorized access.",
     "ru": "Включите PIN-защиту для обеспечения безопасности ваших данных. При включении вам потребуется вводить 4-значный PIN-код при каждом запуске приложения. Это обеспечивает базовую защиту от несанкционированного доступа.",
     "ua": "Увімкніть PIN-захист для забезпечення безпеки ваших даних. При увімкненні вам потрібно буде вводити 4-значний PIN-код при кожному запуску програми. Це забезпечує базовий захист від несанкціонованого доступу."
+  },
+  "29": {
+    "en": "Date Format - allows you to customize how dates are displayed in the application. You can choose from DD-MM-YYYY (European), MM-DD-YYYY (American) or YYYY-MM-DD (ISO) formats and select a separator (dot, slash or hyphen) between date parts. All dates are stored in ISO format in the database.",
+    "ru": "Формат даты - позволяет настроить отображение дат в приложении. Вы можете выбрать формат ДД-ММ-ГГГГ (европейский), ММ-ДД-ГГГГ (американский) или ГГГГ-ММ-ДД (ISO) и указать разделитель (точка, слэш или дефис) между частями даты. Все даты хранятся в формате ISO в базе данных.",
+    "ua": "Формат дати - дозволяє налаштувати відображення дат у додатку. Ви можете вибрати формат ДД-ММ-РРРР (європейський), ММ-ДД-РРРР (американський) або РРРР-ММ-ДД (ISO) та вказати роздільник (крапка, скісна риска або дефіс) між частинами дати. Усі дати зберігаються у форматі ISO в базі даних."
   },
   "40": {
     "en": "Choose owner or bike from the proposed lists",
