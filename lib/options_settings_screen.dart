@@ -95,7 +95,8 @@ class _OptionsSettingsScreenState extends State<OptionsSettingsScreen> {
 
       if (languageChanged) {
         await initTranslations();
-        String msg = lw('Language changed. Reference tables will not change. Please restart');
+        String msg = lw(
+            'Language changed. Reference tables will not change. Please restart');
         okInfoBarYellow(msg);
       } else if (themeChanged) {
         String msg = lw('Theme changed. Please restart the program');
@@ -108,11 +109,6 @@ class _OptionsSettingsScreenState extends State<OptionsSettingsScreen> {
       String msg = lw('Failed to save action');
       okInfoBarRed('$msg: $e');
     }
-  }
-
-  // Метод для получения текущего примера даты для кнопки
-  String _getCurrentDateExample() {
-    return _getDateFormatExample(_dateFormat, _dateSeparator);
   }
 
   @override
@@ -131,7 +127,8 @@ class _OptionsSettingsScreenState extends State<OptionsSettingsScreen> {
                 onLongPress: () => okHelp(helpId),
                 child: Text(
                   lw(entry.key),
-                  style: TextStyle(fontWeight: fwNormal, fontSize: fsNormal, color: clText,),
+                  style: TextStyle(
+                    fontWeight: fwNormal, fontSize: fsNormal, color: clText,),
                 ),
               ),
             ),
@@ -142,8 +139,11 @@ class _OptionsSettingsScreenState extends State<OptionsSettingsScreen> {
                 children: [
                   SizedBox(
                     width: entry.value == 'true' || entry.value == 'false'
-                        ? 24  // Width for checkbox
-                        : MediaQuery.of(context).size.width * 0.45, // 45% of screen width
+                        ? 24 // Width for checkbox
+                        : MediaQuery
+                        .of(context)
+                        .size
+                        .width * 0.45, // 45% of screen width
                     child: entry.key == 'Program language'
                         ? Container(
                       padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -160,7 +160,10 @@ class _OptionsSettingsScreenState extends State<OptionsSettingsScreen> {
                             value: value,
                             child: Text(
                               value,
-                              style: TextStyle(fontWeight: fwNormal, fontSize: fsNormal, color: clText,),
+                              style: TextStyle(
+                                fontWeight: fwNormal,
+                                fontSize: fsNormal,
+                                color: clText,),
                             ),
                           );
                         }).toList(),
@@ -172,7 +175,10 @@ class _OptionsSettingsScreenState extends State<OptionsSettingsScreen> {
                           }
                         },
                         dropdownColor: clMenu,
-                        style: TextStyle(fontWeight: fwNormal, fontSize: fsNormal, color: clText,),
+                        style: TextStyle(
+                          fontWeight: fwNormal,
+                          fontSize: fsNormal,
+                          color: clText,),
                         icon: Icon(
                           Icons.arrow_drop_down,
                           color: clText,
@@ -194,7 +200,10 @@ class _OptionsSettingsScreenState extends State<OptionsSettingsScreen> {
                             value: value,
                             child: Text(
                               lw(value),
-                              style: TextStyle(fontWeight: fwNormal, fontSize: fsNormal, color: clText,),
+                              style: TextStyle(
+                                fontWeight: fwNormal,
+                                fontSize: fsNormal,
+                                color: clText,),
                             ),
                           );
                         }).toList(),
@@ -205,7 +214,10 @@ class _OptionsSettingsScreenState extends State<OptionsSettingsScreen> {
                           });
                         },
                         dropdownColor: clMenu,
-                        style: TextStyle(fontWeight: fwNormal, fontSize: fsNormal, color: clText,),
+                        style: TextStyle(
+                          fontWeight: fwNormal,
+                          fontSize: fsNormal,
+                          color: clText,),
                         icon: Icon(
                           Icons.arrow_drop_down,
                           color: clText,
@@ -221,14 +233,16 @@ class _OptionsSettingsScreenState extends State<OptionsSettingsScreen> {
                         onChanged: (bool? value) async {
                           if (value == true) {
                             // Если включаем PIN, показываем диалог для установки
-                            final pin = await showPinDialog(mode: PinDialogMode.setup);
+                            final pin = await showPinDialog(
+                                mode: PinDialogMode.setup);
 
                             if (pin != null) {
                               setState(() {
                                 _xdef['Use PIN'] = 'true';
                               });
-                              xdef['.PIN code'] = pin;  // Используем новый ключ
-                              await setKey('.PIN code', pin);  // Сохраняем в настройках
+                              xdef['.PIN code'] = pin; // Используем новый ключ
+                              await setKey(
+                                  '.PIN code', pin); // Сохраняем в настройках
                             } else {
                               setState(() {
                                 _xdef['Use PIN'] = 'false';
@@ -239,8 +253,9 @@ class _OptionsSettingsScreenState extends State<OptionsSettingsScreen> {
                             setState(() {
                               _xdef['Use PIN'] = 'false';
                             });
-                            xdef['.PIN code'] = '';  // Сбрасываем PIN
-                            await setKey('.PIN code', '');  // Сохраняем в настройках
+                            xdef['.PIN code'] = ''; // Сбрасываем PIN
+                            await setKey(
+                                '.PIN code', ''); // Сохраняем в настройках
                           }
                         },
                         activeColor: clText,
@@ -263,11 +278,15 @@ class _OptionsSettingsScreenState extends State<OptionsSettingsScreen> {
                     )
                         : TextField(
                       controller: _controllers[entry.key],
-                      style: TextStyle(fontWeight: fwNormal, fontSize: fsNormal, color: clText,),
+                      style: TextStyle(
+                        fontWeight: fwNormal,
+                        fontSize: fsNormal,
+                        color: clText,),
                       cursorColor: clText,
                       decoration: InputDecoration(
                         border: OutlineInputBorder(),
-                        contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                        contentPadding: EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 8),
                       ),
                       onChanged: (value) {
                         _xdef[entry.key] = value;
@@ -298,7 +317,9 @@ class _OptionsSettingsScreenState extends State<OptionsSettingsScreen> {
                   onLongPress: () => okHelp(29),
                   child: Text(
                     lw('Date Format'),
-                    style: TextStyle(fontWeight: fwNormal, fontSize: fsNormal, color: clText),
+                    style: TextStyle(fontWeight: fwNormal,
+                        fontSize: fsNormal,
+                        color: clText),
                   ),
                 ),
               ),
@@ -308,7 +329,10 @@ class _OptionsSettingsScreenState extends State<OptionsSettingsScreen> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.45,
+                      width: MediaQuery
+                          .of(context)
+                          .size
+                          .width * 0.45,
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
                           backgroundColor: clUpBar,
@@ -324,8 +348,10 @@ class _OptionsSettingsScreenState extends State<OptionsSettingsScreen> {
                           }
                         },
                         child: Text(
-                          _getCurrentDateExample(), // Показываем пример даты вместо "Configure"
-                          style: TextStyle(fontSize: fsNormal, fontWeight: fwNormal),
+                          _getCurrentDateExample(),
+                          // Показываем пример даты вместо "Configure"
+                          style: TextStyle(
+                              fontSize: fsNormal, fontWeight: fwNormal),
                         ),
                       ),
                     ),
@@ -381,24 +407,52 @@ class _OptionsSettingsScreenState extends State<OptionsSettingsScreen> {
     );
   }
 
+  String _getCurrentDateExample() {
+    return _getDateFormatExample(_dateFormat, _dateSeparator);
+  }
+
+  // Keep the date format example function
+  String _getDateFormatExample(String format, String separator) {
+    final today = DateTime.now();
+    final day = today.day.toString().padLeft(2, '0');
+    final month = today.month.toString().padLeft(2, '0');
+    final year = today.year.toString();
+
+    switch (format) {
+      case 'DD-MM-YYYY':
+        return '$day$separator$month$separator$year';
+      case 'MM-DD-YYYY':
+        return '$month$separator$day$separator$year';
+      case 'YYYY-MM-DD':
+      default:
+        return '$year$separator$month$separator$day';
+    }
+  }
+
+
+// Update the _showDateFormatDialog function
   Future<bool?> _showDateFormatDialog(BuildContext context) {
-    // Используем локальные переменные класса для временного хранения
+    // Use local variables for temporary storage
     String selectedFormat = _dateFormat;
     String selectedSeparator = _dateSeparator;
 
     return showDialog<bool?>(
       context: context,
       builder: (BuildContext context) {
-        // Получаем размеры экрана
-        final screenWidth = MediaQuery.of(context).size.width;
-        final screenHeight = MediaQuery.of(context).size.height;
+        // Get screen dimensions for proper sizing
+        final screenWidth = MediaQuery
+            .of(context)
+            .size
+            .width;
+        final screenHeight = MediaQuery
+            .of(context)
+            .size
+            .height;
 
-        // Центрируем диалог повыше на экране и делаем его уже
         return Dialog(
           insetPadding: EdgeInsets.symmetric(
-            // Делаем диалог уже, увеличивая горизонтальные отступы
-            horizontal: screenWidth * 0.2, // 20% ширины экрана с каждой стороны
-            vertical: screenHeight * 0.15, // 15% высоты экрана с каждой стороны
+            horizontal: screenWidth * 0.2, // 20% width margin on each side
+            vertical: screenHeight * 0.15, // 15% height margin on each side
           ),
           backgroundColor: clFon,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
@@ -410,25 +464,31 @@ class _OptionsSettingsScreenState extends State<OptionsSettingsScreen> {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Заголовок
+                    // Header
                     Padding(
                       padding: const EdgeInsets.only(bottom: 8.0),
                       child: Text(
                         lw('Settings'),
-                        style: TextStyle(color: clText, fontSize: fsLarge, fontWeight: fwBold),
+                        style: TextStyle(color: clText,
+                            fontSize: fsLarge,
+                            fontWeight: fwBold),
                       ),
                     ),
 
                     // Format section
                     Text(
                       lw('Format'),
-                      style: TextStyle(color: clText, fontSize: fsNormal, fontWeight: fwBold),
+                      style: TextStyle(color: clText,
+                          fontSize: fsNormal,
+                          fontWeight: fwBold),
                     ),
                     const SizedBox(height: 4),
-                    // Форматы в виде радио-кнопок (вертикально)
+
+                    // Date formats as radio buttons (vertical layout)
                     ...DATE_FORMATS.map((String format) {
-                      // Показываем формат с текущим разделителем
-                      String displayFormat = format.replaceAll('-', selectedSeparator);
+                      // Display format with current separator
+                      String displayFormat = format.replaceAll(
+                          '-', selectedSeparator);
                       return Row(
                         children: [
                           Radio<String>(
@@ -442,7 +502,8 @@ class _OptionsSettingsScreenState extends State<OptionsSettingsScreen> {
                                 });
                               }
                             },
-                            materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                            materialTapTargetSize: MaterialTapTargetSize
+                                .shrinkWrap,
                             visualDensity: VisualDensity.compact,
                           ),
                           const SizedBox(width: 8),
@@ -454,16 +515,18 @@ class _OptionsSettingsScreenState extends State<OptionsSettingsScreen> {
                       );
                     }).toList(),
 
-                    const SizedBox(height: 4),
+                    const SizedBox(height: 8),
 
                     // Separator section
                     Text(
                       lw('Separator'),
-                      style: TextStyle(color: clText, fontSize: fsNormal, fontWeight: fwBold),
+                      style: TextStyle(color: clText,
+                          fontSize: fsNormal,
+                          fontWeight: fwBold),
                     ),
                     const SizedBox(height: 4),
 
-                    // Разделители в виде радио-кнопок с крупными значками рядом
+                    // Separator options as radio buttons with large text
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: DATE_SEPARATORS.map((String separator) {
@@ -480,7 +543,8 @@ class _OptionsSettingsScreenState extends State<OptionsSettingsScreen> {
                                   });
                                 }
                               },
-                              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                              materialTapTargetSize: MaterialTapTargetSize
+                                  .shrinkWrap,
                               visualDensity: VisualDensity.compact,
                             ),
                             Text(
@@ -496,14 +560,14 @@ class _OptionsSettingsScreenState extends State<OptionsSettingsScreen> {
                       }).toList(),
                     ),
 
-                    const SizedBox(height: 4),
+                    const SizedBox(height: 8),
 
-                    // Example section
+                    // Example section with preview
                     Container(
                       width: double.infinity,
                       padding: EdgeInsets.all(8),
                       decoration: BoxDecoration(
-                        color: clFill,
+                        color: clFill.withOpacity(0.5),
                         borderRadius: BorderRadius.circular(4),
                         border: Border.all(color: clFrame),
                       ),
@@ -516,7 +580,8 @@ class _OptionsSettingsScreenState extends State<OptionsSettingsScreen> {
                           ),
                           Center(
                             child: Text(
-                              _getDateFormatExample(selectedFormat, selectedSeparator),
+                              _getDateFormatExample(
+                                  selectedFormat, selectedSeparator),
                               style: TextStyle(
                                 color: clText,
                                 fontSize: fsLarge,
@@ -530,34 +595,35 @@ class _OptionsSettingsScreenState extends State<OptionsSettingsScreen> {
 
                     const SizedBox(height: 12),
 
-                    // Кнопки OK/Cancel в одной строке, обе справа
+                    // Action buttons (OK/Cancel)
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.end, // Выравниваем по правому краю
+                      mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         TextButton(
                           style: TextButton.styleFrom(
                             backgroundColor: clUpBar,
                             foregroundColor: clText,
-                            padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 12, vertical: 4),
                           ),
                           onPressed: () {
                             Navigator.of(context).pop(false);
                           },
                           child: Text(lw('Cancel')),
                         ),
-                        const SizedBox(width: 8), // Добавляем отступ между кнопками
+                        const SizedBox(width: 8),
                         TextButton(
                           style: TextButton.styleFrom(
                             backgroundColor: clUpBar,
                             foregroundColor: clText,
-                            padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 12, vertical: 4),
                           ),
                           onPressed: () {
-                            // Обновляем только локальные переменные класса
+                            // Update only the class local variables
                             _dateFormat = selectedFormat;
                             _dateSeparator = selectedSeparator;
-
-                            // Реальное сохранение будет происходить при нажатии Save в основном экране
+                            // Real saving happens when Save is clicked in the main screen
                             Navigator.of(context).pop(true);
                           },
                           child: Text(lw('Ok')),
@@ -572,23 +638,5 @@ class _OptionsSettingsScreenState extends State<OptionsSettingsScreen> {
         );
       },
     );
-  }
-
-  // Вспомогательный метод для примера формата даты
-  String _getDateFormatExample(String format, String separator) {
-    final today = DateTime.now();
-    final day = today.day.toString().padLeft(2, '0');
-    final month = today.month.toString().padLeft(2, '0');
-    final year = today.year.toString();
-
-    switch (format) {
-      case 'DD-MM-YYYY':
-        return '$day$separator$month$separator$year';
-      case 'MM-DD-YYYY':
-        return '$month$separator$day$separator$year';
-      case 'YYYY-MM-DD':
-      default:
-        return '$year$separator$month$separator$day';
-    }
   }
 }
