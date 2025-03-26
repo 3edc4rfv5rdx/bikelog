@@ -18,13 +18,16 @@ class _BikeLogScreenState extends State<BikeLogScreen> with RouteAware {
   Map<String, dynamic>? currentFilters;
   bool _pinVerified = false;
 
+  // Added ScrollController for the ListView
+  final ScrollController _scrollController = ScrollController();
+
   final Map<String, String> menuLabels = {
     'filters': lw('Filters'),
     'settings': lw('Settings'),
     'sum': lw('Sum'),
     'reportToCSV': lw('Report to CSV'),
     'refresh': lw('Refresh'),
-    'about': lw('About')
+    'about': lw('About'),
   };
 
   @override
@@ -45,6 +48,7 @@ class _BikeLogScreenState extends State<BikeLogScreen> with RouteAware {
   @override
   void dispose() {
     routeObserver.unsubscribe(this);
+    _scrollController.dispose(); // Dispose the ScrollController
     super.dispose();
   }
 
@@ -81,8 +85,10 @@ class _BikeLogScreenState extends State<BikeLogScreen> with RouteAware {
 
       // Generate a timestamp for the filename
       DateTime now = DateTime.now();
-      String timestamp = "${now.year}${now.month.toString().padLeft(2, '0')}${now.day.toString().padLeft(2, '0')}";
-      timestamp += "${now.hour.toString().padLeft(2, '0')}${now.minute.toString().padLeft(2, '0')}";
+      String timestamp =
+          "${now.year}${now.month.toString().padLeft(2, '0')}${now.day.toString().padLeft(2, '0')}";
+      timestamp +=
+          "${now.hour.toString().padLeft(2, '0')}${now.minute.toString().padLeft(2, '0')}";
 
       // Create the file with a timestamp
       File csvFile = File('$reportDir/actions-$timestamp.csv');
@@ -107,21 +113,23 @@ class _BikeLogScreenState extends State<BikeLogScreen> with RouteAware {
             int year = dateInt ~/ 10000;
             int month = (dateInt % 10000) ~/ 100;
             int day = dateInt % 100;
-            exportRow['date'] = '$year-${month.toString().padLeft(2, '0')}-${day.toString().padLeft(2, '0')}';
+            exportRow['date'] =
+                '$year-${month.toString().padLeft(2, '0')}-${day.toString().padLeft(2, '0')}';
           }
 
           // Process each value properly for CSV format
-          List<String> formattedValues = exportRow.values.map((value) {
-            // If value is a string, enclose in quotes and escape any existing quotes
-            if (value is String) {
-              String escapedValue = value.replaceAll('"', '""');
-              return '"$escapedValue"';
-            } else if (value == null) {
-              return '""'; // Empty quoted string for null values
-            } else {
-              return value.toString(); // Numbers don't need quotes
-            }
-          }).toList();
+          List<String> formattedValues =
+              exportRow.values.map((value) {
+                // If value is a string, enclose in quotes and escape any existing quotes
+                if (value is String) {
+                  String escapedValue = value.replaceAll('"', '""');
+                  return '"$escapedValue"';
+                } else if (value == null) {
+                  return '""'; // Empty quoted string for null values
+                } else {
+                  return value.toString(); // Numbers don't need quotes
+                }
+              }).toList();
 
           sink.writeln(formattedValues.join(','));
         }
@@ -157,9 +165,9 @@ class _BikeLogScreenState extends State<BikeLogScreen> with RouteAware {
     String txt = lw('BikeLogBook');
     txt += '\n\n';
     txt += '${lw('Version')}: $progVersion\n\n';
-//    txt += '${lw('Date')}: $progDate\n';
+    //    txt += '${lw('Date')}: $progDate\n';
     txt += '(c): $progAuthor 2025\n';
-//    txt += '$progEmail\n';
+    //    txt += '$progEmail\n';
     // txt += '$progSite\n\n';
     if (xvBusiness == true) {
       txt += '${lw('Edition')}: $progEdition\n';
@@ -198,38 +206,51 @@ class _BikeLogScreenState extends State<BikeLogScreen> with RouteAware {
     }
     sql += ';';
 
-    // Execute the query using your getDbData function
-    final actionsFromDb = await getDbData(sql);
+    try {
+      // Execute the query using your getDbData function
+      final actionsFromDb = await getDbData(sql);
 
-    // Format dates according to user's preferences before setting state
-    final formattedActions = actionsFromDb.map((action) {
-      // Create a copy of the action map
-      Map<String, dynamic> formattedAction = Map<String, dynamic>.from(action);
+      // Format dates according to user's preferences before setting state
+      final formattedActions =
+          actionsFromDb.map((action) {
+            // Create a copy of the action map
+            Map<String, dynamic> formattedAction = Map<String, dynamic>.from(
+              action,
+            );
 
-      // Format the date field if it exists (from integer YYYYMMDD to display format)
-      if (formattedAction.containsKey('date') && formattedAction['date'] != null) {
-        // Handle both string and integer formats for backward compatibility
-        if (formattedAction['date'] is int) {
-          formattedAction['date'] = dateFromStorageInt(formattedAction['date']);
-        } else if (formattedAction['date'] is String) {
-          // Try to parse as int first
-          int? dateInt = int.tryParse(formattedAction['date']);
-          if (dateInt != null) {
-            formattedAction['date'] = dateFromStorageInt(dateInt);
-          } else {
-            // Handle old format if unable to parse as integer
-            formattedAction['date'] = dateFromStorageFormat(formattedAction['date']);
-          }
-        }
-      }
+            // Format the date field if it exists (from integer YYYYMMDD to display format)
+            if (formattedAction.containsKey('date') &&
+                formattedAction['date'] != null) {
+              // Handle both string and integer formats for backward compatibility
+              if (formattedAction['date'] is int) {
+                formattedAction['date'] = dateFromStorageInt(
+                  formattedAction['date'],
+                );
+              } else if (formattedAction['date'] is String) {
+                // Try to parse as int first
+                int? dateInt = int.tryParse(formattedAction['date']);
+                if (dateInt != null) {
+                  formattedAction['date'] = dateFromStorageInt(dateInt);
+                } else {
+                  // Handle old format if unable to parse as integer
+                  formattedAction['date'] = dateFromStorageFormat(
+                    formattedAction['date'],
+                  );
+                }
+              }
+            }
 
-      return formattedAction;
-    }).toList();
+            return formattedAction;
+          }).toList();
 
-    // Update the state with the fetched data
-    setState(() {
-      actions = formattedActions; // Use formatted actions
-    });
+      // Update the state with the fetched data
+      setState(() {
+        actions = formattedActions; // Use formatted actions
+      });
+    } catch (e) {
+      okInfoBarRed('${lw("Error loading actions")}: $e');
+      myPrint('Error loading actions: $e');
+    }
   }
 
   // Handle short tap (highlight the row)
@@ -238,7 +259,6 @@ class _BikeLogScreenState extends State<BikeLogScreen> with RouteAware {
       selectedIndex = index; // Highlight the selected row
     });
   }
-
 
   void _handleLongTap(int index) {
     showDialog(
@@ -255,22 +275,31 @@ class _BikeLogScreenState extends State<BikeLogScreen> with RouteAware {
             children: [
               GestureDetector(
                 onLongPress: () => okHelp(16),
-                child:   ListTile(
+                child: ListTile(
                   title: Text(
                     lw('EDIT'),
-                    style: TextStyle(fontSize: fsNormal, fontWeight: fwNormal, color: clText),
+                    style: TextStyle(
+                      fontSize: fsNormal,
+                      fontWeight: fwNormal,
+                      color: clText,
+                    ),
                   ),
                   onTap: () {
                     Navigator.pop(context); // Close the dialog
-                    _editAction(index);     // Call the edit function
+                    _editAction(index); // Call the edit function
                   },
                 ),
               ),
               GestureDetector(
                 onLongPress: () => okHelp(17),
                 child: ListTile(
-                  title: Text(lw('DELETE'),
-                    style: TextStyle(fontSize: fsNormal, fontWeight: fwNormal, color: clText),
+                  title: Text(
+                    lw('DELETE'),
+                    style: TextStyle(
+                      fontSize: fsNormal,
+                      fontWeight: fwNormal,
+                      color: clText,
+                    ),
                   ),
                   onTap: () {
                     Navigator.pop(context);
@@ -285,7 +314,7 @@ class _BikeLogScreenState extends State<BikeLogScreen> with RouteAware {
     );
   }
 
-// For editing action
+  // For editing action
   void _editAction(int index) async {
     final action = actions[index];
     final actionNum = action['num'];
@@ -296,12 +325,11 @@ class _BikeLogScreenState extends State<BikeLogScreen> with RouteAware {
     );
     if (result == true) {
       setState(() {
-        selectedIndex = null;  // Сбрасываем выделение
+        selectedIndex = null; // Сбрасываем выделение
       });
       _loadActions();
     }
   }
-
 
   Future<void> _deleteAction(int index) async {
     final action = actions[index];
@@ -322,8 +350,9 @@ class _BikeLogScreenState extends State<BikeLogScreen> with RouteAware {
     }
   }
 
-// Handle menu item selection
-  void _onMenuItemSelected(String value) async {  // Добавляем async
+  // Handle menu item selection
+  void _onMenuItemSelected(String value) async {
+    // Добавляем async
     switch (value) {
       case 'filters':
         final result = await Navigator.push(
@@ -342,9 +371,7 @@ class _BikeLogScreenState extends State<BikeLogScreen> with RouteAware {
       case 'settings':
         final result = await Navigator.push(
           context,
-          MaterialPageRoute(
-            builder: (context) => const SettingsScreen(),
-          ),
+          MaterialPageRoute(builder: (context) => const SettingsScreen()),
         );
         if (result == true) {
           await _loadActions();
@@ -355,6 +382,7 @@ class _BikeLogScreenState extends State<BikeLogScreen> with RouteAware {
         break;
       case 'reportToCSV':
         _exportActionsToCSV();
+        break; // Added missing break statement
       case 'refresh':
         _loadActions();
         break;
@@ -363,7 +391,6 @@ class _BikeLogScreenState extends State<BikeLogScreen> with RouteAware {
         break;
     }
   }
-
 
   void _showTotalSum() async {
     double totalSum;
@@ -385,15 +412,15 @@ class _BikeLogScreenState extends State<BikeLogScreen> with RouteAware {
       totalCount = result[0]['count'] ?? 0;
     }
 
-    String sumStr = xdef['Round to integer'] == 'true'
-        ? totalSum.round().toString()
-        : totalSum.toStringAsFixed(2);
+    String sumStr =
+        xdef['Round to integer'] == 'true'
+            ? totalSum.round().toString()
+            : totalSum.toStringAsFixed(2);
 
     String msg = '${lw('The total sum')}: $sumStr\n';
     msg += '${lw('Number of actions')}: $totalCount';
     okInfo(msg);
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -403,8 +430,13 @@ class _BikeLogScreenState extends State<BikeLogScreen> with RouteAware {
         backgroundColor: clUpBar,
         title: GestureDetector(
           onLongPress: () => okHelp(1), // help_id for the title
-          child: Text(lw('BikeLogBook'),
-            style: TextStyle(color: clText, fontSize: fsLarge, fontWeight: fwNormal,),
+          child: Text(
+            lw('BikeLogBook'),
+            style: TextStyle(
+              color: clText,
+              fontSize: fsLarge,
+              fontWeight: fwNormal,
+            ),
           ),
         ),
         leading: GestureDetector(
@@ -424,10 +456,7 @@ class _BikeLogScreenState extends State<BikeLogScreen> with RouteAware {
             child: Center(
               child: Text(
                 _getIndicatorText(),
-                style: TextStyle(
-                  color: clText,
-                  fontSize: fsNormal,
-                ),
+                style: TextStyle(color: clText, fontSize: fsNormal),
               ),
             ),
           ),
@@ -466,8 +495,9 @@ class _BikeLogScreenState extends State<BikeLogScreen> with RouteAware {
                             break;
                         }
                       },
-                      child: Text(entry.value,
-                        style: TextStyle(color: clText, fontSize: fsNormal,),
+                      child: Text(
+                        entry.value,
+                        style: TextStyle(color: clText, fontSize: fsNormal),
                       ),
                     ),
                   );
@@ -479,6 +509,8 @@ class _BikeLogScreenState extends State<BikeLogScreen> with RouteAware {
       ),
 
       body: Scrollbar(
+        // Attach the ScrollController to the Scrollbar
+        controller: _scrollController,
         // Установка thumbVisibility: true делает скролл-бар постоянно видимым
         thumbVisibility: true,
         // Радиус закругления для скролл-бара
@@ -488,6 +520,8 @@ class _BikeLogScreenState extends State<BikeLogScreen> with RouteAware {
         // Делаем скролл-бар интерактивным для перетаскивания
         interactive: true,
         child: ListView.builder(
+          // Also attach the same ScrollController to the ListView
+          controller: _scrollController,
           itemCount: actions.length,
           itemBuilder: (context, index) {
             final action = actions[index];
@@ -495,9 +529,7 @@ class _BikeLogScreenState extends State<BikeLogScreen> with RouteAware {
               onTap: () => _handleShortTap(index),
               onLongPress: () => _handleLongTap(index),
               child: Container(
-                color: selectedIndex == index
-                    ? clSel
-                    : null,
+                color: selectedIndex == index ? clSel : null,
                 child: ListTile(
                   title: Text(
                     '${action['date'] ?? lw('Unknown')} - ' +
@@ -507,7 +539,7 @@ class _BikeLogScreenState extends State<BikeLogScreen> with RouteAware {
                         '${action['price'] ?? '0.0'} - ' +
                         '${action['event'] ?? lw('Unknown')} - ' +
                         '${action['comment'] ?? lw('No comment')}',
-                    style: TextStyle(color: clText,fontSize: fsNormal),
+                    style: TextStyle(color: clText, fontSize: fsNormal),
                   ),
                 ),
               ),
@@ -521,16 +553,13 @@ class _BikeLogScreenState extends State<BikeLogScreen> with RouteAware {
         child: FloatingActionButton(
           onPressed: () {
             // Navigate to AddActionScreen
-            Navigator.pushNamed(
-              context,
-              '/add_action',
-            ).then((_) {
+            Navigator.pushNamed(context, '/add_action').then((_) {
               _loadActions(); // Reload actions after returning
             });
           },
           backgroundColor: clUpBar,
           foregroundColor: clText,
-          child: const Icon(Icons.add, size: 32,),
+          child: const Icon(Icons.add, size: 32),
         ),
       ),
     );
