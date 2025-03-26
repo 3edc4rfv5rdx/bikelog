@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
-import 'dart:io';  // Для работы с File и IOSink
+import 'dart:io'; // Для работы с File и IOSink
 import 'package:file_picker/file_picker.dart';
 import 'package:sqflite/sqflite.dart';
 import 'globals.dart';
 
-
-const List<String> appTables = ['actions','types','owners','bikes','events'];
+const List<String> appTables = [
+  'types',
+  'owners',
+  'bikes',
+  'events',
+  'actions',
+];
 String currentDate = '';
 String backupDirPath = '';
 
@@ -33,15 +38,18 @@ Future<void> processSqlFile() async {
     // Очищаем от комментариев и делим на запросы
     sqlContent = sqlContent.replaceAll(RegExp(r'/\*.*?\*/', dotAll: true), '');
 
-    List<String> queries = sqlContent
-        .split(';')
-        .map((q) => q
-        .split('\n')
-        .where((line) => !line.trim().startsWith('--'))
-        .join(' '))
-        .map((q) => q.trim())
-        .where((q) => q.isNotEmpty)
-        .toList();
+    List<String> queries =
+        sqlContent
+            .split(';')
+            .map(
+              (q) => q
+                  .split('\n')
+                  .where((line) => !line.trim().startsWith('--'))
+                  .join(' '),
+            )
+            .map((q) => q.trim())
+            .where((q) => q.isNotEmpty)
+            .toList();
 
     // Выполняем запросы
     Database? database;
@@ -51,7 +59,9 @@ Future<void> processSqlFile() async {
       // Начинаем транзакцию
       await database.transaction((txn) async {
         for (String query in queries) {
-          myPrint('Executing query: ${query.length > 50 ? query.substring(0, 50) + "..." : query}');
+          myPrint(
+            'Executing query: ${query.length > 50 ? query.substring(0, 50) + "..." : query}',
+          );
           await txn.execute(query);
         }
       });
@@ -107,8 +117,10 @@ Future<bool> restoreFromFiles(String backupDir) async {
   }
 }
 
-
-Future<bool> restoreFromCSV(String csvDir) async {
+Future<bool> restoreFromCSV(
+  String csvDir, {
+  Function? onCompleteCallback,
+}) async {
   try {
     myPrint('Starting CSV restore from directory: $csvDir');
     for (String tableName in appTables) {
@@ -133,7 +145,9 @@ Future<bool> restoreFromCSV(String csvDir) async {
           continue;
         }
         String columns = headers.join(',');
-        String vals = values.map((v) => "'${v.replaceAll("'", "''")}'").join(',');
+        String vals = values
+            .map((v) => "'${v.replaceAll("'", "''")}'")
+            .join(',');
         await setDbData('INSERT INTO $tableName ($columns) VALUES ($vals);');
       }
     }
@@ -142,7 +156,8 @@ Future<bool> restoreFromCSV(String csvDir) async {
   } catch (e) {
     String msg = lw('Error restoring from CSV');
     myPrint('CSV restore error: $e');
-    okInfoBarRed('$msg: $e');
+    // Use the callback pattern to avoid setState issues
+    // This allows the caller to handle UI updates safely
     return false;
   }
 }
@@ -177,11 +192,11 @@ List<String> parseCSVLine(String line) {
   return result;
 }
 
-
 // Основная функция бекапа базы
 Future<bool> backupDatabase() async {
   DateTime now = DateTime.now();
-  currentDate = "${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}";
+  currentDate =
+      "${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}";
   backupDirPath = '$xvBakDir/bak-$currentDate';
   myPrint('Starting database backup to: $backupDirPath');
   // Создаем каталог для бекапа
@@ -193,7 +208,11 @@ Future<bool> backupDatabase() async {
   List<String> dbFiles = [xvMainHome, xvSettHome];
   myPrint('Copying database files to backup directory');
   bool result = await copyFiles(dbFiles, backupDirPath);
-  myPrint(result ? 'Database backup completed successfully' : 'Database backup failed');
+  myPrint(
+    result
+        ? 'Database backup completed successfully'
+        : 'Database backup failed',
+  );
   return result;
 }
 
@@ -201,7 +220,9 @@ Future<bool> backupToCSV() async {
   myPrint('Starting CSV backup to: $backupDirPath');
   try {
     for (String tableName in appTables) {
-      List<Map<String, dynamic>> data = await getDbData("SELECT * FROM $tableName");
+      List<Map<String, dynamic>> data = await getDbData(
+        "SELECT * FROM $tableName",
+      );
       File csvFile = File('$backupDirPath/main-$tableName.csv');
       IOSink sink = csvFile.openWrite();
       if (data.isNotEmpty) {
@@ -210,17 +231,18 @@ Future<bool> backupToCSV() async {
         // Write data rows with proper CSV formatting
         for (var row in data) {
           // Process each value properly for CSV format
-          List<String> formattedValues = row.values.map((value) {
-            // If value is a string, enclose in quotes and escape any existing quotes
-            if (value is String) {
-              String escapedValue = value.replaceAll('"', '""');
-              return '"$escapedValue"';
-            } else if (value == null) {
-              return '""'; // Empty quoted string for null values
-            } else {
-              return value.toString(); // Numbers don't need quotes
-            }
-          }).toList();
+          List<String> formattedValues =
+              row.values.map((value) {
+                // If value is a string, enclose in quotes and escape any existing quotes
+                if (value is String) {
+                  String escapedValue = value.replaceAll('"', '""');
+                  return '"$escapedValue"';
+                } else if (value == null) {
+                  return '""'; // Empty quoted string for null values
+                } else {
+                  return value.toString(); // Numbers don't need quotes
+                }
+              }).toList();
           sink.writeln(formattedValues.join(','));
         }
       }
@@ -247,8 +269,10 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
-  bool _backupWithCSV = false; // State for Backup + CSV
-  bool _restoreWithCSV = false; // State for Restore + CSV
+  bool _backupWithCSV = false;
+  bool _restoreWithCSV = false;
+  bool _isRestoring = false; // New state variable to track restoration progress
+  bool _isBackingUp = false; // Similar variable for backup operations
 
   @override
   Widget build(BuildContext context) {
@@ -261,7 +285,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
           onLongPress: () => okHelp(7), // help_id для заголовка
           child: Text(
             lw('Settings'),
-            style: TextStyle(color: clText, fontSize: fsLarge, fontWeight: fwNormal,),
+            style: TextStyle(
+              color: clText,
+              fontSize: fsLarge,
+              fontWeight: fwNormal,
+            ),
           ),
         ),
         leading: GestureDetector(
@@ -278,7 +306,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
         // Добавляем кнопку в AppBar
         actions: [
           GestureDetector(
-            onLongPress: () => okHelp(67), // Добавьте соответствующий ID для справки
+            onLongPress:
+                () => okHelp(67), // Добавьте соответствующий ID для справки
             child: IconButton(
               icon: Icon(Icons.download, color: clUpBar), // Иконка для SQL
               onPressed: () {
@@ -302,9 +331,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     onLongPress: () => okHelp(60), // help_id = 2 for Options
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: clUpBar, // Set button background color to clUpBar
-                        foregroundColor: clText, // Set button text color to clText
-                        minimumSize: const Size(double.infinity, 48), // Set button height
+                        backgroundColor:
+                            clUpBar, // Set button background color to clUpBar
+                        foregroundColor:
+                            clText, // Set button text color to clText
+                        minimumSize: const Size(
+                          double.infinity,
+                          48,
+                        ), // Set button height
                       ),
                       onPressed: () {
                         // Navigate to the Options Settings screen
@@ -312,7 +346,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       },
                       child: Text(
                         lw('Options'),
-                        style: TextStyle(fontWeight: fwNormal, fontSize: fsNormal, color: clText,),
+                        style: TextStyle(
+                          fontWeight: fwNormal,
+                          fontSize: fsNormal,
+                          color: clText,
+                        ),
                       ),
                     ),
                   ),
@@ -325,12 +363,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 child: FractionallySizedBox(
                   widthFactor: 0.75, // Set width to 75% of the available space
                   child: GestureDetector(
-                    onLongPress: () => okHelp(61), // help_id = 3 for Owner Settings
+                    onLongPress:
+                        () => okHelp(61), // help_id = 3 for Owner Settings
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: clUpBar, // Set button background color to clUpBar
-                        foregroundColor: clText, // Set button text color to clText
-                        minimumSize: const Size(double.infinity, 48), // Set button height
+                        backgroundColor:
+                            clUpBar, // Set button background color to clUpBar
+                        foregroundColor:
+                            clText, // Set button text color to clText
+                        minimumSize: const Size(
+                          double.infinity,
+                          48,
+                        ), // Set button height
                       ),
                       onPressed: () {
                         // Navigate to the Reference Settings screen with refMode = 1 (Owner)
@@ -342,7 +386,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       },
                       child: Text(
                         lw('Owners Management'),
-                        style: TextStyle(fontWeight: fwNormal, fontSize: fsNormal, color: clText,),
+                        style: TextStyle(
+                          fontWeight: fwNormal,
+                          fontSize: fsNormal,
+                          color: clText,
+                        ),
                       ),
                     ),
                   ),
@@ -355,12 +403,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 child: FractionallySizedBox(
                   widthFactor: 0.75, // Set width to 75% of the available space
                   child: GestureDetector(
-                    onLongPress: () => okHelp(62), // help_id = 4 for Type Settings
+                    onLongPress:
+                        () => okHelp(62), // help_id = 4 for Type Settings
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: clUpBar, // Set button background color to clUpBar
-                        foregroundColor: clText, // Set button text color to clText
-                        minimumSize: const Size(double.infinity, 48), // Set button height
+                        backgroundColor:
+                            clUpBar, // Set button background color to clUpBar
+                        foregroundColor:
+                            clText, // Set button text color to clText
+                        minimumSize: const Size(
+                          double.infinity,
+                          48,
+                        ), // Set button height
                       ),
                       onPressed: () {
                         // Navigate to the Reference Settings screen with refMode = 2 (Type)
@@ -372,7 +426,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       },
                       child: Text(
                         lw('Types Management'),
-                        style: TextStyle(fontWeight: fwNormal, fontSize: fsNormal, color: clText,),
+                        style: TextStyle(
+                          fontWeight: fwNormal,
+                          fontSize: fsNormal,
+                          color: clText,
+                        ),
                       ),
                     ),
                   ),
@@ -385,12 +443,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 child: FractionallySizedBox(
                   widthFactor: 0.75, // Set width to 75% of the available space
                   child: GestureDetector(
-                    onLongPress: () => okHelp(63), // help_id = 5 for Event Settings
+                    onLongPress:
+                        () => okHelp(63), // help_id = 5 for Event Settings
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: clUpBar, // Set button background color to clUpBar
-                        foregroundColor: clText, // Set button text color to clText
-                        minimumSize: const Size(double.infinity, 48), // Set button height
+                        backgroundColor:
+                            clUpBar, // Set button background color to clUpBar
+                        foregroundColor:
+                            clText, // Set button text color to clText
+                        minimumSize: const Size(
+                          double.infinity,
+                          48,
+                        ), // Set button height
                       ),
                       onPressed: () {
                         // Navigate to the Reference Settings screen with refMode = 3 (Event)
@@ -402,7 +466,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       },
                       child: Text(
                         lw('Events Management'),
-                        style: TextStyle(fontWeight: fwNormal, fontSize: fsNormal, color: clText,),
+                        style: TextStyle(
+                          fontWeight: fwNormal,
+                          fontSize: fsNormal,
+                          color: clText,
+                        ),
                       ),
                     ),
                   ),
@@ -415,19 +483,30 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 child: FractionallySizedBox(
                   widthFactor: 0.75, // Set width to 75% of the available space
                   child: GestureDetector(
-                    onLongPress: () => okHelp(64), // help_id = 6 for Bike Settings
+                    onLongPress:
+                        () => okHelp(64), // help_id = 6 for Bike Settings
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: clUpBar, // Set button background color to clUpBar
-                        foregroundColor: clText, // Set button text color to clText
-                        minimumSize: const Size(double.infinity, 48), // Set button height
+                        backgroundColor:
+                            clUpBar, // Set button background color to clUpBar
+                        foregroundColor:
+                            clText, // Set button text color to clText
+                        minimumSize: const Size(
+                          double.infinity,
+                          48,
+                        ), // Set button height
                       ),
                       onPressed: () {
                         // Navigate to the Bike Settings screen
                         Navigator.pushNamed(context, '/bike_settings');
                       },
-                      child: Text(lw('Bikes Management'),
-                        style: TextStyle(fontWeight: fwNormal, fontSize: fsNormal, color: clText,),
+                      child: Text(
+                        lw('Bikes Management'),
+                        style: TextStyle(
+                          fontWeight: fwNormal,
+                          fontSize: fsNormal,
+                          color: clText,
+                        ),
                       ),
                     ),
                   ),
@@ -451,19 +530,26 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     children: [
                       Expanded(
                         child: GestureDetector(
-                          onLongPress: () => okHelp(65), // help_id = 7 for Backup
+                          onLongPress:
+                              () => okHelp(65), // help_id = 7 for Backup
                           child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: clUpBar, // Set button background color to clUpBar
-                              foregroundColor: clText, // Set button text color to clText
-                              minimumSize: const Size.fromHeight(48), // Set button height
+                              backgroundColor:
+                                  clUpBar, // Set button background color to clUpBar
+                              foregroundColor:
+                                  clText, // Set button text color to clText
+                              minimumSize: const Size.fromHeight(
+                                48,
+                              ), // Set button height
                             ),
                             // Обработчик кнопки
                             onPressed: () async {
                               // Сначала делаем бекап базы
                               bool backupSuccess = await backupDatabase();
                               if (!backupSuccess) {
-                                okInfoBarRed(lw('Database backup failed'));
+                                if (mounted) {
+                                  okInfoBarRed(lw('Database backup failed'));
+                                }
                                 return;
                               }
 
@@ -471,31 +557,48 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               if (_backupWithCSV) {
                                 bool csvSuccess = await backupToCSV();
                                 if (!csvSuccess) {
-                                  okInfoBarRed(lw('CSV export failed'));
+                                  if (mounted) {
+                                    okInfoBarRed(lw('CSV export failed'));
+                                  }
                                   return;
                                 }
                               }
 
-                              setState(() {
-                                _backupWithCSV = false; // Сбрасываем флаг после успешного выполнения
-                              });
-                              okInfoBarGreen(lw('Backup completed successfully'));
+                              // Check if the widget is still mounted before calling setState
+                              if (mounted) {
+                                setState(() {
+                                  _backupWithCSV =
+                                      false; // Сбрасываем флаг после успешного выполнения
+                                });
+                                okInfoBarGreen(
+                                  lw('Backup completed successfully'),
+                                );
+                              }
                             },
                             child: Text(
                               lw('Backup'),
-                              style: TextStyle(fontWeight: fwNormal, fontSize: fsNormal, color: clText,),
+                              style: TextStyle(
+                                fontWeight: fwNormal,
+                                fontSize: fsNormal,
+                                color: clText,
+                              ),
                             ),
                           ),
                         ),
                       ),
                       const SizedBox(width: 16),
                       GestureDetector(
-                        onLongPress: () => okHelp(68), // help_id = 8 for Backup Checkbox
+                        onLongPress:
+                            () => okHelp(68), // help_id = 8 for Backup Checkbox
                         child: Row(
                           children: [
                             Text(
                               '+csv',
-                              style: TextStyle(fontWeight: fwNormal, fontSize: fsLarge, color: clText,),
+                              style: TextStyle(
+                                fontWeight: fwNormal,
+                                fontSize: fsLarge,
+                                color: clText,
+                              ),
                             ),
                             Transform.scale(
                               scale: 1.5, // Масштаб
@@ -506,8 +609,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                     _backupWithCSV = value ?? false;
                                   });
                                 },
-                                activeColor: clText, // Цвет фона Checkbox, когда он активен (выбран)
-                                checkColor: clFill, // Цвет галочки (иконки) внутри Checkbox
+                                activeColor:
+                                    clText, // Цвет фона Checkbox, когда он активен (выбран)
+                                checkColor:
+                                    clFill, // Цвет галочки (иконки) внутри Checkbox
                                 side: BorderSide(color: clFrame),
                               ),
                             ),
@@ -529,51 +634,111 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     children: [
                       Expanded(
                         child: GestureDetector(
-                          onLongPress: () => okHelp(66), // help_id = 9 for Restore
+                          onLongPress:
+                              () => okHelp(66), // help_id = 9 for Restore
                           child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: clUpBar, // Set button background color to clUpBar
-                              foregroundColor: clText, // Set button text color to clText
-                              minimumSize: const Size.fromHeight(48), // Set button height
+                              backgroundColor:
+                                  clUpBar, // Set button background color to clUpBar
+                              foregroundColor:
+                                  clText, // Set button text color to clText
+                              minimumSize: const Size.fromHeight(
+                                48,
+                              ), // Set button height
                             ),
                             onPressed: () async {
-                              String? selectedDir = await selectRestoreDirectory();
+                              String? selectedDir =
+                                  await selectRestoreDirectory();
                               if (selectedDir == null) {
                                 return;
                               }
 
-                              bool success;
-                              if (_restoreWithCSV) {
-                                success = await restoreFromCSV(selectedDir);
-                              } else {
-                                success = await restoreFromFiles(selectedDir);
+                              // Show a loading indicator or disable the button to prevent multiple clicks
+                              if (mounted) {
+                                setState(() {
+                                  _isRestoring =
+                                      true; // Add this state variable to track restoration progress
+                                });
                               }
 
-                              if (success) {
-                                setState(() {
-                                  _restoreWithCSV = false; // Сбрасываем флаг после успешного выполнения
-                                });
-                                okInfoBarGreen(lw('Restore completed successfully'));
-//                                Navigator.pop(context, true);  // Добавляем возврат с результатом
-                              } else {
-                                okInfoBarRed(lw('Restore failed. Check logs for details'));
+                              bool success;
+                              try {
+                                if (_restoreWithCSV) {
+                                  success = await restoreFromCSV(selectedDir);
+                                } else {
+                                  success = await restoreFromFiles(selectedDir);
+                                }
+
+                                // Process the result only if the widget is still mounted
+                                if (mounted) {
+                                  setState(() {
+                                    _isRestoring = false;
+                                    if (success) {
+                                      _restoreWithCSV = false;
+                                    }
+                                  });
+
+                                  if (success) {
+                                    okInfoBarGreen(
+                                      lw('Restore completed successfully'),
+                                    );
+                                    // Navigate only after successful processing, with a slight delay to ensure UI updates
+                                    Future.delayed(
+                                      Duration(milliseconds: 100),
+                                      () {
+                                        if (mounted) {
+                                          Navigator.pop(context, true);
+                                        }
+                                      },
+                                    );
+                                  } else {
+                                    okInfoBarRed(
+                                      lw(
+                                        'Restore failed. Check logs for details',
+                                      ),
+                                    );
+                                  }
+                                }
+                              } catch (e) {
+                                // Handle any unexpected errors
+                                myPrint('Unexpected error during restore: $e');
+                                if (mounted) {
+                                  setState(() {
+                                    _isRestoring = false;
+                                  });
+                                  okInfoBarRed(
+                                    lw(
+                                      'Restore operation failed with an error',
+                                    ),
+                                  );
+                                }
                               }
                             },
                             child: Text(
-                            lw('Restore'),
-                              style: TextStyle(fontWeight: fwNormal, fontSize: fsNormal, color: clText,),
+                              lw('Restore'),
+                              style: TextStyle(
+                                fontWeight: fwNormal,
+                                fontSize: fsNormal,
+                                color: clText,
+                              ),
                             ),
                           ),
                         ),
                       ),
                       const SizedBox(width: 16),
                       GestureDetector(
-                        onLongPress: () => okHelp(69), // help_id = 10 for Restore Checkbox
+                        onLongPress:
+                            () =>
+                                okHelp(69), // help_id = 10 for Restore Checkbox
                         child: Row(
                           children: [
                             Text(
                               '+csv',
-                              style: TextStyle(fontWeight: fwNormal, fontSize: fsLarge, color: clText,),
+                              style: TextStyle(
+                                fontWeight: fwNormal,
+                                fontSize: fsLarge,
+                                color: clText,
+                              ),
                             ),
                             Transform.scale(
                               scale: 1.5, // Масштаб
@@ -584,8 +749,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                     _restoreWithCSV = value ?? false;
                                   });
                                 },
-                                activeColor: clText, // Цвет фона Checkbox, когда он активен (выбран)
-                                checkColor: clFill, // Цвет галочки (иконки) внутри Checkbox
+                                activeColor:
+                                    clText, // Цвет фона Checkbox, когда он активен (выбран)
+                                checkColor:
+                                    clFill, // Цвет галочки (иконки) внутри Checkbox
                                 side: BorderSide(color: clFrame),
                               ),
                             ),
