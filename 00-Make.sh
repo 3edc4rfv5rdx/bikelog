@@ -1,7 +1,7 @@
 #!/bin/bash
 
 
-COMMENT="change to integer date - all ok"
+COMMENT="add comment field to ref.form"
 #
 GLOBVERS='0.9'
 VER=''
