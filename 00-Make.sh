@@ -1,7 +1,7 @@
 #!/bin/bash
 
 
-COMMENT="integer date - change filters"
+COMMENT="change to integer date - all ok"
 #
 GLOBVERS='0.9'
 VER=''
