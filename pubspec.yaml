@@ -69,6 +69,7 @@ flutter:
     - assets/help.json
     - assets/iconbig.png # app icon
     - assets/main512.png  # splash for lang select
+    - assets/help-finger.png
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in

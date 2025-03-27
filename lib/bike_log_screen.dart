@@ -27,6 +27,7 @@ class _BikeLogScreenState extends State<BikeLogScreen> with RouteAware {
     'sum': lw('Sum'),
     'reportToCSV': lw('Report to CSV'),
     'refresh': lw('Refresh'),
+    'help': lw('Help'),
     'about': lw('About'),
   };
 
@@ -57,6 +58,67 @@ class _BikeLogScreenState extends State<BikeLogScreen> with RouteAware {
     setState(() {
       _loadActions();
     });
+  }
+
+  void _showHelp() {
+    final Size screenSize = MediaQuery.of(context).size;
+    final double dialogWidth = screenSize.width * 0.9;
+    final double dialogHeight = screenSize.height * 0.9;
+
+    showDialog(
+      context: context,
+      builder: (context) => Dialog(
+        insetPadding: EdgeInsets.symmetric(horizontal: screenSize.width * 0.05, vertical: screenSize.height * 0.05),
+        child: Container(
+          width: dialogWidth,
+          height: dialogHeight,
+          padding: EdgeInsets.all(20),
+          child: Column(
+            children: [
+              Expanded(
+                flex: 8,
+                child: Image.asset(
+                  "assets/help-finger.png",
+                  fit: BoxFit.contain,
+                ),
+              ),
+              SizedBox(height: 20),
+              // Транспарант с красным фоном и белым текстом
+              Container(
+                width: dialogWidth * 0.9, // 90% ширины диалога
+                padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                decoration: BoxDecoration(
+                  color: Colors.red,
+                  borderRadius: BorderRadius.circular(5),
+                ),
+                child: Text(
+                  lw("Long press for HELP"),
+                  style: TextStyle(
+                    color: Colors.white, // Белый текст
+                    fontSize: fsLarge,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              SizedBox(height: 20),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: clUpBar,
+                  foregroundColor: clText,
+                  minimumSize: Size(120, 40),
+                ),
+                onPressed: () => Navigator.pop(context),
+                child: Text(
+                  lw("Ok"),
+                  style: TextStyle(fontSize: fsNormal),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   Future<void> _checkPinProtection() async {
@@ -389,6 +451,9 @@ class _BikeLogScreenState extends State<BikeLogScreen> with RouteAware {
       case 'about':
         _showAbout();
         break;
+      case 'help':
+        _showHelp();
+        break;
     }
   }
 
@@ -492,6 +557,9 @@ class _BikeLogScreenState extends State<BikeLogScreen> with RouteAware {
                             break;
                           case 'about':
                             okHelp(15); // help_id = 10 for About
+                            break;
+                          case 'help':
+                            okHelp(19); // Новый id для помощи по справке
                             break;
                         }
                       },
