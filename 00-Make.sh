@@ -1,7 +1,7 @@
 #!/bin/bash
 
 
-COMMENT="add comment field to ref.form"
+COMMENT="ok"
 #
 GLOBVERS='0.9'
 VER=''

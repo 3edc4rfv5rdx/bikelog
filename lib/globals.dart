@@ -42,7 +42,7 @@ String xvSettHome = '';
 String xvBakDir = '';
 bool xvBusiness = false;
 
-const String progVersion = '0.9.250326';
+const String progVersion = '0.9.250327';
 // const String progDate = '2025-02-19';
 const String progAuthor = 'Eugen';
 const String progEmail = 'xxxx@xxx.xx';
