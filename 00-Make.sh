@@ -1,7 +1,7 @@
 #!/bin/bash
 
 
-COMMENT="ok"
+COMMENT="Make help-finger show help"
 #
 GLOBVERS='0.9'
 VER=''
