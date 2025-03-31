@@ -2,7 +2,7 @@
 set -eo pipefail
 
 # === CONFIGURATION ===
-COMMENT="long test version"
+COMMENT="add build number"
 #
 #
 GLOBVERS='0.9'
