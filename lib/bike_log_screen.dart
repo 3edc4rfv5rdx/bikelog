@@ -226,7 +226,8 @@ class _BikeLogScreenState extends State<BikeLogScreen> with RouteAware {
   void _showAbout() {
     String txt = lw('BikeLogBook');
     txt += '\n\n';
-    txt += '${lw('Version')}: $progVersion\n\n';
+    txt += '${lw('Version')}: $progVersion\n';
+    txt += '${lw('Build number')}: $buildNumber\n\n';
     //    txt += '${lw('Date')}: $progDate\n';
     txt += '(c): $progAuthor 2025\n';
     //    txt += '$progEmail\n';
