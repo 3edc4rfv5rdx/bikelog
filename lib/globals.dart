@@ -43,7 +43,7 @@ String xvBakDir = '';
 bool xvBusiness = false;
 
 const String progVersion = '0.9.250331';
-const int buildNumber = 42;
+const int buildNumber = 43;
 // const String progDate = '2025-02-19';
 const String progAuthor = 'Eugen';
 const String progEmail = 'xxxx@xxx.xx';
