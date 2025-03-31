@@ -1,7 +1,7 @@
 #!/bin/bash
 
 
-COMMENT="Make help-finger show help"
+COMMENT="add build number"
 #
 GLOBVERS='0.9'
 VER=''
