@@ -1,11 +1,12 @@
-#!/bin/bash -x
+#!/bin/bash
 set -eo pipefail
 
-# ============ CONFIGURATION ============
-COMMENT="add COMMENT field to refs.form"
+# === CONFIGURATION ===
+COMMENT="long test version"
+#
+#
 GLOBVERS='0.9'
 PROJ_NAME="bikelog"
-
 # Paths
 OUT_PATH="$HOME"
 PROJ_PATH="$OUT_PATH/AndroidStudioProjects/$PROJ_NAME"
@@ -136,6 +137,10 @@ update_version() {
     # Update globals.dart
     safe_sed "$GLOB_FILE" "const String progVersion = '[0-9]\+\.[0-9]\+\.[0-9]\+'" "const String progVersion = '$VER'"
     echo -e "${GREEN}✓ Updated $GLOB_FILE to version $VER${NC}"
+
+    # Update build number in globals.dart
+    safe_sed "$GLOB_FILE" "const int buildNumber = [0-9]\+" "const int buildNumber = $VER_CODE"
+    echo -e "${GREEN}✓ Updated build number to $VER_CODE in $GLOB_FILE${NC}"
 
     # Git operations if not skipped
     if [ "$SKIP_GIT" = false ] && { [ -d ".git" ] || git rev-parse --is-inside-work-tree >/dev/null 2>&1; }; then
