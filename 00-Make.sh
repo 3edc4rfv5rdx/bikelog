@@ -1,7 +1,7 @@
 #!/bin/bash
 
 
-COMMENT=""
+COMMENT="go to github"
 #
 GLOBVERS='0.9'
 VER=''
