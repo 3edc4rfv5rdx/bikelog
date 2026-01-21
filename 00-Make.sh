@@ -1,7 +1,7 @@
 #!/bin/bash
 
 
-COMMENT="add build number"
+COMMENT=""
 #
 GLOBVERS='0.9'
 VER=''

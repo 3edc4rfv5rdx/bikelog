@@ -47,3 +47,13 @@ app.*.map.json
 
 key.properties
 
+.metadata
+Bikelog-*.apkx
+analysis_options.yaml
+android/
+assets/help-finger.png
+assets/iconbig.png
+assets/main512.png
+linux/
+pubspec.lock
+test/
