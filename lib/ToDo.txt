@@ -1,55 +1,54 @@
 ===TODO:
 # v0.9.260121+47 (2026-01-21 12:10:51)
-- colors buttons in all date pikers
-+ новый help
-+ новые языки
-+ новые справочники
-+ "калькулятор в поле price" (2*753+70)
+- color buttons in all date pickers
++ new help
++ new languages
++ new reference lists
++ "calculator in price field" (2*753+70)
 ? swap dates
 ? swap prices
 ? AdMob
-+ создать полный отчет в csv
-+ ошибка при редакт велов
-+ переделал чтение из assets и замену данных языком и help
-+ стартовая картинка
-+ иконки всех размеров
-+ перевод названий тем с списке/опциях
-+ высота полей фото...
-+ сделать кнопки Ok/Cancel как в [Ok]
++ create full report in csv
++ error when editing bikes
++ reworked reading from assets and data replacement with language & help
++ startup image
++ icons of all sizes
++ translation of theme names in list/options
++ photo field heights...
++ make Ok/Cancel buttons like in [Ok]
 + clear (+csv) flags after backup/restore
 + prints in recovery functions
-+ rewrite langs
-+ вариант 'бизнес'
-+ сортировать велы в списке по владельцу
-+ в справочниках в modeEdit по первому нажатию <- сбрасывать все поля etc - снял везде
-+ в copyAssetsToFileSystem сделать проверку на наличие файлов и если да, не копировать
-+ initTranslations(globals) переделать на мои db-функции
-+ провериь прохождение старта второго раза
-+ Добавить к фильтрам хозяина
-+ перевод ua/заголовок сумма
-+ полное удаление хозяина+велы+действия
-+ перевод ru/ua при удалении вела/действий
-+ обновление главн окна при переходе после удаления велов
-+ осле этого - вход в фильтры - red-screen (удаленный вел в drop-down - сбрасывать)
-+ при переходе на bike_log экран не происходит refresh.
-+ проверить маски валидации цены (убрать $ в начале/конце)
-+ сумма с количеством действий
-+ main screen - [Filterd] or (Last 33)
-+ ввод из sql-файла
++ rewrite languages
++ 'business' variant
++ sort bikes in list by owner
++ in reference editors in modeEdit on first <- press reset all fields etc - removed everywhere
++ in copyAssetsToFileSystem add check: if file exists → do not copy
++ initTranslations(globals) reworked to my db functions
++ check second start flow
++ Add owner to filters
++ translation ua / sum title
++ complete deletion of owner + bikes + actions
++ ru/ua translation when deleting bike/actions
++ main window refresh after returning from bike deletion
++ after that → enter filters → red screen (deleted bike stays in dropdown → reset)
++ bike_log screen does not refresh on enter
++ check price validation masks (remove $ at start/end)
++ total sum with action count
++ main screen - [Filtered] or (Last 33)
++ input from sql file
 + first start flag
-+ в фильтре когда выбран вел и возвращаемся в фильтр ставить радио-кн на велы
-+ темы день/вечер/ночь
-+ поля дат в фильтре
++ in filter: when bike selected and return → set radio to bikes
++ day/evening/night themes
++ date fields in filter
 
 ===TOFIX:
 # v0.9.260121+47 (2026-01-21 12:10:51)
-+ на андр в главн окне нет скролл-бара
-+ перевод календаря
++ no scrollbar in main window on Android
++ calendar translation
 
 ===ERRORS:
 # v0.9.260121+47 (2026-01-21 12:10:51)
-+ при просмотре фото в велах возврат на settings
++ viewing bike photo → returns to settings
 + export to csv with ""
-+ after recovery return to main screen
++ after recovery → return to main screen
 + export to csv + purple error
-
