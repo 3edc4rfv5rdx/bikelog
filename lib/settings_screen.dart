@@ -158,6 +158,7 @@ Future<bool> restoreFromCSV(
     myPrint('CSV restore error: $e');
     // Use the callback pattern to avoid setState issues
     // This allows the caller to handle UI updates safely
+    okInfoBarRed(lw('Error restoring from CSV') + ': ' + e.toString());
     return false;
   }
 }

@@ -255,9 +255,9 @@ class _BikeLogScreenState extends State<BikeLogScreen> with RouteAware {
            bikes.brand as brand, bikes.model as model, actions.price as price, 
            events.name as event, actions.comment as comment
     from actions
+    inner join bikes on actions.bike = bikes.num
     inner join owners on bikes.owner = owners.num
     inner join events on actions.event = events.num
-    inner join bikes on actions.bike = bikes.num
     $xvFilter
     order by date $dateSort, owner, brand, model, price, event, num
   ''';

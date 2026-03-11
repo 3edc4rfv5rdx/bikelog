@@ -212,6 +212,7 @@ class _ReferenceSettingsScreenState extends State<ReferenceSettingsScreen> {
     try {
       String sql = 'SELECT name as name FROM owners WHERE num = $ownerNum';
       final owner = await getDbData(sql);
+      if (owner.isEmpty) return false;
       final ownerName = owner[0]['name'].toString();
 
       sql = 'SELECT COUNT(*) as cnt FROM bikes WHERE owner = $ownerNum';
