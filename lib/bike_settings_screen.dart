@@ -487,6 +487,7 @@ class _BikeEditPanelState extends State<BikeEditPanel> {
       String normBrand = strCleanAndEscape(brandController.text);
       String normModel = strCleanAndEscape(modelController.text);
       String normSerNum = strCleanAndEscape(serialNumController.text);
+      String normPhoto = strCleanAndEscape(photoController.text);
 
       // Convert the date from display format to integer format for storage
       int buyDateInt =
@@ -502,15 +503,15 @@ class _BikeEditPanelState extends State<BikeEditPanel> {
         SET owner = $selectedOwner, type = $selectedType,
             brand = '$normBrand', model = '$normModel',
             serialnum = '$normSerNum', buydate = $buyDateInt,
-            photo = '${photoController.text}'
+            photo = '$normPhoto'
         WHERE num = ${widget.bikeId}
         ''';
       } else {
         // Insert new bike
         sql = '''
         INSERT INTO bikes (owner, type, brand, model, serialnum, buydate, photo)
-        VALUES ($selectedOwner, $selectedType, '$normBrand', '$normModel', 
-                '$normSerNum', $buyDateInt, '${photoController.text}')
+        VALUES ($selectedOwner, $selectedType, '$normBrand', '$normModel',
+                '$normSerNum', $buyDateInt, '$normPhoto')
         ''';
       }
 

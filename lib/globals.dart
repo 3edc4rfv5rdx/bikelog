@@ -500,13 +500,13 @@ Future<String> getDbOne(String sql) async {
 }
 
 // Function to execute a SQL query and return a list of rows
-Future<List<Map<String, dynamic>>> getDbData(String sql) async {
+Future<List<Map<String, dynamic>>> getDbData(String sql, [List<dynamic>? arguments]) async {
   dbMainBusy = true;
   Database? database;
   List<Map<String, dynamic>> result = []; // Default value
   try {
     database = await myOpenDatabase(xvMainHome);
-    result = await database.rawQuery(sql);
+    result = await database.rawQuery(sql, arguments ?? []);
   } catch (e) {
     myPrint('Error in getDbData: $e');
     rethrow;
@@ -520,12 +520,12 @@ Future<List<Map<String, dynamic>>> getDbData(String sql) async {
 }
 
 // Function to execute a SQL command on the main database
-Future<void> setDbData(String sql) async {
+Future<void> setDbData(String sql, [List<dynamic>? arguments]) async {
   dbMainBusy = true;
   Database? database;
   try {
     database = await myOpenDatabase(xvMainHome);
-    await database.execute(sql);
+    await database.execute(sql, arguments ?? []);
   } catch (e) {
     myPrint('Error in setDbData: $e');
     rethrow;

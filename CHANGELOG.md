@@ -6,3 +6,4 @@
 - F: Translate Russian comment to English in build.gradle.kts
 - R: Translate all Russian comments to English in all Dart files (9 files, 217 lines)
 - F: Move backup directory from Download to Documents, fix "Bakup" typo
+- E: Fix SQL injection: escape user input in filter comment, bike photo; add parameterized query support to getDbData/setDbData

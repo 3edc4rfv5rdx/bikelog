@@ -88,7 +88,7 @@ class _FilterScreenState extends State<FilterScreen> {
 
       if (priceFrom != null && priceFrom.isNotEmpty) s.add('actions.price >= $priceFrom');
       if (priceTo != null && priceTo.isNotEmpty) s.add('actions.price <= $priceTo');
-      if (comment != null && comment.isNotEmpty) s.add('actions.comment LIKE "%$comment%"');
+      if (comment != null && comment.isNotEmpty) s.add('actions.comment LIKE "%${strCleanAndEscape(comment)}%"');
 
       // Form the filter string
       if (s.isNotEmpty) {
