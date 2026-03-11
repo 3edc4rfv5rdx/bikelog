@@ -19,8 +19,8 @@ class _ReferenceSettingsScreenState extends State<ReferenceSettingsScreen> {
       FocusNode(); // New focus node for comment field
   List<Map<String, dynamic>> _items = [];
   int? _selectedItemNum;
-  int edMode = 0; // Режим: 0 - none, 1 - EDIT, 2 - DELETE, 3 - ADD
-  bool _isEditing = false; // Флаг для управления состоянием редактирования
+  int edMode = 0; // Mode: 0 - none, 1 - EDIT, 2 - DELETE, 3 - ADD
+  bool _isEditing = false; // Flag to control editing state
 
   String get _tableName {
     switch (widget.refMode) {
@@ -104,7 +104,7 @@ class _ReferenceSettingsScreenState extends State<ReferenceSettingsScreen> {
     String errorMessage = '';
 
     if (edMode == 1 || edMode == 3) {
-      // Общая логика для режимов редактирования и добавления
+      // Common logic for edit and add modes
       if (_nameController.text.isEmpty) {
         okInfoBarOrange(lw('Name cannot be empty'));
         return;
@@ -117,7 +117,7 @@ class _ReferenceSettingsScreenState extends State<ReferenceSettingsScreen> {
               : // Use NULL for empty comments
               "'${strCleanAndEscape(_commentController.text)}'"; // Otherwise use the comment value in quotes
 
-      // Для режима редактирования используем _selectedItemNum, для добавления - NULL
+      // For edit mode use _selectedItemNum, for add mode - NULL
       final numValue = edMode == 1 ? _selectedItemNum : 'NULL';
       // Updated SQL to include the comment field, handling NULL properly
       sql =
@@ -135,7 +135,7 @@ class _ReferenceSettingsScreenState extends State<ReferenceSettingsScreen> {
       }
 
       if (widget.refMode == 1) {
-        // Для владельцев
+        // For owners
         if (_selectedItemNum == 1) {
           okInfoBarOrange(lw('Cannot delete this record'));
           return;
@@ -157,7 +157,7 @@ class _ReferenceSettingsScreenState extends State<ReferenceSettingsScreen> {
           return;
         }
       } else {
-        // Для остальных типов записей - обычное удаление
+        // For other record types - standard deletion
         sql = 'DELETE FROM $_tableName WHERE num = $_selectedItemNum';
         successMessage = lw('Deleted successfully');
         errorMessage = lw('Error deleting data');
@@ -188,7 +188,7 @@ class _ReferenceSettingsScreenState extends State<ReferenceSettingsScreen> {
           itemComment ??
           ''; // Set comment text, default to empty string if null
     });
-    // Добавляем небольшую задержку
+    // Add a small delay
     Future.delayed(const Duration(milliseconds: 100), () {
       _nameFocusNode.requestFocus(); // Focus on the name field first
     });
@@ -202,7 +202,7 @@ class _ReferenceSettingsScreenState extends State<ReferenceSettingsScreen> {
       edMode = 3;
       _isEditing = true;
     });
-    // Добавляем небольшую задержку
+    // Add a small delay
     Future.delayed(const Duration(milliseconds: 100), () {
       _nameFocusNode.requestFocus(); // Focus on the name field first
     });
@@ -276,7 +276,7 @@ class _ReferenceSettingsScreenState extends State<ReferenceSettingsScreen> {
         ),
         actions: [
           GestureDetector(
-            onLongPress: () => okHelp(58), // номер помощи для Save
+            onLongPress: () => okHelp(58), // help number for Save
             child: IconButton(
               icon: const Icon(Icons.save),
               color: clText,
@@ -406,11 +406,11 @@ class _ReferenceSettingsScreenState extends State<ReferenceSettingsScreen> {
           ),
 
           Divider(
-            height: 2, // общая высота элемента
-            thickness: 2, // толщина линии
-            color: clText, // цвет
-            indent: 20, // отступ слева
-            endIndent: 20, // отступ справа
+            height: 2, // total element height
+            thickness: 2, // line thickness
+            color: clText, // color
+            indent: 20, // left indent
+            endIndent: 20, // right indent
           ),
           Expanded(
             child: Container(
@@ -518,8 +518,8 @@ class _ReferenceSettingsScreenState extends State<ReferenceSettingsScreen> {
           backgroundColor: clUpBar,
           child: Icon(Icons.add, color: clText),
           onPressed: () async {
-            // добавляем async
-            // Проверяем лимит владельцев если включен business режим и это справочник owners
+            // Add async
+            // Check owners limit if business mode is enabled and this is the owners reference
             if (xvBusiness == true && widget.refMode == 1) {
               int currentOwnersCount = await getTableRowCount('owners');
               if (currentOwnersCount >= progOwners) {

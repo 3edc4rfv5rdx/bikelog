@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'dart:io'; // Для работы с File и IOSink
+import 'dart:io'; // For working with File and IOSink
 import 'package:file_picker/file_picker.dart';
 import 'package:sqflite/sqflite.dart';
 import 'globals.dart';
@@ -14,10 +14,10 @@ const List<String> appTables = [
 String currentDate = '';
 String backupDirPath = '';
 
-// Добавьте эту функцию в класс _SettingsScreenState
+// Add this function to _SettingsScreenState class
 Future<void> processSqlFile() async {
   try {
-    // Выбираем SQL файл
+    // Select SQL file
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
       allowedExtensions: ['sql'],
@@ -31,11 +31,11 @@ Future<void> processSqlFile() async {
     String filePath = result.files.single.path!;
     myPrint('Selected SQL file: $filePath');
 
-    // Считываем содержимое файла
+    // Read file contents
     File sqlFile = File(filePath);
     String sqlContent = await sqlFile.readAsString();
 
-    // Очищаем от комментариев и делим на запросы
+    // Remove comments and split into queries
     sqlContent = sqlContent.replaceAll(RegExp(r'/\*.*?\*/', dotAll: true), '');
 
     List<String> queries =
@@ -51,12 +51,12 @@ Future<void> processSqlFile() async {
             .where((q) => q.isNotEmpty)
             .toList();
 
-    // Выполняем запросы
+    // Execute queries
     Database? database;
     try {
       database = await myOpenDatabase(xvMainHome);
 
-      // Начинаем транзакцию
+      // Start transaction
       await database.transaction((txn) async {
         for (String query in queries) {
           myPrint(
@@ -192,19 +192,19 @@ List<String> parseCSVLine(String line) {
   return result;
 }
 
-// Основная функция бекапа базы
+// Main database backup function
 Future<bool> backupDatabase() async {
   DateTime now = DateTime.now();
   currentDate =
       "${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}";
   backupDirPath = '$xvBakDir/bak-$currentDate';
   myPrint('Starting database backup to: $backupDirPath');
-  // Создаем каталог для бекапа
+  // Create backup directory
   if (!await newMakeDir(backupDirPath)) {
     myPrint('Failed to create backup directory');
     return false;
   }
-  // Копируем файлы базы данных
+  // Copy database files
   List<String> dbFiles = [xvMainHome, xvSettHome];
   myPrint('Copying database files to backup directory');
   bool result = await copyFiles(dbFiles, backupDirPath);
@@ -278,11 +278,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: clFon,
-      // Модифицированный AppBar в SettingsScreen
+      // Modified AppBar in SettingsScreen
       appBar: AppBar(
         backgroundColor: clUpBar,
         title: GestureDetector(
-          onLongPress: () => okHelp(7), // help_id для заголовка
+          onLongPress: () => okHelp(7), // help_id for the title
           child: Text(
             lw('Settings'),
             style: TextStyle(
@@ -303,15 +303,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
             },
           ),
         ),
-        // Добавляем кнопку в AppBar
+        // Add button to AppBar
         actions: [
           GestureDetector(
             onLongPress:
-                () => okHelp(67), // Добавьте соответствующий ID для справки
+                () => okHelp(67), // Add corresponding help ID
             child: IconButton(
-              icon: Icon(Icons.download, color: clUpBar), // Иконка для SQL
+              icon: Icon(Icons.download, color: clUpBar), // SQL icon
               onPressed: () {
-                processSqlFile(); // Вызов функции обработки SQL-файла
+                processSqlFile(); // Call SQL file processing function
               },
             ),
           ),
@@ -515,7 +515,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ],
           ),
 
-          // Опускаем нижние кнопки на 50 пикселей
+          // Push bottom buttons down by 50 pixels
           const SizedBox(height: 50),
 
           // Bottom block of buttons (Backup and Restore) - 60% width
@@ -542,9 +542,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                 48,
                               ), // Set button height
                             ),
-                            // Обработчик кнопки
+                            // Button handler
                             onPressed: () async {
-                              // Сначала делаем бекап базы
+                              // First backup the database
                               bool backupSuccess = await backupDatabase();
                               if (!backupSuccess) {
                                 if (mounted) {
@@ -553,7 +553,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                 return;
                               }
 
-                              // Если включен CSV флаг, делаем экспорт в CSV
+                              // If CSV flag is enabled, export to CSV
                               if (_backupWithCSV) {
                                 bool csvSuccess = await backupToCSV();
                                 if (!csvSuccess) {
@@ -568,7 +568,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               if (mounted) {
                                 setState(() {
                                   _backupWithCSV =
-                                      false; // Сбрасываем флаг после успешного выполнения
+                                      false; // Reset flag after successful execution
                                 });
                                 okInfoBarGreen(
                                   lw('Backup completed successfully'),
@@ -601,7 +601,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               ),
                             ),
                             Transform.scale(
-                              scale: 1.5, // Масштаб
+                              scale: 1.5, // Scale
                               child: Checkbox(
                                 value: _backupWithCSV,
                                 onChanged: (bool? value) {
@@ -610,9 +610,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                   });
                                 },
                                 activeColor:
-                                    clText, // Цвет фона Checkbox, когда он активен (выбран)
+                                    clText, // Checkbox background color when active (checked)
                                 checkColor:
-                                    clFill, // Цвет галочки (иконки) внутри Checkbox
+                                    clFill, // Checkmark (icon) color inside Checkbox
                                 side: BorderSide(color: clFrame),
                               ),
                             ),
@@ -741,7 +741,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               ),
                             ),
                             Transform.scale(
-                              scale: 1.5, // Масштаб
+                              scale: 1.5, // Scale
                               child: Checkbox(
                                 value: _restoreWithCSV,
                                 onChanged: (bool? value) {
@@ -750,9 +750,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                   });
                                 },
                                 activeColor:
-                                    clText, // Цвет фона Checkbox, когда он активен (выбран)
+                                    clText, // Checkbox background color when active (checked)
                                 checkColor:
-                                    clFill, // Цвет галочки (иконки) внутри Checkbox
+                                    clFill, // Checkmark (icon) color inside Checkbox
                                 side: BorderSide(color: clFrame),
                               ),
                             ),

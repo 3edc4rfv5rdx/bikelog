@@ -34,7 +34,7 @@ class _BikeLogScreenState extends State<BikeLogScreen> with RouteAware {
   @override
   void initState() {
     super.initState();
-    // Используем addPostFrameCallback для отложенного выполнения
+    // Use addPostFrameCallback for deferred execution
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _checkPinProtection();
     });
@@ -83,9 +83,9 @@ class _BikeLogScreenState extends State<BikeLogScreen> with RouteAware {
                 ),
               ),
               SizedBox(height: 20),
-              // Транспарант с красным фоном и белым текстом
+              // Banner with red background and white text
               Container(
-                width: dialogWidth * 0.9, // 90% ширины диалога
+                width: dialogWidth * 0.9, // 90% of dialog width
                 padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
                 decoration: BoxDecoration(
                   color: Colors.red,
@@ -94,7 +94,7 @@ class _BikeLogScreenState extends State<BikeLogScreen> with RouteAware {
                 child: Text(
                   lw("Long press for HELP"),
                   style: TextStyle(
-                    color: Colors.white, // Белый текст
+                    color: Colors.white, // White text
                     fontSize: fsLarge,
                     fontWeight: FontWeight.bold,
                   ),
@@ -131,8 +131,8 @@ class _BikeLogScreenState extends State<BikeLogScreen> with RouteAware {
         });
         _loadActions();
       } else {
-        // Если PIN не прошел проверку (3 неудачные попытки)
-        SystemNavigator.pop(); // Выход из приложения
+        // If PIN verification failed (3 unsuccessful attempts)
+        SystemNavigator.pop(); // Exit the application
       }
     } else {
       _loadActions();
@@ -388,7 +388,7 @@ class _BikeLogScreenState extends State<BikeLogScreen> with RouteAware {
     );
     if (result == true) {
       setState(() {
-        selectedIndex = null; // Сбрасываем выделение
+        selectedIndex = null; // Reset selection
       });
       _loadActions();
     }
@@ -415,7 +415,7 @@ class _BikeLogScreenState extends State<BikeLogScreen> with RouteAware {
 
   // Handle menu item selection
   void _onMenuItemSelected(String value) async {
-    // Добавляем async
+    // Add async
     switch (value) {
       case 'filters':
         final result = await Navigator.push(
@@ -428,7 +428,7 @@ class _BikeLogScreenState extends State<BikeLogScreen> with RouteAware {
           setState(() {
             currentFilters = result;
           });
-          await _loadActions(); // Перезагружаем список с новыми фильтрами
+          await _loadActions(); // Reload list with new filters
         }
         break;
       case 'settings':
@@ -462,7 +462,7 @@ class _BikeLogScreenState extends State<BikeLogScreen> with RouteAware {
     double totalSum;
     int totalCount;
 
-    // Если есть фильтр, используем текущие actions
+    // If filter is active, use current actions
     if (xvFilter != '') {
       totalSum = actions.fold(0.0, (sum, action) {
         final price = action['price'] ?? 0.0;
@@ -470,7 +470,7 @@ class _BikeLogScreenState extends State<BikeLogScreen> with RouteAware {
       });
       totalCount = actions.length;
     }
-    // Иначе делаем запрос на все записи
+    // Otherwise query all records
     else {
       String sql = 'SELECT COUNT(*) as count, SUM(price) as total FROM actions';
       final result = await getDbData(sql);
@@ -560,7 +560,7 @@ class _BikeLogScreenState extends State<BikeLogScreen> with RouteAware {
                             okHelp(15); // help_id = 10 for About
                             break;
                           case 'help':
-                            okHelp(19); // Новый id для помощи по справке
+                            okHelp(19); // New help ID for help section
                             break;
                         }
                       },
@@ -580,13 +580,13 @@ class _BikeLogScreenState extends State<BikeLogScreen> with RouteAware {
       body: Scrollbar(
         // Attach the ScrollController to the Scrollbar
         controller: _scrollController,
-        // Установка thumbVisibility: true делает скролл-бар постоянно видимым
+        // Setting thumbVisibility: true makes the scrollbar always visible
         thumbVisibility: true,
-        // Радиус закругления для скролл-бара
+        // Border radius for the scrollbar
         radius: const Radius.circular(15),
-        // Толщина скролл-бара
+        // Scrollbar thickness
         thickness: 6,
-        // Делаем скролл-бар интерактивным для перетаскивания
+        // Make the scrollbar interactive for dragging
         interactive: true,
         child: ListView.builder(
           // Also attach the same ScrollController to the ListView

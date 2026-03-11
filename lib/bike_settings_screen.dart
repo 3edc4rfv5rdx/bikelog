@@ -14,7 +14,7 @@ class BikeSettingsScreen extends StatefulWidget {
 class _BikeSettingsScreenState extends State<BikeSettingsScreen> {
   List<Map<String, dynamic>> bikes = [];
   int? selectedBikeIndex;
-  int? edBikeId; // Переменная для ID редактируемого велосипеда
+  int? edBikeId; // Variable for the ID of the bike being edited
   final ScrollController _scrollController = ScrollController();
 
   @override
@@ -25,11 +25,11 @@ class _BikeSettingsScreenState extends State<BikeSettingsScreen> {
 
   @override
   void dispose() {
-    _scrollController.dispose(); // Важно освободить ресурсы
+    _scrollController.dispose(); // Important to free resources
     super.dispose();
   }
 
-  // Загрузка велосипедов из базы данных
+  // Load bikes from the database
   Future<void> _loadBikes() async {
     final sql = '''
       SELECT bikes.num as num, owners.name as owner,
@@ -64,10 +64,10 @@ class _BikeSettingsScreenState extends State<BikeSettingsScreen> {
       useRootNavigator: false,
       position: RelativeRect.fromLTRB(
         screenWidth / 2 -
-            100, // левая граница (центр минус половина ширины меню)
-        screenHeight * 0.3, // верхняя граница (30% высоты экрана)
-        screenWidth / 2, // правая граница (центр)
-        screenHeight * 0.3, // нижняя граница (та же что и верхняя)
+            100, // left edge (center minus half the menu width)
+        screenHeight * 0.3, // top edge (30% of screen height)
+        screenWidth / 2, // right edge (center)
+        screenHeight * 0.3, // bottom edge (same as top)
       ),
       items: [
         PopupMenuItem(
@@ -170,7 +170,7 @@ class _BikeSettingsScreenState extends State<BikeSettingsScreen> {
   }
 
   void _showEditPanel() {
-    // Открываем панель редактирования поверх всего экрана
+    // Open the edit panel on top of the entire screen
     Navigator.of(context).push(
       PageRouteBuilder(
         opaque: false,
@@ -180,7 +180,7 @@ class _BikeSettingsScreenState extends State<BikeSettingsScreen> {
             onSaved: () {
               _loadBikes();
             },
-            topPadding: 0, // Начинаем с самого верха
+            topPadding: 0, // Start from the very top
           );
         },
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
@@ -210,7 +210,7 @@ class _BikeSettingsScreenState extends State<BikeSettingsScreen> {
           backgroundColor: clUpBar,
           child: Icon(Icons.add, color: clText),
           onPressed: () async {
-            // Проверяем лимит велосипедов если включен business режим
+            // Check bike limit if business mode is enabled
             if (xvBusiness == true) {
               int currentBikesCount = await getTableRowCount('bikes');
               if (currentBikesCount >= progBikes) {
@@ -220,7 +220,7 @@ class _BikeSettingsScreenState extends State<BikeSettingsScreen> {
               }
             }
             setState(() {
-              edBikeId = null; // null значит новый велосипед
+              edBikeId = null; // null means a new bike
             });
             _showEditPanel();
           },
@@ -290,9 +290,9 @@ class _BikeSettingsScreenState extends State<BikeSettingsScreen> {
 }
 
 class BikeEditPanel extends StatefulWidget {
-  final int? bikeId; // null для нового велосипеда
+  final int? bikeId; // null for a new bike
   final Function onSaved;
-  final double topPadding; // Отступ сверху для позиционирования
+  final double topPadding; // Top padding for positioning
 
   const BikeEditPanel({
     Key? key,
@@ -306,14 +306,14 @@ class BikeEditPanel extends StatefulWidget {
 }
 
 class _BikeEditPanelState extends State<BikeEditPanel> {
-  // Уменьшаем размеры элементов и отступы
+  // Reduce element sizes and paddings
   final double dropDownHeight = max(fsNormal * 2.2, kMinInteractiveDimension);
-  final double textFieldHeight = fsNormal * 2.2; // Уменьшено с 2.6
-  final double fieldPadding = fsNormal * 0.8; // Уменьшено с 1.0
-  final double textFieldTextHeight = 1.0; // Уменьшено с 1.2
+  final double textFieldHeight = fsNormal * 2.2; // Reduced from 2.6
+  final double fieldPadding = fsNormal * 0.8; // Reduced from 1.0
+  final double textFieldTextHeight = 1.0; // Reduced from 1.2
 
-  // Уменьшаем отступы между полями
-  final double fieldSpacing = 8.0; // Уменьшено с 12.0
+  // Reduce spacing between fields
+  final double fieldSpacing = 8.0; // Reduced from 12.0
 
   List<Map<String, dynamic>> owners = [];
   List<Map<String, dynamic>> types = [];
@@ -334,7 +334,7 @@ class _BikeEditPanelState extends State<BikeEditPanel> {
   final FocusNode buyDateFocusNode = FocusNode();
   final FocusNode photoFocusNode = FocusNode();
 
-  // Контроллер прокрутки для формы
+  // Scroll controller for the form
   final ScrollController _formScrollController = ScrollController();
 
   @override
@@ -516,8 +516,8 @@ class _BikeEditPanelState extends State<BikeEditPanel> {
 
       await setDbData(sql);
       widget
-          .onSaved(); // Вызываем колбэк для обновления списка в основном экране
-      Navigator.pop(context); // Закрываем панель редактирования
+          .onSaved(); // Call the callback to refresh the list on the main screen
+      Navigator.pop(context); // Close the edit panel
 
       String message = lw('Bike saved successfully');
       okInfoBarGreen(message);
@@ -534,17 +534,17 @@ class _BikeEditPanelState extends State<BikeEditPanel> {
       child: SafeArea(
         child: Stack(
           children: [
-            // Полупрозрачный фон, который закрывает основной экран
+            // Semi-transparent background that covers the main screen
             Positioned.fill(
               child: GestureDetector(
                 onTap:
-                    () => Navigator.pop(context), // Закрытие при нажатии на фон
+                    () => Navigator.pop(context), // Close when tapping the background
                 child: Container(
                   color: clText.withAlpha((clText.a * 0.35).round()),
                 ),
               ),
             ),
-            // Выезжающая панель сверху
+            // Sliding panel from the top
             Positioned(
               top: widget.topPadding,
               left: 0,
@@ -566,7 +566,7 @@ class _BikeEditPanelState extends State<BikeEditPanel> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    // Панель с заголовком и кнопками
+                    // Panel with title and buttons
                     Container(
                       decoration: BoxDecoration(
                         color: clUpBar,
@@ -575,7 +575,7 @@ class _BikeEditPanelState extends State<BikeEditPanel> {
                         ),
                       ),
                       padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                      height: 36, // Уменьшенная высота
+                      height: 36, // Reduced height
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -585,9 +585,9 @@ class _BikeEditPanelState extends State<BikeEditPanel> {
                               icon: Icon(Icons.close, color: clText),
                               padding: EdgeInsets.all(
                                 4,
-                              ), // Уменьшенный отступ кнопки
+                              ), // Reduced button padding
                               constraints:
-                                  BoxConstraints(), // Убираем ограничения размера кнопки
+                                  BoxConstraints(), // Remove button size constraints
                               onPressed: () => Navigator.pop(context),
                             ),
                           ),
@@ -610,19 +610,19 @@ class _BikeEditPanelState extends State<BikeEditPanel> {
                               icon: Icon(Icons.save, color: clText),
                               padding: EdgeInsets.all(
                                 4,
-                              ), // Уменьшенный отступ кнопки
+                              ), // Reduced button padding
                               constraints:
-                                  BoxConstraints(), // Убираем ограничения размера кнопки
+                                  BoxConstraints(), // Remove button size constraints
                               onPressed: _saveBike,
                             ),
                           ),
                         ],
                       ),
                     ),
-                    // Контент панели - используем ограниченную высоту с прокруткой
+                    // Panel content - use limited height with scrolling
                     Container(
                       constraints: BoxConstraints(
-                        // Ограничиваем высоту контента до 70% высоты экрана
+                        // Limit content height to 70% of screen height
                         maxHeight: MediaQuery.of(context).size.height * 0.7,
                       ),
                       child: Scrollbar(
@@ -1054,12 +1054,12 @@ class _BikeEditPanelState extends State<BikeEditPanel> {
                                               Icons.camera_alt,
                                               color: clText,
                                               size: 20,
-                                            ), // Уменьшен размер иконки
+                                            ), // Reduced icon size
                                             padding: EdgeInsets.all(
                                               2,
-                                            ), // Уменьшенный отступ
+                                            ), // Reduced padding
                                             constraints:
-                                                BoxConstraints(), // Убираем ограничения размера кнопки
+                                                BoxConstraints(), // Remove button size constraints
                                             onPressed: _pickFile,
                                           ),
                                         ),
@@ -1068,32 +1068,32 @@ class _BikeEditPanelState extends State<BikeEditPanel> {
                                   ),
                                 ],
                               ),
-                              // Добавляем дополнительный отступ внизу чтобы обеспечить доступ к полям даже когда клавиатура открыта
+                              // Add extra bottom padding to ensure fields are accessible even when the keyboard is open
                               SizedBox(
                                 height:
                                     MediaQuery.of(context).viewInsets.bottom > 0
                                         ? MediaQuery.of(
                                               context,
                                             ).viewInsets.bottom +
-                                            120 // Когда клавиатура открыта - больше отступ
+                                            120 // When keyboard is open - larger padding
                                         : 16,
-                              ), // Когда клавиатура закрыта - стандартный отступ
+                              ), // When keyboard is closed - standard padding
                             ],
                           ),
                         ),
                       ),
                     ),
-                    // Индикатор для перетаскивания (свайп вниз для закрытия)
+                    // Drag indicator (swipe down to close)
                     GestureDetector(
                       onVerticalDragEnd: (details) {
                         if (details.primaryVelocity != null &&
                             details.primaryVelocity! > 300) {
-                          // Если скорость свайпа вниз достаточно большая, закрываем панель
+                          // If the downward swipe velocity is fast enough, close the panel
                           Navigator.pop(context);
                         }
                       },
                       child: Container(
-                        height: 16, // Уменьшили с 20
+                        height: 16, // Reduced from 20
                         decoration: BoxDecoration(
                           color: clUpBar,
                           borderRadius: BorderRadius.vertical(
@@ -1103,10 +1103,10 @@ class _BikeEditPanelState extends State<BikeEditPanel> {
                         child: Center(
                           child: Container(
                             width: 40,
-                            height: 4, // Уменьшили с 5
+                            height: 4, // Reduced from 5
                             margin: EdgeInsets.only(
                               bottom: 4,
-                            ), // Добавили отступ снизу
+                            ), // Added bottom margin
                             decoration: BoxDecoration(
                               color: clText,
                               borderRadius: BorderRadius.circular(2),

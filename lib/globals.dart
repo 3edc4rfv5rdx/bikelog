@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart'; // For Linux
 import 'package:flutter/foundation.dart' show defaultTargetPlatform, TargetPlatform;
 import 'dart:io';
-import 'dart:convert'; // Для работы с JSON (json.decode)
-import 'package:flutter/services.dart' show rootBundle; // Для загрузки файлов из assets
+import 'dart:convert'; // For working with JSON (json.decode)
+import 'package:flutter/services.dart' show rootBundle; // For loading files from assets
 
 // Global key for accessing ScaffoldMessenger
 final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
@@ -63,14 +63,14 @@ int get progBikes => prgEditions[currVers].$3;
 const List<String> appLANGUAGES = ['EN','RU','UA',];
 
 String getLocaleCode(String language) {
-  // Словарь только для исключений, где код страны отличается
+  // Dictionary only for exceptions where the country code differs
   final Map<String, String> exceptions = {
     'UA': 'uk',  // ukraine
     'GR': 'el',  // greek
     'CN': 'zh',  // china
     'JP': 'ja',  // japan
     'SE': 'sv',  // sveden
-    'DK': 'da',  // Датский
+    'DK': 'da',  // Danish
     'CZ': 'cs',  // cheska
   };
   String langCode = language.toUpperCase();
@@ -95,61 +95,61 @@ const List<List<Color>> curTHEME = [
   ],
   // Dark theme, currentThemeIndex = 1
   [
-    Color(0xFF121212),      // fon - почти черный фон списков
-    Color(0xFF5C5C5C),      // menu - средне-темный серый
-    Color(0x4D6C6C6C),      // selected - серый с прозрачностью
-    Color(0xFF404040),      // upBar - темно-серый
-    Color(0xFFE0E0E0),      // text - светло-серый
+    Color(0xFF121212),      // fon - almost black list background
+    Color(0xFF5C5C5C),      // menu - medium-dark grey
+    Color(0x4D6C6C6C),      // selected - grey with transparency
+    Color(0xFF404040),      // upBar - dark grey
+    Color(0xFFE0E0E0),      // text - light grey
     Color(0xFF4d4d4d),      // white
     Color(0xFF808080),      // grey
   ],
   // Green theme,  currentThemeIndex = 2
   [
-    Color(0xFFF3F7ED),      // fon - светлый фисташковый
-    Color(0xFFD4E2C6),      // menu - шалфейный
-    Color(0x4D4C6B3D),      // selected - оливковый с прозрачностью
-    Color(0xFF97BA60),      // upBar - глубокий оливковый
-    Color(0xFF121E0A),      // text - темно-зеленый
+    Color(0xFFF3F7ED),      // fon - light pistachio
+    Color(0xFFD4E2C6),      // menu - sage
+    Color(0x4D4C6B3D),      // selected - olive with transparency
+    Color(0xFF97BA60),      // upBar - deep olive
+    Color(0xFF121E0A),      // text - dark green
     Colors.white,          // fill
     Colors.grey,           // frame
   ],
   // blue theme = 3
   [
-    Color(0xFFEDF7FB),      // fon - светлый лазурный
-    Color(0xFFC6E0E9),      // menu - светло-голубой
-    Color(0x4D3D6B7F),      // selected - серо-голубой с прозрачностью
-    Color(0xFF7FB8D5),      // upBar - глубокий голубой
-    Color(0xFF0A181E),      // text - темно-синий
+    Color(0xFFEDF7FB),      // fon - light azure
+    Color(0xFFC6E0E9),      // menu - light blue
+    Color(0x4D3D6B7F),      // selected - grey-blue with transparency
+    Color(0xFF7FB8D5),      // upBar - deep blue
+    Color(0xFF0A181E),      // text - dark blue
     Colors.white,          // fill
     Colors.grey,           // frame
   ],
   // Brown = 4
   [
-    Color(0xFFF7F2ED),      // fon - светлый бежевый
-    Color(0xFFE2D4C6),      // menu - светло-коричневый
-    Color(0x4D6B4D3D),      // selected - коричневый с прозрачностью
-    Color(0xFFB69478),      // upBar - глубокий коричневый
+    Color(0xFFF7F2ED),      // fon - light beige
+    Color(0xFFE2D4C6),      // menu - light brown
+    Color(0x4D6B4D3D),      // selected - brown with transparency
+    Color(0xFFB69478),      // upBar - deep brown
     Colors.black,           // text
     Colors.white,          // fill
     Colors.grey,           // frame
   ],
   // purple = 5
   [
-    Color(0xFFF2EDF7),      // fon - светлый лавандовый
-    Color(0xFFD4C6E2),      // menu - светло-фиолетовый
-    Color(0x4D5D3D6B),      // selected - фиолетовый с прозрачностью
-    Color(0xFF9A75B8),      // upBar - глубокий фиолетовый
-    Color(0xFF180A1E),      // text - темно-фиолетовый
+    Color(0xFFF2EDF7),      // fon - light lavender
+    Color(0xFFD4C6E2),      // menu - light purple
+    Color(0x4D5D3D6B),      // selected - purple with transparency
+    Color(0xFF9A75B8),      // upBar - deep purple
+    Color(0xFF180A1E),      // text - dark purple
     Color(0xFFFFFFFF),      // white
     Color(0xFF808080),      // grey
   ],
   // orange = 6
   [
-    Color(0xFFF7F0ED),      // fon - светлый персиковый
-    Color(0xFFE2CDC6),      // menu - светло-оранжевый
-    Color(0x4D6B533D),      // selected - оранжевый с прозрачностью
-    Color(0xFFE59967),      // upBar - глубокий оранжевый
-    Color(0xFF1E120A),      // text - темно-коричневый
+    Color(0xFFF7F0ED),      // fon - light peach
+    Color(0xFFE2CDC6),      // menu - light orange
+    Color(0x4D6B533D),      // selected - orange with transparency
+    Color(0xFFE59967),      // upBar - deep orange
+    Color(0xFF1E120A),      // text - dark brown
     Color(0xFFFFFFFF),      // white
     Color(0xFF808080),      // grey
   ],
@@ -180,7 +180,7 @@ const String prgName = 'bikelog';
 const String mainDb = '${prgName}_main.db';
 const String mainSql = '${prgName}_main.sql';
 const String settDb = '${prgName}_sett.db';
-// Добавляем константу для пути к файлу справки
+// Adding a constant for the help file path
 const String helpFile = 'assets/help.json';
 const String langFile = 'assets/locales.json';
 const String refFile = 'assets/references.json';
@@ -293,7 +293,7 @@ void showCustomDialog({
 }) {
   showDialog(
     context: navigatorKey.currentContext!,
-// затемнение фона при показе
+// background dimming on display
 //    barrierColor: Colors.transparent,
 //    barrierDismissible: true,
     builder: (context) {
@@ -344,27 +344,27 @@ void showCustomDialog({
   );
 }
 
-// Показывает диалог справки с текстом из JSON файла
+// Shows a help dialog with text from a JSON file
 void okHelp(int helpId) async {
   if (helpId == 0) return;
 
   try {
-    // Загружаем JSON файл с текстами справки
+    // Load the JSON file with help texts
     final jsonString = await rootBundle.loadString(helpFile);
     final Map<String, dynamic> helpTexts = json.decode(jsonString);
     final String helpIdStr = helpId.toString();
     String helpText = '';
 
-    // Получаем текущий язык
+    // Get the current language
     final columnName = xdef['Program language'].toLowerCase();
 
-    // Получаем текст справки для текущего языка
+    // Get the help text for the current language
     if (helpTexts.containsKey(helpIdStr)) {
       final Map<String, dynamic> helpEntry = helpTexts[helpIdStr];
       if (helpEntry.containsKey(columnName)) {
         helpText = helpEntry[columnName];
       } else if (helpEntry.containsKey('en')) {
-        // Если нет перевода для текущего языка, используем английский
+        // If no translation for the current language, use English
         helpText = helpEntry['en'];
       } else {
         throw Exception(lw('Help text not found'));
@@ -373,7 +373,7 @@ void okHelp(int helpId) async {
       throw Exception(lw('Help text not found'));
     }
 
-    // Показываем диалог с текстом справки
+    // Show the dialog with the help text
     if (helpText.isNotEmpty) {
       showCustomDialog(
         title: lw('Help'),
@@ -435,18 +435,18 @@ void okSuccess(String message) {
 // Function to initialize translations
 Map<String, String> _translationCache = {};
 
-// Новая функция для загрузки локализаций из JSON файла
+// New function for loading localizations from a JSON file
 Future<void> initTranslations() async {
   String lang = xdef['Program language'].toLowerCase();
-  // Для английского языка кеш не нужен
+  // No cache needed for English
   if (lang == 'en') { _translationCache.clear(); return; }
   try {
-    // Загружаем JSON файл с локализациями
+    // Load the JSON file with localizations
     final String jsonString = await rootBundle.loadString(langFile);
     final Map<String, dynamic> allTranslations = json.decode(jsonString);
-    // Очищаем кеш перед обновлением
+    // Clear the cache before updating
     _translationCache.clear();
-    // Заполняем кеш переводами для текущего языка
+    // Fill the cache with translations for the current language
     allTranslations.forEach((key, value) {
       if (value is Map && value.containsKey(lang)) {
         _translationCache[key] = value[lang];
@@ -455,7 +455,7 @@ Future<void> initTranslations() async {
     myPrint('initTranslations finished, loaded ${_translationCache.length} translations');
   } catch (e) {
     myPrint('Error initializing translations: $e');
-    _translationCache.clear(); // В случае ошибки очищаем кеш
+    _translationCache.clear(); // Clear the cache in case of error
   }
 }
 
@@ -463,7 +463,7 @@ Future<void> initTranslations() async {
 String lw(String wrd) {
   String lang = xdef['Program language']; // was .toUpperCase();
   if (lang == 'EN') { return wrd; }
-  return _translationCache[wrd] ?? '(( $wrd ))'; // Возвращаем текст, если перевод не найден
+  return _translationCache[wrd] ?? '(( $wrd ))'; // Return the text if translation not found
 }
 
 // Function to validate the price input
@@ -593,7 +593,7 @@ Future<void> compactDatabase() async {
   } catch (e) {
     myPrint('Error during VACUUM compaction: $e');
     okInfoBarRed('VACUUM ${lw('An error occurred')}: $e'); // Handle the error
-    rethrow; // Пробрасываем ошибку дальше, чтобы ее можно было обработать в вызывающем коде
+    rethrow; // Re-throw the error so it can be handled by the calling code
   } finally {
     if (database != null) {
       await database.close();
@@ -608,8 +608,8 @@ Future<void> setMultiOper(String sql, String databasePath) async {
 
   Database database = await myOpenDatabase(databasePath);
   String normalizedSql = sql
-      .replaceAll(RegExp(r'/\*.*?\*/', dotAll: true), '') // Удаляем многострочные комментарии /* */
-      .replaceAll(RegExp(r'--.*$', multiLine: true), '')  // Удаляем однострочные комментарии --
+      .replaceAll(RegExp(r'/\*.*?\*/', dotAll: true), '') // Remove multi-line comments /* */
+      .replaceAll(RegExp(r'--.*$', multiLine: true), '')  // Remove single-line comments --
       .replaceAll('\n', ' ')
       .replaceAll(RegExp(r'\s+'), ' ');
   try {
@@ -633,7 +633,7 @@ Future<void> setMultiOper(String sql, String databasePath) async {
 
 Future<void> waitForMainDb() async {
   int attempts = 0;
-  while (dbMainBusy && attempts < 100) { // 5 секунд максимум
+  while (dbMainBusy && attempts < 100) { // 5 seconds maximum
     await Future.delayed(Duration(milliseconds: 50));
     attempts++;
   }
@@ -855,22 +855,22 @@ void myPrint(String msg) {if (xvDebug) print('>>> $msg');}
 
 String strCleanAndEscape(String input) {
   if (input.isEmpty) return input;
-  // Сначала очищаем строку от лишних пробелов и переносов
+  // First clean the string from extra spaces and line breaks
   String cleaned = input
       .trim()
       .replaceAll(RegExp(r'\s+'), ' ')
       .replaceAll(RegExp(r'[\r\n]+'), ' ');
-  // Затем экранируем специальные символы SQL
+  // Then escape special SQL characters
   String escaped = cleaned
       .replaceAll("'", "''")
       .replaceAll('\\', '\\\\');
   return escaped;
 }
 
-// Тип диалога: установка или проверка PIN
+// Dialog type: setup or verify PIN
 enum PinDialogMode { setup, verify }
 
-// Функция для показа диалога PIN-кода
+// Function to show the PIN code dialog
 Future<String?> showPinDialog({
   required PinDialogMode mode,
   int maxAttempts = 3,
@@ -951,11 +951,11 @@ Future<String?> showPinDialog({
                   onPressed: () {
                     final pin = pinController.text;
 
-                    // Валидация PIN
+                    // PIN validation
                     bool isValid = pin.length == 4 && RegExp(r'^[0-9]+$').hasMatch(pin);
 
                     if (mode == PinDialogMode.setup) {
-                      // В режиме установки просто проверяем формат
+                      // In setup mode, just validate the format
                       if (isValid) {
                         Navigator.pop(context, pin);
                       } else {
@@ -963,12 +963,12 @@ Future<String?> showPinDialog({
                         pinController.clear();
                       }
                     } else {
-                      // В режиме проверки сверяем с сохраненным PIN
+                      // In verify mode, compare with the saved PIN
                       if (pin == xdef['.PIN code']) {
                         Navigator.pop(context, pin);
                       } else {
                         attempts++;
-                        setState(() {}); // Обновляем состояние для показа количества попыток
+                        setState(() {}); // Update state to show remaining attempts
 
                         if (attempts >= maxAttempts) {
                           Navigator.pop(context, null);
@@ -1008,7 +1008,7 @@ String dateToStorageFormat(String displayDate) {
   String separator = xdef['.Date separator'];
 
   List<String> parts = displayDate.split(separator);
-  if (parts.length != 3) return displayDate; // Неверный формат
+  if (parts.length != 3) return displayDate; // Invalid format
 
   String year, month, day;
 
@@ -1027,17 +1027,17 @@ String dateToStorageFormat(String displayDate) {
 
     case 'YYYY-MM-DD':
     default:
-    // Уже в ISO формате, просто стандартизируем разделители
+    // Already in ISO format, just standardize the separators
       year = parts[0];
       month = parts[1].padLeft(2, '0');
       day = parts[2].padLeft(2, '0');
       break;
   }
 
-  return '$year-$month-$day'; // Всегда используем - для хранения
+  return '$year-$month-$day'; // Always use - for storage
 }
 
-// Преобразование из формата хранения (YYYY-MM-DD) в формат отображения
+// Convert from storage format (YYYY-MM-DD) to display format
 String dateFromStorageFormat(String storageDate) {
   if (storageDate.isEmpty) return '';
 
@@ -1045,7 +1045,7 @@ String dateFromStorageFormat(String storageDate) {
   String separator = xdef['.Date separator'];
 
   List<String> parts = storageDate.split('-');
-  if (parts.length != 3) return storageDate; // Неверный формат
+  if (parts.length != 3) return storageDate; // Invalid format
 
   String year = parts[0];
   String month = parts[1];
@@ -1064,14 +1064,14 @@ String dateFromStorageFormat(String storageDate) {
   }
 }
 
-// Получение текста подсказки для полей ввода даты на основе текущих настроек
+// Get the hint text for date input fields based on current settings
 String getDateFormatHint() {
   String format = xdef['.Date format'];
   String separator = xdef['.Date separator'];
   return format.replaceAll('-', separator);
 }
 
-// Вспомогательная функция для получения примера даты в текущем формате
+// Helper function to get a date example in the current format
 String getDateFormatExample() {
   final today = DateTime.now();
   final day = today.day.toString().padLeft(2, '0');
@@ -1092,14 +1092,14 @@ String getDateFormatExample() {
   }
 }
 
-// Обновим существующие функции проверки даты
+// Update the existing date validation functions
 bool isValidDateFormat(String input) {
   if (input.isEmpty) return false;
 
   String format = xdef['.Date format'];
   String separator = xdef['.Date separator'];
 
-  // Экранируем разделитель для регулярного выражения
+  // Escape the separator for the regular expression
   String escapedSeparator = separator.replaceAll('.', '\\.');
 
   String pattern;
@@ -1121,10 +1121,10 @@ bool isValidDateFormat(String input) {
 
 bool isValidDate(String input) {
   try {
-    // Сначала преобразуем в формат хранения
+    // First convert to storage format
     String storageFormat = dateToStorageFormat(input);
 
-    // Разбиваем по ISO разделителю
+    // Split by ISO separator
     final parts = storageFormat.split('-');
     if (parts.length != 3) return false;
 
@@ -1141,10 +1141,10 @@ bool isValidDate(String input) {
 
 bool isDateNotInFuture(String input) {
   try {
-    // Сначала преобразуем в формат хранения
+    // First convert to storage format
     String storageFormat = dateToStorageFormat(input);
 
-    // Разбиваем по ISO разделителю
+    // Split by ISO separator
     final parts = storageFormat.split('-');
     if (parts.length != 3) return false;
 
@@ -1163,7 +1163,7 @@ bool isDateNotInFuture(String input) {
 
 bool isDateFromBeforeDateTo(String dateFrom, String dateTo) {
   try {
-    // Преобразуем обе даты в формат хранения
+    // Convert both dates to storage format
     String fromStorage = dateToStorageFormat(dateFrom);
     String toStorage = dateToStorageFormat(dateTo);
 

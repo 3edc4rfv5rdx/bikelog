@@ -2,7 +2,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter/services.dart';
 import 'dart:async'; // For Completer
 import 'dart:io'; // For File and Directory operations
-import 'dart:convert'; // Для работы с JSON (json.decode)
+import 'dart:convert'; // For working with JSON (json.decode)
 import 'package:flutter/foundation.dart'
     show defaultTargetPlatform, TargetPlatform;
 import 'package:flutter/material.dart';
@@ -30,21 +30,21 @@ Future<void> firstRunLanguageSelection() async {
         home: Builder(
           builder: (BuildContext context) {
             final screenWidth = MediaQuery.of(context).size.width;
-            final containerWidth = screenWidth * 0.9; // 90% ширины экрана
+            final containerWidth = screenWidth * 0.9; // 90% of screen width
             final buttonWidth = (containerWidth - 48 - 24) / 3;
             return Scaffold(
               body: Container(
                 decoration: BoxDecoration(
                   image: DecorationImage(
                     image: AssetImage('assets/main512.png'),
-                    fit: BoxFit.cover, // Растянуть изображение на весь контейнер
+                    fit: BoxFit.cover, // Stretch image to fill the container
                   ),
                 ),
                 child: Stack(
                   children: [
                     Positioned(
                       top: MediaQuery.of(context).size.height * 0.2,
-                      // Регулируйте это значение для изменения положения
+                      // Adjust this value to change position
                       left: 0,
                       right: 0,
                       child: Center(
@@ -148,7 +148,7 @@ void main() async {
   currentThemeIndex = getThemeIndex(xdef['Color theme']);
   initThemeColors(currentThemeIndex);
   // run!
-  // Устанавливаем только портретную ориентацию
+  // Set portrait-only orientation
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
@@ -233,7 +233,7 @@ Future<void> initializePaths() async {
       throw UnsupportedError('Unsupported platform');
   }
 
-  // Установка общих путей к базам данных
+  // Set common database paths
   xvMainHome = '$xvHomePath/$mainDb';
   xvSettHome = '$xvHomePath/$settDb';
   myPrint("initializePaths finished");
@@ -245,7 +245,7 @@ Future<bool> initSqlDatabase({
   required String dbType,
 }) async {
   try {
-    // Проверяем существование файла
+    // Check if file exists
     File dbFile = File(dbFilePath);
     bool fileExists = await dbFile.exists();
     // if exist and this 'main' tnen skip
@@ -253,7 +253,7 @@ Future<bool> initSqlDatabase({
       myPrint("Skipping main database initialization - file already exists");
       return true;
     }
-    // Читаем SQL из assets и Выполняем SQL-операции
+    // Read SQL from assets and execute SQL operations
     String sql = await rootBundle.loadString(sqlFilePath);
     await setMultiOper(sql, dbFilePath);
     if (!fileExists) {
@@ -272,7 +272,7 @@ Future<bool> initSqlDatabase({
 Future<void> initializeAllDatabases() async {
   bool isFirstStart = xdef['.First start'] == 'true';
   bool isVersionChanged = progVersion != await getKey('.Prog version');
-  // Если не первый запуск и версия не изменилась, просто выходим
+  // If not first launch and version unchanged, just exit
   if (!isFirstStart && !isVersionChanged) {
     myPrint("Skipping database initialization - not first start and version unchanged");
     return;
@@ -286,29 +286,29 @@ Future<void> initializeAllDatabases() async {
 }
 
 Future<void> writeRef() async {
-  // Проверяем, есть ли уже записи в таблице типов
+  // Check if there are already records in the types table
   if (await getTableRowCount('types') > 0) return;
   try {
-    // Получаем текущий язык
+    // Get current language
     final String programLanguage = xdef['Program language'].toLowerCase();
-    // Загружаем JSON-файл со справочными данными
+    // Load JSON file with reference data
     final String jsonString = await rootBundle.loadString(refFile);
     final Map<String, dynamic> refData = json.decode(jsonString);
-    // Получаем справочники
+    // Get references
     final Map<String, List<dynamic>> references = Map<String, List<dynamic>>.from(refData['references']);
-    // Заполняем таблицы
+    // Fill tables
     for (var tableEntry in references.entries) {
       String tableName = tableEntry.key.toLowerCase(); // 'Owners' -> 'owners'
       List<dynamic> items = tableEntry.value;
       for (var item in items) {
-        // Выбираем название в зависимости от текущего языка
-        String name = item[programLanguage] ?? item['en']; // Если нет перевода, используем английский
+        // Select name based on current language
+        String name = item[programLanguage] ?? item['en']; // If no translation, use English
         int num = item['num'];
-        // Вставляем запись в соответствующую таблицу
+        // Insert record into the corresponding table
         await setDbData("INSERT INTO $tableName (num, name) VALUES ($num, '$name');");
       }
     }
-    // Вставляем запись для велосипеда (не меняется)
+    // Insert record for bicycle (does not change)
     await setDbData('''
       INSERT INTO bikes (num, owner, brand, model, type, serialnum, buydate, photo) 
       VALUES (1, 1, '*', '*', 1, '', '', '');

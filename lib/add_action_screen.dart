@@ -42,7 +42,7 @@ class _AddActionScreenState extends State<AddActionScreen> {
   // Checkbox state for currency
   bool isDollar = false;
 
-  // Функции для оценки математических выражений
+  // Functions for evaluating mathematical expressions
   double evaluateExpression(String expression) {
     try {
       // Remove all spaces
@@ -134,7 +134,7 @@ class _AddActionScreenState extends State<AddActionScreen> {
     return result;
   }
 
-  // Функция проверки ввода цены (включая выражения)
+  // Price input validation function (including expressions)
   bool isValidCalculatorExpression(String input) {
     if (input.isEmpty) {
       return true; // Allow empty price
@@ -296,9 +296,9 @@ class _AddActionScreenState extends State<AddActionScreen> {
           child: Text(
             widget.actionNum == null ? lw('Add Action') : lw('Edit Action'),
             style: TextStyle(
-              color: clText, // Задаем цвет текста
-              fontSize: fsLarge, // Задаем размер шрифта
-              fontWeight: fwNormal, // Делаем текст жирным
+              color: clText, // Set text color
+              fontSize: fsLarge, // Set font size
+              fontWeight: fwNormal, // Set font weight
             ),
           ),
         ),

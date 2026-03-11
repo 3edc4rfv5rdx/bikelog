@@ -13,7 +13,7 @@ class _OptionsSettingsScreenState extends State<OptionsSettingsScreen> {
   final List<String> _languages = appLANGUAGES;
   final Map<String, TextEditingController> _controllers = {};
 
-  // Переменные для временного хранения настроек формата даты
+  // Variables for temporary storage of date format settings
   String _dateFormat = 'YYYY-MM-DD';
   String _dateSeparator = '-';
 
@@ -30,14 +30,14 @@ class _OptionsSettingsScreenState extends State<OptionsSettingsScreen> {
         _controllers[key] = TextEditingController(text: value);
       }
     });
-    // Проверяем текущий язык
+    // Check current language
     if (!_languages.contains(_xdef['Program language'])) {
       setState(() {
         _xdef['Program language'] = _languages[0];
       });
     }
 
-    // Инициализируем настройки формата даты
+    // Initialize date format settings
     _dateFormat = xdef['.Date format'] ?? 'YYYY-MM-DD';
     _dateSeparator = xdef['.Date separator'] ?? '-';
   }
@@ -83,13 +83,13 @@ class _OptionsSettingsScreenState extends State<OptionsSettingsScreen> {
         await setKey(entry.key, entry.value);
       }
 
-      // Сохраняем настройки формата даты
+      // Save date format settings
       await setKey('.Date format', _dateFormat);
       await setKey('.Date separator', _dateSeparator);
 
       // Update the global variable xdef
       xdef = Map.from(_xdef);
-      // Обновляем скрытые настройки в глобальной переменной
+      // Update hidden settings in global variable
       xdef['.Date format'] = _dateFormat;
       xdef['.Date separator'] = _dateSeparator;
 
@@ -113,7 +113,7 @@ class _OptionsSettingsScreenState extends State<OptionsSettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // Создаем список виджетов для ListView
+    // Create widget list for ListView
     List<Widget> settingItems = List.generate(_xdef.entries.length, (index) {
       var entry = _xdef.entries.elementAt(index);
       int helpId = 20 + index;
@@ -232,7 +232,7 @@ class _OptionsSettingsScreenState extends State<OptionsSettingsScreen> {
                         value: entry.value == 'true',
                         onChanged: (bool? value) async {
                           if (value == true) {
-                            // Если включаем PIN, показываем диалог для установки
+                            // If enabling PIN, show setup dialog
                             final pin = await showPinDialog(
                                 mode: PinDialogMode.setup);
 
@@ -240,22 +240,22 @@ class _OptionsSettingsScreenState extends State<OptionsSettingsScreen> {
                               setState(() {
                                 _xdef['Use PIN'] = 'true';
                               });
-                              xdef['.PIN code'] = pin; // Используем новый ключ
+                              xdef['.PIN code'] = pin; // Use the new key
                               await setKey(
-                                  '.PIN code', pin); // Сохраняем в настройках
+                                  '.PIN code', pin); // Save in settings
                             } else {
                               setState(() {
                                 _xdef['Use PIN'] = 'false';
                               });
                             }
                           } else {
-                            // Если отключаем PIN, сбрасываем значение
+                            // If disabling PIN, reset the value
                             setState(() {
                               _xdef['Use PIN'] = 'false';
                             });
-                            xdef['.PIN code'] = ''; // Сбрасываем PIN
+                            xdef['.PIN code'] = ''; // Reset PIN
                             await setKey(
-                                '.PIN code', ''); // Сохраняем в настройках
+                                '.PIN code', ''); // Save in settings
                           }
                         },
                         activeColor: clText,
@@ -301,7 +301,7 @@ class _OptionsSettingsScreenState extends State<OptionsSettingsScreen> {
       );
     }).toList();
 
-    // Добавляем кнопку "Date Format" после "Exchange rate"
+    // Add "Date Format" button after "Exchange rate"
     int exchangeRateIndex = _xdef.keys.toList().indexOf('Exchange rate');
     if (exchangeRateIndex >= 0) {
       int insertIndex = exchangeRateIndex + 1;
@@ -343,13 +343,13 @@ class _OptionsSettingsScreenState extends State<OptionsSettingsScreen> {
                           final result = await _showDateFormatDialog(context);
                           if (result == true) {
                             setState(() {
-                              // Обновится текст на кнопке
+                              // Button text will be updated
                             });
                           }
                         },
                         child: Text(
                           _getCurrentDateExample(),
-                          // Показываем пример даты вместо "Configure"
+                          // Show date example instead of "Configure"
                           style: TextStyle(
                               fontSize: fsNormal, fontWeight: fwNormal),
                         ),

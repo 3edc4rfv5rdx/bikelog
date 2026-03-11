@@ -18,8 +18,8 @@ class FilterScreen extends StatefulWidget {
 
 class _FilterScreenState extends State<FilterScreen> {
   FilterMode _filterMode = FilterMode.byOwner;
-  String? _selectedOwner = '0';  // инициализируем значением '0'
-  String? _selectedBike = '0';   // инициализируем значением '0'
+  String? _selectedOwner = '0';  // Initialize with value '0'
+  String? _selectedBike = '0';   // Initialize with value '0'
   String? _selectedEvent;
   DateTime? _dateFrom;
   DateTime? _dateTo;
