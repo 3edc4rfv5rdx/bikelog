@@ -209,13 +209,13 @@ Future<void> initializePaths() async {
       final externalStorageDirectory = await getExternalStorageDirectory();
       xvExt1Path = externalStorageDirectory?.path ?? xvHomePath;
       myPrint("External storage directory path: $xvExt1Path");
-      xvBakDir = '/storage/emulated/0/Download/BikeLogBackup';
+      xvBakDir = '/storage/emulated/0/Documents/BikeLogBackup';
       break;
 
     case TargetPlatform.linux:
       xvHomePath = '/home/e/Documents';
       xvExt1Path = xvHomePath;
-      xvBakDir = '/home/e/Download/BikeLogBakup';
+      xvBakDir = '/home/e/Documents/BikeLogBackup';
       break;
 
     case TargetPlatform.iOS:
