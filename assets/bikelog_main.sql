@@ -41,7 +41,13 @@ create table if not exists actions (
     event integer,
     price real,
     comment text,
-    foreign key (bike) references bikes(num)
+    foreign key (bike) references bikes(num),
     foreign key (event) references events(num)
 );
+
+create index if not exists idx_bikes_owner on bikes(owner);
+create index if not exists idx_bikes_type on bikes(type);
+create index if not exists idx_actions_bike on actions(bike);
+create index if not exists idx_actions_event on actions(event);
+create index if not exists idx_actions_date on actions(date);
 
