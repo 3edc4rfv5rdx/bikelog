@@ -31,40 +31,6 @@ A cross-platform mobile application for tracking bicycle maintenance, repairs, a
 - **Platforms:** Android, Linux (iOS possible)
 - **Min Android SDK:** 21 (Android 5.0)
 
-## Project Structure
-
-```
-lib/
-  main.dart                    - app entry point, initialization, first-run setup
-  globals.dart                 - global state, constants, themes, translations
-  db_helpers.dart              - database operations, file I/O, settings
-  ui_helpers.dart              - dialogs, snackbars, PIN dialog
-  date_helpers.dart            - date formatting, validation, picker
-  bike_log_screen.dart         - main actions list screen
-  add_action_screen.dart       - add/edit maintenance action
-  bike_settings_screen.dart    - bike management
-  reference_settings_screen.dart - owners, types, events management
-  filter_screen.dart           - filter configuration
-  settings_screen.dart         - backup, restore, app settings
-  options_settings_screen.dart - theme, language, date format options
-assets/
-  bikelog_main.sql             - database schema
-  locales.json                 - UI translations (EN/RU/UA)
-  references.json              - default reference data
-  help.json                    - context help texts
-```
-
-## Build
-
-```bash
-# Development
-flutter pub get
-flutter run
-
-# Release APK (via build script)
-./00-Make.sh
-```
-
 ## Author
 
 Eugen - [bikelogbook.od.ua](https://bikelogbook.od.ua)
