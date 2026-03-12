@@ -134,7 +134,7 @@ Future<String> getKey(String key) async {
 }
 
 Future<void> compactDatabase() async {
-  waitForMainDb();
+  await waitForMainDb();
   dbMainBusy = true;
   Database? database;
   try {
@@ -154,7 +154,7 @@ Future<void> compactDatabase() async {
 }
 
 Future<void> setMultiOper(String sql, String databasePath) async {
-  waitForMainDb();
+  await waitForMainDb();
   dbMainBusy = true;
 
   Database database = await myOpenDatabase(databasePath);
@@ -183,7 +183,7 @@ Future<void> setMultiOper(String sql, String databasePath) async {
 }
 
 Future<void> executeDbTransaction(List<String> sqlStatements) async {
-  waitForMainDb();
+  await waitForMainDb();
   dbMainBusy = true;
 
   final db = await myOpenDatabase(xvMainHome);

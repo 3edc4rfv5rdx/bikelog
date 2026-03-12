@@ -128,6 +128,8 @@ void main() async {
   await initializeIni();
   await initializeAllDatabases(); // first start or not
   await firstRunLanguageSelection(); // === STARTER ===
+  // Brief delay to ensure database connection is fully released after creation
+  await Future.delayed(const Duration(milliseconds: 200));
   await writeRef(); // one at first time
   await initTranslations();
   if (xdef['.First start'] == 'true') {
@@ -300,7 +302,7 @@ Future<void> writeRef() async {
     }
     // Insert record for bicycle (does not change)
     await setDbData('''
-      INSERT INTO bikes (num, owner, brand, model, type, serialnum, buydate, photo) 
+      INSERT INTO bikes (num, owner, brand, model, type, serialnum, buydate, photo)
       VALUES (1, 1, '*', '*', 1, '', '', '');
     ''');
     myPrint("writeRef finished");

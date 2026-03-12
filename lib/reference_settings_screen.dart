@@ -138,15 +138,14 @@ class _ReferenceSettingsScreenState extends State<ReferenceSettingsScreen> {
         }
         try {
           final deleted = await _deleteOwnerWithData(_selectedItemNum!);
+          _selectedItemNum = null;
+          edMode = 0;
+          _isEditing = false;
+          await _loadItems();
           if (deleted) {
-            successMessage = lw('Deleted successfully');
-          } else {
-            _selectedItemNum = null;
-            edMode = 0;
-            _isEditing = false;
-            await _loadItems();
-            return;
+            okInfoBarGreen(lw('Deleted successfully'));
           }
+          return;
         } catch (e) {
           String msg = lw('Error deleting data');
           okInfoBarRed('$msg: $e');

@@ -1,6 +1,8 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'dart:io'; // For working with File and IOSink
 import 'package:file_picker/file_picker.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:sqflite/sqflite.dart';
 import 'globals.dart';
 
@@ -13,6 +15,23 @@ const List<String> appTables = [
 ];
 String currentDate = '';
 String backupDirPath = '';
+
+/// Request storage permissions on Android before backup/restore.
+/// Returns true if permissions are granted or not needed (non-Android).
+Future<bool> requestStoragePermission() async {
+  if (defaultTargetPlatform != TargetPlatform.android) return true;
+
+  // Android 11+ (API 30+): need MANAGE_EXTERNAL_STORAGE
+  if (await Permission.manageExternalStorage.isGranted) return true;
+
+  final status = await Permission.manageExternalStorage.request();
+  if (status.isGranted) return true;
+
+  // Fallback for older Android
+  if (await Permission.storage.isGranted) return true;
+  final storageStatus = await Permission.storage.request();
+  return storageStatus.isGranted;
+}
 
 // Add this function to _SettingsScreenState class
 Future<void> processSqlFile() async {
@@ -514,6 +533,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             ),
                             // Button handler
                             onPressed: () async {
+                              if (!await requestStoragePermission()) {
+                                okInfoBarRed(lw('Storage permission denied'));
+                                return;
+                              }
                               // First backup the database
                               bool backupSuccess = await backupDatabase();
                               if (!backupSuccess) {
@@ -609,6 +632,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               ), // Set button height
                             ),
                             onPressed: () async {
+                              if (!await requestStoragePermission()) {
+                                okInfoBarRed(lw('Storage permission denied'));
+                                return;
+                              }
                               String? selectedDir =
                                   await selectRestoreDirectory();
                               if (selectedDir == null) {
