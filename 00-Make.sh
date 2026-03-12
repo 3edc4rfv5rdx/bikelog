@@ -1,7 +1,7 @@
 #!/bin/bash
 
 
-COMMENT="go to github"
+COMMENT="after audit"
 #
 GLOBVERS='0.9'
 VER=''
