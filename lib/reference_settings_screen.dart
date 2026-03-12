@@ -259,11 +259,7 @@ class _ReferenceSettingsScreenState extends State<ReferenceSettingsScreen> {
           onLongPress: () => okHelp(5),
           child: Text(
             _title,
-            style: TextStyle(
-              fontWeight: fwNormal,
-              fontSize: fsLarge,
-              color: clText,
-            ),
+            style: tsLarge,
           ),
         ),
         backgroundColor: clUpBar,
@@ -305,11 +301,7 @@ class _ReferenceSettingsScreenState extends State<ReferenceSettingsScreen> {
                     onLongPress: () => okHelp(48),
                     child: Text(
                       lw('Name'),
-                      style: TextStyle(
-                        fontWeight: fwNormal,
-                        fontSize: fsNormal,
-                        color: clText,
-                      ),
+                      style: tsNormal,
                     ),
                   ),
                 ),
@@ -321,11 +313,7 @@ class _ReferenceSettingsScreenState extends State<ReferenceSettingsScreen> {
                       controller: _nameController,
                       focusNode: _nameFocusNode,
                       enabled: _isEditing,
-                      style: TextStyle(
-                        fontWeight: fwNormal,
-                        fontSize: fsNormal,
-                        color: clText,
-                      ),
+                      style: tsNormal,
                       decoration: InputDecoration(
                         fillColor: clFill,
                         filled: true,
@@ -367,11 +355,7 @@ class _ReferenceSettingsScreenState extends State<ReferenceSettingsScreen> {
                         ), // You might want to add a specific help code for comment
                     child: Text(
                       lw('Comment'),
-                      style: TextStyle(
-                        fontWeight: fwNormal,
-                        fontSize: fsNormal,
-                        color: clText,
-                      ),
+                      style: tsNormal,
                     ),
                   ),
                 ),
@@ -383,11 +367,7 @@ class _ReferenceSettingsScreenState extends State<ReferenceSettingsScreen> {
                       controller: _commentController,
                       focusNode: _commentFocusNode,
                       enabled: _isEditing,
-                      style: TextStyle(
-                        fontWeight: fwNormal,
-                        fontSize: fsNormal,
-                        color: clText,
-                      ),
+                      style: tsNormal,
                       decoration: InputDecoration(
                         fillColor: clFill,
                         filled: true,
@@ -456,22 +436,14 @@ class _ReferenceSettingsScreenState extends State<ReferenceSettingsScreen> {
                               value: 'EDIT',
                               child: Text(
                                 lw('EDIT'),
-                                style: TextStyle(
-                                  fontWeight: fwNormal,
-                                  fontSize: fsNormal,
-                                  color: clText,
-                                ),
+                                style: tsNormal,
                               ),
                             ),
                             PopupMenuItem(
                               value: 'DELETE',
                               child: Text(
                                 lw('DELETE'),
-                                style: TextStyle(
-                                  fontWeight: fwNormal,
-                                  fontSize: fsNormal,
-                                  color: clText,
-                                ),
+                                style: tsNormal,
                               ),
                             ),
                           ],
@@ -495,11 +467,7 @@ class _ReferenceSettingsScreenState extends State<ReferenceSettingsScreen> {
                                 .centerLeft, // Keep left alignment for readability
                         child: Text(
                           displayText,
-                          style: TextStyle(
-                            fontWeight: fwNormal,
-                            fontSize: fsNormal,
-                            color: clText,
-                          ),
+                          style: tsNormal,
                           overflow:
                               TextOverflow
                                   .ellipsis, // Add this to handle long text

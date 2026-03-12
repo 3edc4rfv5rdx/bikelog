@@ -238,11 +238,7 @@ class _BikeSettingsScreenState extends State<BikeSettingsScreen> {
           onLongPress: () => okHelp(6),
           child: Text(
             lw('Bikes Management'),
-            style: TextStyle(
-              color: clText,
-              fontSize: fsLarge,
-              fontWeight: fwNormal,
-            ),
+            style: tsLarge,
           ),
         ),
       ),
@@ -597,11 +593,7 @@ class _BikeEditPanelState extends State<BikeEditPanel> {
                               widget.bikeId == null
                                   ? lw('Add New Bike')
                                   : lw('Edit Bike'),
-                              style: TextStyle(
-                                fontSize: fsLarge,
-                                color: clText,
-                                fontWeight: fwNormal,
-                              ),
+                              style: tsLarge,
                               textAlign: TextAlign.center,
                             ),
                           ),
@@ -651,11 +643,7 @@ class _BikeEditPanelState extends State<BikeEditPanel> {
                                       onLongPress: () => okHelp(50),
                                       child: Text(
                                         lw('Owner'),
-                                        style: TextStyle(
-                                          fontSize: fsNormal,
-                                          color: clText,
-                                          fontWeight: fwNormal,
-                                        ),
+                                        style: tsNormal,
                                       ),
                                     ),
                                   ),
@@ -720,11 +708,7 @@ class _BikeEditPanelState extends State<BikeEditPanel> {
                                       onLongPress: () => okHelp(51),
                                       child: Text(
                                         lw('Brand'),
-                                        style: TextStyle(
-                                          fontSize: fsNormal,
-                                          color: clText,
-                                          fontWeight: fwNormal,
-                                        ),
+                                        style: tsNormal,
                                       ),
                                     ),
                                   ),
@@ -769,11 +753,7 @@ class _BikeEditPanelState extends State<BikeEditPanel> {
                                       onLongPress: () => okHelp(52),
                                       child: Text(
                                         lw('Model'),
-                                        style: TextStyle(
-                                          fontSize: fsNormal,
-                                          color: clText,
-                                          fontWeight: fwNormal,
-                                        ),
+                                        style: tsNormal,
                                       ),
                                     ),
                                   ),
@@ -818,11 +798,7 @@ class _BikeEditPanelState extends State<BikeEditPanel> {
                                       onLongPress: () => okHelp(53),
                                       child: Text(
                                         lw('Type'),
-                                        style: TextStyle(
-                                          fontSize: fsNormal,
-                                          color: clText,
-                                          fontWeight: fwNormal,
-                                        ),
+                                        style: tsNormal,
                                       ),
                                     ),
                                   ),
@@ -887,11 +863,7 @@ class _BikeEditPanelState extends State<BikeEditPanel> {
                                       onLongPress: () => okHelp(54),
                                       child: Text(
                                         lw('SerialNum'),
-                                        style: TextStyle(
-                                          fontSize: fsNormal,
-                                          color: clText,
-                                          fontWeight: fwNormal,
-                                        ),
+                                        style: tsNormal,
                                       ),
                                     ),
                                   ),
@@ -936,11 +908,7 @@ class _BikeEditPanelState extends State<BikeEditPanel> {
                                       onLongPress: () => okHelp(55),
                                       child: Text(
                                         lw('BuyDate'),
-                                        style: TextStyle(
-                                          fontSize: fsNormal,
-                                          color: clText,
-                                          fontWeight: fwNormal,
-                                        ),
+                                        style: tsNormal,
                                       ),
                                     ),
                                   ),
@@ -1008,11 +976,7 @@ class _BikeEditPanelState extends State<BikeEditPanel> {
                                       onLongPress: () => okHelp(57),
                                       child: Text(
                                         lw('Photo'),
-                                        style: TextStyle(
-                                          fontSize: fsNormal,
-                                          color: clText,
-                                          fontWeight: fwNormal,
-                                        ),
+                                        style: tsNormal,
                                       ),
                                     ),
                                   ),

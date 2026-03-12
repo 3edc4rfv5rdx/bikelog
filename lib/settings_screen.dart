@@ -286,11 +286,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           onLongPress: () => okHelp(7), // help_id for the title
           child: Text(
             lw('Settings'),
-            style: TextStyle(
-              color: clText,
-              fontSize: fsLarge,
-              fontWeight: fwNormal,
-            ),
+            style: tsLarge,
           ),
         ),
         leading: GestureDetector(
@@ -347,11 +343,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       },
                       child: Text(
                         lw('Options'),
-                        style: TextStyle(
-                          fontWeight: fwNormal,
-                          fontSize: fsNormal,
-                          color: clText,
-                        ),
+                        style: tsNormal,
                       ),
                     ),
                   ),
@@ -387,11 +379,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       },
                       child: Text(
                         lw('Owners Management'),
-                        style: TextStyle(
-                          fontWeight: fwNormal,
-                          fontSize: fsNormal,
-                          color: clText,
-                        ),
+                        style: tsNormal,
                       ),
                     ),
                   ),
@@ -427,11 +415,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       },
                       child: Text(
                         lw('Types Management'),
-                        style: TextStyle(
-                          fontWeight: fwNormal,
-                          fontSize: fsNormal,
-                          color: clText,
-                        ),
+                        style: tsNormal,
                       ),
                     ),
                   ),
@@ -467,11 +451,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       },
                       child: Text(
                         lw('Events Management'),
-                        style: TextStyle(
-                          fontWeight: fwNormal,
-                          fontSize: fsNormal,
-                          color: clText,
-                        ),
+                        style: tsNormal,
                       ),
                     ),
                   ),
@@ -503,11 +483,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       },
                       child: Text(
                         lw('Bikes Management'),
-                        style: TextStyle(
-                          fontWeight: fwNormal,
-                          fontSize: fsNormal,
-                          color: clText,
-                        ),
+                        style: tsNormal,
                       ),
                     ),
                   ),
@@ -578,11 +554,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             },
                             child: Text(
                               lw('Backup'),
-                              style: TextStyle(
-                                fontWeight: fwNormal,
-                                fontSize: fsNormal,
-                                color: clText,
-                              ),
+                              style: tsNormal,
                             ),
                           ),
                         ),
@@ -595,11 +567,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           children: [
                             Text(
                               '+csv',
-                              style: TextStyle(
-                                fontWeight: fwNormal,
-                                fontSize: fsLarge,
-                                color: clText,
-                              ),
+                              style: tsLarge,
                             ),
                             Transform.scale(
                               scale: 1.5, // Scale
@@ -717,11 +685,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             },
                             child: Text(
                               lw('Restore'),
-                              style: TextStyle(
-                                fontWeight: fwNormal,
-                                fontSize: fsNormal,
-                                color: clText,
-                              ),
+                              style: tsNormal,
                             ),
                           ),
                         ),
@@ -735,11 +699,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           children: [
                             Text(
                               '+csv',
-                              style: TextStyle(
-                                fontWeight: fwNormal,
-                                fontSize: fsLarge,
-                                color: clText,
-                              ),
+                              style: tsLarge,
                             ),
                             Transform.scale(
                               scale: 1.5, // Scale

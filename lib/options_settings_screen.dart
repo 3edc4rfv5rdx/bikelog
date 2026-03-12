@@ -127,8 +127,7 @@ class _OptionsSettingsScreenState extends State<OptionsSettingsScreen> {
                 onLongPress: () => okHelp(helpId),
                 child: Text(
                   lw(entry.key),
-                  style: TextStyle(
-                    fontWeight: fwNormal, fontSize: fsNormal, color: clText,),
+                  style: tsNormal,
                 ),
               ),
             ),
@@ -160,10 +159,7 @@ class _OptionsSettingsScreenState extends State<OptionsSettingsScreen> {
                             value: value,
                             child: Text(
                               value,
-                              style: TextStyle(
-                                fontWeight: fwNormal,
-                                fontSize: fsNormal,
-                                color: clText,),
+                              style: tsNormal,
                             ),
                           );
                         }).toList(),
@@ -175,10 +171,7 @@ class _OptionsSettingsScreenState extends State<OptionsSettingsScreen> {
                           }
                         },
                         dropdownColor: clMenu,
-                        style: TextStyle(
-                          fontWeight: fwNormal,
-                          fontSize: fsNormal,
-                          color: clText,),
+                        style: tsNormal,
                         icon: Icon(
                           Icons.arrow_drop_down,
                           color: clText,
@@ -200,10 +193,7 @@ class _OptionsSettingsScreenState extends State<OptionsSettingsScreen> {
                             value: value,
                             child: Text(
                               lw(value),
-                              style: TextStyle(
-                                fontWeight: fwNormal,
-                                fontSize: fsNormal,
-                                color: clText,),
+                              style: tsNormal,
                             ),
                           );
                         }).toList(),
@@ -214,10 +204,7 @@ class _OptionsSettingsScreenState extends State<OptionsSettingsScreen> {
                           });
                         },
                         dropdownColor: clMenu,
-                        style: TextStyle(
-                          fontWeight: fwNormal,
-                          fontSize: fsNormal,
-                          color: clText,),
+                        style: tsNormal,
                         icon: Icon(
                           Icons.arrow_drop_down,
                           color: clText,
@@ -317,9 +304,7 @@ class _OptionsSettingsScreenState extends State<OptionsSettingsScreen> {
                   onLongPress: () => okHelp(29),
                   child: Text(
                     lw('Date Format'),
-                    style: TextStyle(fontWeight: fwNormal,
-                        fontSize: fsNormal,
-                        color: clText),
+                    style: tsNormal,
                   ),
                 ),
               ),
@@ -370,11 +355,7 @@ class _OptionsSettingsScreenState extends State<OptionsSettingsScreen> {
           onLongPress: () => okHelp(4),
           child: Text(
             lw('Options Settings'),
-            style: TextStyle(
-              color: clText,
-              fontWeight: fwNormal,
-              fontSize: fsLarge,
-            ),
+            style: tsLarge,
           ),
         ),
         backgroundColor: clUpBar,

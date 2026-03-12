@@ -68,11 +68,7 @@ Future<void> firstRunLanguageSelection() async {
                             children: [
                               Text(
                                 'Select Language',
-                                style: TextStyle(
-                                  fontSize: fsLarge,
-                                  fontWeight: fwNormal,
-                                  color: clText,
-                                ),
+                                style: tsLarge,
                               ),
                               const SizedBox(height: 24),
                               Wrap(
@@ -100,11 +96,7 @@ Future<void> firstRunLanguageSelection() async {
                                               },
                                               child: Text(
                                                 lang,
-                                                style: TextStyle(
-                                                  color: clText,
-                                                  fontSize: fsNormal,
-                                                  fontWeight: fwNormal,
-                                                ),
+                                                style: tsNormal,
                                               ),
                                             ),
                                           ),

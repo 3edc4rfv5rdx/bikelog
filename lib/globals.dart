@@ -174,6 +174,10 @@ const double fsLarge = 18;  // Font size for headers
 const FontWeight fwBold = FontWeight.bold;
 const FontWeight fwNormal = FontWeight.normal;
 
+// Common text styles (non-const because colors change with theme)
+TextStyle get tsNormal => TextStyle(fontSize: fsNormal, fontWeight: fwNormal, color: clText);
+TextStyle get tsLarge => TextStyle(fontSize: fsLarge, fontWeight: fwNormal, color: clText);
+
 bool dbMainBusy = false;
 const String prgName = 'bikelog';
 // Main database and SQL file
@@ -229,11 +233,11 @@ Future<bool> okConfirm({
       return AlertDialog(
         title: Text(
           title,
-          style: TextStyle(color: clText, fontSize: fsLarge, fontWeight: fwNormal,),
+          style: tsLarge,
         ),
         content: Text(
           message,
-          style: TextStyle(color: clText, fontSize: fsNormal, fontWeight: fwNormal,),
+          style: tsNormal,
         ),
         backgroundColor: clFon, // Background color
         shape: RoundedRectangleBorder(
@@ -312,14 +316,14 @@ void showCustomDialog({
             SizedBox(width: 8),
             Text(
               title,
-              style: TextStyle(color: clText, fontSize: fsLarge, fontWeight: fwNormal,),
+              style: tsLarge,
             ),
           ],
         ),
         content: SingleChildScrollView(
           child: Text(
             message,
-            style: TextStyle(color: clText, fontSize: fsNormal, fontWeight: fwNormal,),
+            style: tsNormal,
           ),
         ),
         actions: [
@@ -892,7 +896,7 @@ Future<String?> showPinDialog({
               ),
               title: Text(
                 mode == PinDialogMode.setup ? lw('Set PIN code') : lw('Enter PIN'),
-                style: TextStyle(color: clText, fontSize: fsLarge, fontWeight: fwNormal),
+                style: tsLarge,
               ),
               content: Column(
                 mainAxisSize: MainAxisSize.min,

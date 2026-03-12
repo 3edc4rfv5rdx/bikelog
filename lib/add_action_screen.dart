@@ -295,11 +295,7 @@ class _AddActionScreenState extends State<AddActionScreen> {
           onLongPress: () => okHelp(2), // help_id  for the title
           child: Text(
             widget.actionNum == null ? lw('Add Action') : lw('Edit Action'),
-            style: TextStyle(
-              color: clText, // Set text color
-              fontSize: fsLarge, // Set font size
-              fontWeight: fwNormal, // Set font weight
-            ),
+            style: tsLarge,
           ),
         ),
 
@@ -472,11 +468,7 @@ class _AddActionScreenState extends State<AddActionScreen> {
                     onLongPress: () => okHelp(40),
                     child: Text(
                       lw('Bike'),
-                      style: TextStyle(
-                        fontSize: fsNormal,
-                        fontWeight: fwNormal,
-                        color: clText,
-                      ),
+                      style: tsNormal,
                     ),
                   ),
                 ),
@@ -496,11 +488,7 @@ class _AddActionScreenState extends State<AddActionScreen> {
                         value: '0',
                         child: Text(
                           xvSelect,
-                          style: TextStyle(
-                            fontSize: fsNormal,
-                            fontWeight: fwNormal,
-                            color: clText,
-                          ),
+                          style: tsNormal,
                         ),
                       ),
                       if (bikes.isNotEmpty)
@@ -512,11 +500,7 @@ class _AddActionScreenState extends State<AddActionScreen> {
                             value: bike['num'],
                             child: Text(
                               '$owner-$brand-$model',
-                              style: TextStyle(
-                                fontSize: fsNormal,
-                                fontWeight: fwNormal,
-                                color: clText,
-                              ),
+                              style: tsNormal,
                             ),
                           );
                         }),
@@ -543,11 +527,7 @@ class _AddActionScreenState extends State<AddActionScreen> {
                     onLongPress: () => okHelp(41),
                     child: Text(
                       lw('Date'),
-                      style: TextStyle(
-                        fontSize: fsNormal,
-                        fontWeight: fwNormal,
-                        color: clText,
-                      ),
+                      style: tsNormal,
                     ),
                   ),
                 ),
@@ -565,11 +545,7 @@ class _AddActionScreenState extends State<AddActionScreen> {
                             filled: true,
                             fillColor: clFill,
                           ),
-                          style: TextStyle(
-                            fontSize: fsNormal,
-                            fontWeight: fwNormal,
-                            color: clText,
-                          ),
+                          style: tsNormal,
                           keyboardType: TextInputType.datetime,
                         ),
                       ),
@@ -624,11 +600,7 @@ class _AddActionScreenState extends State<AddActionScreen> {
                     onLongPress: () => okHelp(42),
                     child: Text(
                       lw('Event'),
-                      style: TextStyle(
-                        fontSize: fsNormal,
-                        fontWeight: fwNormal,
-                        color: clText,
-                      ),
+                      style: tsNormal,
                     ),
                   ),
                 ),
@@ -648,11 +620,7 @@ class _AddActionScreenState extends State<AddActionScreen> {
                         value: '0',
                         child: Text(
                           xvSelect,
-                          style: TextStyle(
-                            fontSize: fsNormal,
-                            fontWeight: fwNormal,
-                            color: clText,
-                          ),
+                          style: tsNormal,
                         ),
                       ),
                       if (events.isNotEmpty)
@@ -662,11 +630,7 @@ class _AddActionScreenState extends State<AddActionScreen> {
                             value: event['num'],
                             child: Text(
                               name,
-                              style: TextStyle(
-                                fontSize: fsNormal,
-                                fontWeight: fwNormal,
-                                color: clText,
-                              ),
+                              style: tsNormal,
                             ),
                           );
                         }),
@@ -693,11 +657,7 @@ class _AddActionScreenState extends State<AddActionScreen> {
                     onLongPress: () => okHelp(43),
                     child: Text(
                       lw('Price'),
-                      style: TextStyle(
-                        fontSize: fsNormal,
-                        fontWeight: fwNormal,
-                        color: clText,
-                      ),
+                      style: tsNormal,
                     ),
                   ),
                 ),
@@ -716,11 +676,7 @@ class _AddActionScreenState extends State<AddActionScreen> {
                       ),
                       Text(
                         '\$',
-                        style: TextStyle(
-                          fontSize: fsNormal,
-                          fontWeight: fwNormal,
-                          color: clText,
-                        ),
+                        style: tsNormal,
                       ),
                       const SizedBox(width: 8),
                       Expanded(
@@ -732,11 +688,7 @@ class _AddActionScreenState extends State<AddActionScreen> {
                             filled: true,
                             fillColor: clFill,
                           ),
-                          style: TextStyle(
-                            fontSize: fsNormal,
-                            fontWeight: fwNormal,
-                            color: clText,
-                          ),
+                          style: tsNormal,
                           keyboardType: TextInputType.numberWithOptions(
                             decimal: true,
                           ),
@@ -759,11 +711,7 @@ class _AddActionScreenState extends State<AddActionScreen> {
                     onLongPress: () => okHelp(44),
                     child: Text(
                       lw('Comment'),
-                      style: TextStyle(
-                        fontSize: fsNormal,
-                        fontWeight: fwNormal,
-                        color: clText,
-                      ),
+                      style: tsNormal,
                     ),
                   ),
                 ),
@@ -777,11 +725,7 @@ class _AddActionScreenState extends State<AddActionScreen> {
                       filled: true,
                       fillColor: clFill,
                     ),
-                    style: TextStyle(
-                      fontSize: fsNormal,
-                      fontWeight: fwNormal,
-                      color: clText,
-                    ),
+                    style: tsNormal,
                     maxLines: 3,
                   ),
                 ),

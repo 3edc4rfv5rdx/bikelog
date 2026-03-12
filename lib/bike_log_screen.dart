@@ -341,11 +341,7 @@ class _BikeLogScreenState extends State<BikeLogScreen> with RouteAware {
                 child: ListTile(
                   title: Text(
                     lw('EDIT'),
-                    style: TextStyle(
-                      fontSize: fsNormal,
-                      fontWeight: fwNormal,
-                      color: clText,
-                    ),
+                    style: tsNormal,
                   ),
                   onTap: () {
                     Navigator.pop(context); // Close the dialog
@@ -358,11 +354,7 @@ class _BikeLogScreenState extends State<BikeLogScreen> with RouteAware {
                 child: ListTile(
                   title: Text(
                     lw('DELETE'),
-                    style: TextStyle(
-                      fontSize: fsNormal,
-                      fontWeight: fwNormal,
-                      color: clText,
-                    ),
+                    style: tsNormal,
                   ),
                   onTap: () {
                     Navigator.pop(context);
@@ -498,11 +490,7 @@ class _BikeLogScreenState extends State<BikeLogScreen> with RouteAware {
           onLongPress: () => okHelp(1), // help_id for the title
           child: Text(
             lw('BikeLogBook'),
-            style: TextStyle(
-              color: clText,
-              fontSize: fsLarge,
-              fontWeight: fwNormal,
-            ),
+            style: tsLarge,
           ),
         ),
         leading: GestureDetector(

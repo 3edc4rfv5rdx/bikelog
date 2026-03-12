@@ -10,3 +10,4 @@
 - E: Fix SQL JOIN order in bike_log_screen (bikes before owners)
 - E: Add null safety check in _deleteOwnerWithData (empty list guard)
 - E: Show error to user on CSV restore failure (was silent)
+- R: Extract common TextStyle into tsNormal/tsLarge getters, remove ~200 lines of duplication
