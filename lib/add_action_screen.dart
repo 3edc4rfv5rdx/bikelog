@@ -397,34 +397,24 @@ class _AddActionScreenState extends State<AddActionScreen> {
                   }
                 }
 
-                String originalComment = strCleanAndEscape(commentController.text);
+                String originalComment = commentController.text.trim();
 
                 // Convert display date to integer format for storage
                 int dbDateInt = dateToStorageInt(dateController.text);
 
                 try {
                   String sql;
+                  List<dynamic> args;
                   if (widget.actionNum != null) {
                     // Update existing record
-                    sql = '''
-          UPDATE actions
-          SET bike = $selectedBike,
-              date = $dbDateInt,
-              event = $selectedEvent,
-              price = $price,
-              comment = '$originalComment'
-          WHERE num = ${widget.actionNum};
-        ''';
+                    sql = 'UPDATE actions SET bike = ?, date = ?, event = ?, price = ?, comment = ? WHERE num = ?';
+                    args = [selectedBike, dbDateInt, selectedEvent, price, originalComment, widget.actionNum];
                   } else {
                     // Insert new record
-                    sql = '''
-          INSERT INTO actions
-          (bike, date, event, price, comment)
-          VALUES
-          ($selectedBike, $dbDateInt, $selectedEvent, $price, '$originalComment');
-        ''';
+                    sql = 'INSERT INTO actions (bike, date, event, price, comment) VALUES (?, ?, ?, ?, ?)';
+                    args = [selectedBike, dbDateInt, selectedEvent, price, originalComment];
                   }
-                  await setDbData(sql);
+                  await setDbData(sql, args);
 
                   if (widget.actionNum == null && xdef['Several actions'] == 'true') {
                     // Clear the form and stay on screen

@@ -480,10 +480,10 @@ class _BikeEditPanelState extends State<BikeEditPanel> {
       return;
     }
     try {
-      String normBrand = strCleanAndEscape(brandController.text);
-      String normModel = strCleanAndEscape(modelController.text);
-      String normSerNum = strCleanAndEscape(serialNumController.text);
-      String normPhoto = strCleanAndEscape(photoController.text);
+      String brand = brandController.text.trim();
+      String model = modelController.text.trim();
+      String serNum = serialNumController.text.trim();
+      String photo = photoController.text.trim();
 
       // Convert the date from display format to integer format for storage
       int buyDateInt =
@@ -493,25 +493,17 @@ class _BikeEditPanelState extends State<BikeEditPanel> {
 
       // Create SQL statement based on whether we're updating or inserting
       String sql;
+      List<dynamic> args;
       if (widget.bikeId != null) {
-        sql = '''
-        UPDATE bikes
-        SET owner = $selectedOwner, type = $selectedType,
-            brand = '$normBrand', model = '$normModel',
-            serialnum = '$normSerNum', buydate = $buyDateInt,
-            photo = '$normPhoto'
-        WHERE num = ${widget.bikeId}
-        ''';
+        sql = 'UPDATE bikes SET owner = ?, type = ?, brand = ?, model = ?, serialnum = ?, buydate = ?, photo = ? WHERE num = ?';
+        args = [selectedOwner, selectedType, brand, model, serNum, buyDateInt, photo, widget.bikeId];
       } else {
         // Insert new bike
-        sql = '''
-        INSERT INTO bikes (owner, type, brand, model, serialnum, buydate, photo)
-        VALUES ($selectedOwner, $selectedType, '$normBrand', '$normModel',
-                '$normSerNum', $buyDateInt, '$normPhoto')
-        ''';
+        sql = 'INSERT INTO bikes (owner, type, brand, model, serialnum, buydate, photo) VALUES (?, ?, ?, ?, ?, ?, ?)';
+        args = [selectedOwner, selectedType, brand, model, serNum, buyDateInt, photo];
       }
 
-      await setDbData(sql);
+      await setDbData(sql, args);
       widget
           .onSaved(); // Call the callback to refresh the list on the main screen
       Navigator.pop(context); // Close the edit panel

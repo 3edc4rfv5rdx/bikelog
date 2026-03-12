@@ -145,10 +145,8 @@ Future<bool> restoreFromCSV(
           continue;
         }
         String columns = headers.join(',');
-        String vals = values
-            .map((v) => "'${v.replaceAll("'", "''")}'")
-            .join(',');
-        await setDbData('INSERT INTO $tableName ($columns) VALUES ($vals);');
+        String placeholders = List.filled(values.length, '?').join(',');
+        await setDbData('INSERT INTO $tableName ($columns) VALUES ($placeholders);', values);
       }
     }
     myPrint('CSV restore completed successfully');

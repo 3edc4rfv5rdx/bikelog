@@ -100,6 +100,7 @@ class _ReferenceSettingsScreenState extends State<ReferenceSettingsScreen> {
     }
 
     String sql = '';
+    List<dynamic> sqlArgs = [];
     String successMessage = '';
     String errorMessage = '';
 
@@ -110,18 +111,13 @@ class _ReferenceSettingsScreenState extends State<ReferenceSettingsScreen> {
         return;
       }
 
-      String normName = strCleanAndEscape(_nameController.text);
-      String commentValue =
-          _commentController.text.isEmpty
-              ? "NULL"
-              : // Use NULL for empty comments
-              "'${strCleanAndEscape(_commentController.text)}'"; // Otherwise use the comment value in quotes
+      String name = _nameController.text.trim();
+      String? comment = _commentController.text.isEmpty ? null : _commentController.text.trim();
 
       // For edit mode use _selectedItemNum, for add mode - NULL
-      final numValue = edMode == 1 ? _selectedItemNum : 'NULL';
-      // Updated SQL to include the comment field, handling NULL properly
-      sql =
-          'INSERT OR REPLACE INTO $_tableName (num, name, comment) VALUES ($numValue, "$normName", $commentValue)';
+      final numValue = edMode == 1 ? _selectedItemNum : null;
+      sql = 'INSERT OR REPLACE INTO $_tableName (num, name, comment) VALUES (?, ?, ?)';
+      sqlArgs = [numValue, name, comment];
       successMessage =
           edMode == 1 ? lw('Saved successfully') : lw('Added successfully');
       errorMessage =
@@ -158,14 +154,15 @@ class _ReferenceSettingsScreenState extends State<ReferenceSettingsScreen> {
         }
       } else {
         // For other record types - standard deletion
-        sql = 'DELETE FROM $_tableName WHERE num = $_selectedItemNum';
+        sql = 'DELETE FROM $_tableName WHERE num = ?';
+        sqlArgs = [_selectedItemNum];
         successMessage = lw('Deleted successfully');
         errorMessage = lw('Error deleting data');
       }
     }
 
     try {
-      await setDbData(sql);
+      await setDbData(sql, sqlArgs.isEmpty ? null : sqlArgs);
       _nameController.clear();
       _commentController.clear(); // Clear the comment field
       _selectedItemNum = null;
