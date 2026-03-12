@@ -165,7 +165,13 @@ class _BikeSettingsScreenState extends State<BikeSettingsScreen> {
                 onPressed: () => Navigator.of(dialogContext).pop(),
               ),
             ),
-            body: Center(child: Image.file(File(photoPath))),
+            body: Center(
+              child: InteractiveViewer(
+                minScale: 1.0,
+                maxScale: 5.0,
+                child: Image.file(File(photoPath)),
+              ),
+            ),
           ),
     );
   }
