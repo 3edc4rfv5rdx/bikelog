@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:math';
 import 'package:file_picker/file_picker.dart';
+import 'package:image_picker/image_picker.dart';
 import 'dart:io' show File;
 import 'globals.dart';
 
@@ -444,19 +445,39 @@ class _BikeEditPanelState extends State<BikeEditPanel> {
     });
   }
 
-  Future<void> _pickFile() async {
-    try {
-      FilePickerResult? result = await FilePicker.platform.pickFiles(
-        dialogTitle: lw('Select bike image'),
-        type: FileType.custom,
-        allowMultiple: false,
-        allowedExtensions: ['jpg', 'jpeg', 'png', 'gif'],
-      );
+  Future<void> _pickPhoto() async {
+    final choice = await showDialog<String>(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: clFill,
+        title: Text(lw('Photo'), style: tsLarge),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: Icon(Icons.camera_alt, color: clText),
+              title: Text(lw('Take photo'), style: tsNormal),
+              onTap: () => Navigator.pop(context, 'camera'),
+            ),
+            ListTile(
+              leading: Icon(Icons.photo_library, color: clText),
+              title: Text(lw('Choose from gallery'), style: tsNormal),
+              onTap: () => Navigator.pop(context, 'gallery'),
+            ),
+          ],
+        ),
+      ),
+    );
+    if (choice == null) return;
 
-      if (result != null) {
-        PlatformFile file = result.files.first;
+    try {
+      final picker = ImagePicker();
+      final XFile? image = await picker.pickImage(
+        source: choice == 'camera' ? ImageSource.camera : ImageSource.gallery,
+      );
+      if (image != null) {
         setState(() {
-          photoController.text = file.path ?? '';
+          photoController.text = image.path;
         });
       }
     } catch (e) {
@@ -977,9 +998,7 @@ class _BikeEditPanelState extends State<BikeEditPanel> {
                                     child: Row(
                                       children: [
                                         Expanded(
-                                          child: Container(
-                                            height: textFieldHeight,
-                                            child: TextField(
+                                          child: TextField(
                                               controller: photoController,
                                               focusNode: photoFocusNode,
                                               decoration: InputDecoration(
@@ -1001,7 +1020,6 @@ class _BikeEditPanelState extends State<BikeEditPanel> {
                                                 color: clText,
                                                 height: textFieldTextHeight,
                                               ),
-                                            ),
                                           ),
                                         ),
                                         Material(
@@ -1017,7 +1035,7 @@ class _BikeEditPanelState extends State<BikeEditPanel> {
                                             ), // Reduced padding
                                             constraints:
                                                 BoxConstraints(), // Remove button size constraints
-                                            onPressed: _pickFile,
+                                            onPressed: _pickPhoto,
                                           ),
                                         ),
                                       ],
