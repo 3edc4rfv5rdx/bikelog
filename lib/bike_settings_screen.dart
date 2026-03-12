@@ -272,10 +272,13 @@ class _BikeSettingsScreenState extends State<BikeSettingsScreen> {
                 color: selectedBikeIndex == index ? clSel : null,
                 child: ListTile(
                   title: Text(
-                    '${bike['owner']} - ${bike['brand']} - ${bike['model']} - ${bike['type']} - ${bike['sernum']} - $formattedBuyDate - ${(bike['photo']?.isNotEmpty ?? false) ? ' [o]' : ''}',
+                    '${bike['owner']} - ${bike['brand']} - ${bike['model']} - ${bike['type']} - ${bike['sernum']} - $formattedBuyDate',
                     style: TextStyle(fontSize: fsNormal, color: clText),
                     overflow: TextOverflow.ellipsis,
                   ),
+                  trailing: (bike['photo']?.isNotEmpty ?? false)
+                      ? Icon(Icons.photo_camera, color: clText, size: 16)
+                      : null,
                 ),
               ),
             );
