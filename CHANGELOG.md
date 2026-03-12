@@ -2,6 +2,7 @@
 > N=new feature, E=error fix, F=fine-tune, R=refactor, I=infrastructure, T=tag
 
 ## Audit (2026-03-12)
+- E: Fix Ukrainian translation: "owners" was mistranslated as "bicycles" in locales.json
 - R: Remove duplicate initializeIni() from main.dart (already in db_helpers.dart)
 - E: Use parameterized queries in bikes, references, CSV restore, and writeRef (prevent SQL injection)
 - E: Fix missing comma in actions table FK definition; add indexes on foreign keys and date
