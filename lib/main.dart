@@ -297,7 +297,7 @@ Future<void> writeRef() async {
         String name = item[programLanguage] ?? item['en']; // If no translation, use English
         int num = item['num'];
         // Insert record into the corresponding table
-        await setDbData("INSERT INTO $tableName (num, name) VALUES ($num, '$name');");
+        await setDbData("INSERT INTO $tableName (num, name) VALUES (?, ?);", [num, name]);
       }
     }
     // Insert record for bicycle (does not change)
@@ -311,33 +311,3 @@ Future<void> writeRef() async {
   }
 }
 
-// first time init settings db-file and write ini-keys
-Future<void> initializeIni() async {
-  final dbFile = File(xvSettHome);
-  if (!await dbFile.exists()) {
-    Database? database;
-    xdef['.First start'] = 'true';
-    try {
-      database = await myOpenDatabase(xvSettHome);
-      await database.execute('''
-        CREATE TABLE IF NOT EXISTS settings (
-          key TEXT PRIMARY KEY NOT NULL,
-          value TEXT NOT NULL)
-      ''');
-    } catch (e) {
-      myPrint('Error creating database: $e');
-    } finally {
-      await database?.close();
-    }
-  }
-  // write ini keys
-  for (var key in xdef.keys) {
-    String saved = await getKey(key);
-    if (saved == '') {
-      await setKey(key, xdef[key]); // default
-    } else {
-      xdef[key] = saved;
-    }
-  }
-  myPrint("initializeIni finished");
-}

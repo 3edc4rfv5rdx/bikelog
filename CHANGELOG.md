@@ -2,7 +2,8 @@
 > N=new feature, E=error fix, F=fine-tune, R=refactor, I=infrastructure, T=tag
 
 ## Audit (2026-03-12)
-- E: Use parameterized queries in bikes, references, and CSV restore (prevent SQL injection)
+- R: Remove duplicate initializeIni() from main.dart (already in db_helpers.dart)
+- E: Use parameterized queries in bikes, references, CSV restore, and writeRef (prevent SQL injection)
 - E: Fix missing comma in actions table FK definition; add indexes on foreign keys and date
 - R: Split globals.dart into modules: db_helpers.dart, ui_helpers.dart, date_helpers.dart (via export)
 - R: Consolidate 6 SnackBar functions into one okInfoBar() with color shortcuts
