@@ -1,6 +1,9 @@
 # CHANGELOG
 > N=new feature, E=error fix, F=fine-tune, R=refactor, I=infrastructure, T=tag
 
+## Audit (2026-03-12)
+- R: Consolidate 6 SnackBar functions into one okInfoBar() with color shortcuts
+
 ## Audit (2026-03-11)
 - I: Move key.properties reference to ~/.my-safe/ (external secure storage)
 - F: Translate Russian comment to English in build.gradle.kts

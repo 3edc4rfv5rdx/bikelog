@@ -647,120 +647,33 @@ Future<void> waitForMainDb() async {
 }
 
 
-// Function to show a blue SnackBar
-void okInfoBarBlue(String message) {
+// Core SnackBar function
+void okInfoBar(String message, {
+  Color bgColor = Colors.blue,
+  Color? textColor,
+  Duration? duration,
+  DismissDirection dismissDirection = DismissDirection.down,
+  SnackBarAction? action,
+}) {
   scaffoldMessengerKey.currentState?.showSnackBar(
     SnackBar(
-      content: Text(
-        message,
-        style: TextStyle(
-          fontSize: fsSmall,
-          color: Colors.white,
-        ),
-      ),
+      content: Text(message, style: TextStyle(fontSize: fsSmall, color: textColor ?? clText)),
       behavior: SnackBarBehavior.floating,
-      backgroundColor: Colors.blue,
-      duration: Duration(seconds: 5),
+      backgroundColor: bgColor,
+      duration: duration ?? const Duration(seconds: 4),
+      dismissDirection: dismissDirection,
+      action: action,
     ),
   );
 }
 
-// Function to show a red SnackBar
-// EXAMPLE: okInfoBarRed("This is a message", duration: Duration(seconds: 3));
-void okInfoBarRed(String message, {Duration? duration}) {
-  scaffoldMessengerKey.currentState?.showSnackBar(
-    SnackBar(
-      content: Text(
-        message,
-        style: TextStyle(
-          fontSize: fsSmall,
-          color: Colors.white,
-        ),
-      ),
-      backgroundColor: Colors.red,
-      duration: duration ?? Duration(seconds: 7),
-      behavior: SnackBarBehavior.floating,
-      dismissDirection: DismissDirection.none,
-    ),
-  );
-}
-
-// Function to show an orange SnackBar
-void okInfoBarOrange(String message) {
-  scaffoldMessengerKey.currentState?.showSnackBar(
-    SnackBar(
-      content: Text(
-        message,
-        style: TextStyle(
-          fontSize: fsSmall,
-          color: clText,
-        ),
-      ),
-      behavior: SnackBarBehavior.floating,
-      backgroundColor: Colors.orange,
-    ),
-  );
-}
-
-// Function to show a yellow SnackBar
-void okInfoBarYellow(String message) {
-  scaffoldMessengerKey.currentState?.showSnackBar(
-    SnackBar(
-      content: Text(
-        message,
-        style: TextStyle(
-          fontSize: fsSmall,
-          color: clText,
-        ),
-      ),
-      backgroundColor: Colors.yellow,
-      behavior: SnackBarBehavior.floating,
-    ),
-  );
-}
-
-// Function to show a green SnackBar
-void okInfoBarGreen(String message, {Duration? duration}) {
-  scaffoldMessengerKey.currentState?.showSnackBar(
-    SnackBar(
-      content: Text(
-        message,
-        style: TextStyle(
-          fontSize: fsSmall,
-          color: clText,
-        ),
-      ),
-      duration: duration ?? Duration(seconds: 3),
-      behavior: SnackBarBehavior.floating,
-      backgroundColor: Colors.green,
-    ),
-  );
-}
-
-// Function to show a purple SnackBar
-void okInfoBarPurple(String message) {
-  scaffoldMessengerKey.currentState?.showSnackBar(
-    SnackBar(
-      content: Text(
-        message,
-        style: TextStyle(
-          fontSize: fsSmall,
-          color: clFill,
-        ),
-      ),
-      behavior: SnackBarBehavior.floating,
-      backgroundColor: Colors.purple,
-      duration: Duration(days: 3),
-      dismissDirection: DismissDirection.none,
-      action: SnackBarAction(
-        label: '[ OK ]',
-        onPressed: () {
-          scaffoldMessengerKey.currentState?.hideCurrentSnackBar();
-        },
-      ),
-    ),
-  );
-}
+// Colored SnackBar shortcuts
+void okInfoBarBlue(String message) => okInfoBar(message, bgColor: Colors.blue, textColor: Colors.white, duration: const Duration(seconds: 5));
+void okInfoBarRed(String message, {Duration? duration}) => okInfoBar(message, bgColor: Colors.red, textColor: Colors.white, duration: duration ?? const Duration(seconds: 7), dismissDirection: DismissDirection.none);
+void okInfoBarOrange(String message) => okInfoBar(message, bgColor: Colors.orange);
+void okInfoBarYellow(String message) => okInfoBar(message, bgColor: Colors.yellow);
+void okInfoBarGreen(String message, {Duration? duration}) => okInfoBar(message, bgColor: Colors.green, duration: duration ?? const Duration(seconds: 3));
+void okInfoBarPurple(String message) => okInfoBar(message, bgColor: Colors.purple, textColor: clFill, duration: const Duration(days: 3), dismissDirection: DismissDirection.none, action: SnackBarAction(label: '[ OK ]', onPressed: () { scaffoldMessengerKey.currentState?.hideCurrentSnackBar(); }));
 
 // Function to open a database based on the platform
 Future<Database> myOpenDatabase(String path) async {
