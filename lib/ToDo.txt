@@ -1,4 +1,5 @@
 ===TODO:
+# v0.9.260312+55 (2026-03-12 16:43:19)
 # v0.9.260121+47 (2026-01-21 12:10:51)
 - color buttons in all date pickers
 + new help
@@ -42,11 +43,13 @@
 + date fields in filter
 
 ===TOFIX:
+# v0.9.260312+55 (2026-03-12 16:43:19)
 # v0.9.260121+47 (2026-01-21 12:10:51)
 + no scrollbar in main window on Android
 + calendar translation
 
 ===ERRORS:
+# v0.9.260312+55 (2026-03-12 16:43:19)
 # v0.9.260121+47 (2026-01-21 12:10:51)
 + viewing bike photo → returns to settings
 + export to csv with ""
