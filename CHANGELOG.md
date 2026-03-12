@@ -2,6 +2,7 @@
 > N=new feature, E=error fix, F=fine-tune, R=refactor, I=infrastructure, T=tag
 
 ## Audit (2026-03-12)
+- F: Remove unused imports, variables, and dead code (fix all analyzer warnings)
 - E: Fix Ukrainian translation: "owners" was mistranslated as "bicycles" in locales.json
 - R: Remove duplicate initializeIni() from main.dart (already in db_helpers.dart)
 - E: Use parameterized queries in bikes, references, CSV restore, and writeRef (prevent SQL injection)

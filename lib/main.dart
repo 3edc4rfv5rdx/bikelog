@@ -7,8 +7,6 @@ import 'package:flutter/foundation.dart'
     show defaultTargetPlatform, TargetPlatform;
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart'; // For getting system paths
-import 'package:sqflite_common_ffi/sqflite_ffi.dart'; // For Linux
-
 import 'globals.dart';
 import 'add_action_screen.dart';
 import 'bike_log_screen.dart';

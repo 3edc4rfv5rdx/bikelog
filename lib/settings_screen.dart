@@ -152,11 +152,8 @@ Future<bool> restoreFromCSV(
     myPrint('CSV restore completed successfully');
     return true;
   } catch (e) {
-    String msg = lw('Error restoring from CSV');
     myPrint('CSV restore error: $e');
-    // Use the callback pattern to avoid setState issues
-    // This allows the caller to handle UI updates safely
-    okInfoBarRed(lw('Error restoring from CSV') + ': ' + e.toString());
+    okInfoBarRed('${lw('Error restoring from CSV')}: $e');
     return false;
   }
 }
@@ -270,8 +267,6 @@ class SettingsScreen extends StatefulWidget {
 class _SettingsScreenState extends State<SettingsScreen> {
   bool _backupWithCSV = false;
   bool _restoreWithCSV = false;
-  bool _isRestoring = false; // New state variable to track restoration progress
-  bool _isBackingUp = false; // Similar variable for backup operations
 
   @override
   Widget build(BuildContext context) {
@@ -620,14 +615,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                 return;
                               }
 
-                              // Show a loading indicator or disable the button to prevent multiple clicks
-                              if (mounted) {
-                                setState(() {
-                                  _isRestoring =
-                                      true; // Add this state variable to track restoration progress
-                                });
-                              }
-
                               bool success;
                               try {
                                 if (_restoreWithCSV) {
@@ -639,7 +626,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                 // Process the result only if the widget is still mounted
                                 if (mounted) {
                                   setState(() {
-                                    _isRestoring = false;
                                     if (success) {
                                       _restoreWithCSV = false;
                                     }
@@ -670,9 +656,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                 // Handle any unexpected errors
                                 myPrint('Unexpected error during restore: $e');
                                 if (mounted) {
-                                  setState(() {
-                                    _isRestoring = false;
-                                  });
                                   okInfoBarRed(
                                     lw(
                                       'Restore operation failed with an error',
