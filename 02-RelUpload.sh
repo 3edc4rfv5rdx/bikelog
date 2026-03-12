@@ -106,7 +106,7 @@ SRC_SHA_MAIN="app-release.apk.sha256"
 SRC_SHA_ARM64="app-arm64-v8a-release.apk.sha256"
 
 # ------------------------------------------------------------
-# Target file names in GitHub Release (shopper-*)
+# Target file names in GitHub Release (bikelog-*)
 # ------------------------------------------------------------
 DST_APK_MAIN="${PROJECT}-release-${VERSION}-${BUILD}.apk"
 DST_SHA_MAIN="${PROJECT}-release.apk.sha256"
