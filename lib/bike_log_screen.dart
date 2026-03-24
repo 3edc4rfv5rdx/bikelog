@@ -582,21 +582,45 @@ class _BikeLogScreenState extends State<BikeLogScreen> with RouteAware {
           itemCount: actions.length,
           itemBuilder: (context, index) {
             final action = actions[index];
-            return GestureDetector(
-              onTap: () => _handleShortTap(index),
-              onLongPress: () => _handleLongTap(index),
-              child: Container(
-                color: selectedIndex == index ? clSel : null,
-                child: ListTile(
-                  title: Text(
-                    '${action['date'] ?? lw('Unknown')} - ' +
-                        '${action['owner'] ?? lw('Unknown')} - ' +
-                        '${action['brand'] ?? lw('Unknown')} - ' +
-                        '${action['model'] ?? lw('Unknown')} - ' +
-                        '${action['price'] ?? '0.0'} - ' +
-                        '${action['event'] ?? lw('Unknown')} - ' +
-                        '${action['comment'] ?? lw('No comment')}',
-                    style: TextStyle(color: clText, fontSize: fsNormal),
+            return Dismissible(
+              key: ValueKey(action['num']),
+              background: Container(
+                color: Colors.blue,
+                alignment: Alignment.centerLeft,
+                padding: const EdgeInsets.only(left: 20),
+                child: const Icon(Icons.edit, color: Colors.white),
+              ),
+              secondaryBackground: Container(
+                color: Colors.red,
+                alignment: Alignment.centerRight,
+                padding: const EdgeInsets.only(right: 20),
+                child: const Icon(Icons.delete, color: Colors.white),
+              ),
+              confirmDismiss: (direction) async {
+                if (direction == DismissDirection.startToEnd) {
+                  _editAction(index);
+                  return false; // Don't remove the item
+                } else {
+                  await _deleteAction(index);
+                  return false; // _deleteAction handles removal
+                }
+              },
+              child: GestureDetector(
+                onTap: () => _handleShortTap(index),
+                onLongPress: () => _handleLongTap(index),
+                child: Container(
+                  color: selectedIndex == index ? clSel : null,
+                  child: ListTile(
+                    title: Text(
+                      '${action['date'] ?? lw('Unknown')} - ' +
+                          '${action['owner'] ?? lw('Unknown')} - ' +
+                          '${action['brand'] ?? lw('Unknown')} - ' +
+                          '${action['model'] ?? lw('Unknown')} - ' +
+                          '${action['price'] ?? '0.0'} - ' +
+                          '${action['event'] ?? lw('Unknown')} - ' +
+                          '${action['comment'] ?? lw('No comment')}',
+                      style: TextStyle(color: clText, fontSize: fsNormal),
+                    ),
                   ),
                 ),
               ),
