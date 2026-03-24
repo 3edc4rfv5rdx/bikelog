@@ -1,7 +1,7 @@
 # CHANGELOG
 > N=new feature, E=error fix, F=fine-tune, R=refactor, I=infrastructure, T=tag
 
-## 2026-03-24
+## v0.9.260324+57
 - E: Fix photo icon tap requiring double tap in bike list (GestureDetector → IconButton)
 - N: Swipe gestures on action list (right=edit, left=delete)
 
