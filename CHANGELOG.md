@@ -1,6 +1,10 @@
 # CHANGELOG
 > N=new feature, E=error fix, F=fine-tune, R=refactor, I=infrastructure, T=tag
 
+## 2026-03-24
+- E: Fix photo icon tap requiring double tap in bike list (GestureDetector → IconButton)
+- N: Swipe gestures on action list (right=edit, left=delete)
+
 ## Audit (2026-03-12)
 - E: Fix copy-paste error in 02-RelUpload.sh: "shopper" → "bikelog" in comment
 - F: Translate Russian comments to English in 00-Make.sh and pubspec.yaml
