@@ -283,9 +283,11 @@ class _BikeSettingsScreenState extends State<BikeSettingsScreen> {
                     overflow: TextOverflow.ellipsis,
                   ),
                   trailing: (bike['photo']?.isNotEmpty ?? false)
-                      ? GestureDetector(
-                          onTap: () => _showPhoto(bike['photo']),
-                          child: Icon(Icons.photo_camera, color: clText, size: 16),
+                      ? IconButton(
+                          icon: Icon(Icons.photo_camera, color: clText, size: 16),
+                          onPressed: () => _showPhoto(bike['photo']),
+                          padding: EdgeInsets.zero,
+                          constraints: const BoxConstraints(),
                         )
                       : null,
                 ),
