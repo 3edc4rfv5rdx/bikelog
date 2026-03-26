@@ -44,7 +44,7 @@ String xvBakDir = '';
 bool xvBusiness = false;
 
 const String progVersion = '0.9.260326';
-const int buildNumber = 59;
+const int buildNumber = 60;
 const String progAuthor = 'Eugen';
 const String progEmail = 'xxxx@xxx.xx';
 const String progSite = 'bikelogbook.od.ua';
