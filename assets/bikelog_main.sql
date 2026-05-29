@@ -1,3 +1,6 @@
+-- The `del` column on every table is a reserved soft-delete flag. It is
+-- currently unused: the app uses hard DELETE everywhere. Kept in the schema for
+-- backward compatibility (existing DBs and CSV backups carry it).
 create table if not exists owners (
     num integer primary key autoincrement,
     del integer not null default 0,

@@ -193,7 +193,7 @@ The following are defined but never referenced: `getDbOne` (`db_helpers.dart`);
 the `StringExtension.replace` extension (`globals.dart`). Remove them or wire them
 in if intended.
 
-### 19. Unused `del` soft-delete column
+### ✅ 19. Unused `del` soft-delete column
 Every table in `assets/bikelog_main.sql` has `del integer not null default 0`, but
 no query ever writes or filters on `del` (all deletes are hard `DELETE FROM`).
 Either implement soft-delete consistently (write `del=1` and add `WHERE del=0` to
