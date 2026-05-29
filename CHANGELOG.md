@@ -2,6 +2,7 @@
 > N=new feature, E=error fix, F=fine-tune, R=refactor, I=infrastructure, T=tag
 
 ## Unreleased
+- I: Remove completed post-audit CHECK-LIST.md and tidy TODO.txt formatting
 - I: Add 98-InstallAPK.sh; bump Gradle wrapper to 8.12 and refresh pubspec.lock
 - I: Refuse to build on a dirty tree in 00-Make.sh; move tagging out of the build
 - I: 01-PushTag.sh derives the tag from pubspec.yaml and stamps CHANGELOG (## Unreleased -> ## vX)

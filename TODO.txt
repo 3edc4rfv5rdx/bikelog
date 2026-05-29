@@ -1,2 +1,5 @@
-o сделать жесты на главном экране (влево - удалить, вправо - edit)
-o tofix1 #15: перевести backup/restore с dart:io путей на MediaStore/SAF, чтобы убрать MANAGE_EXTERNAL_STORAGE и публиковаться в Play (видимый Documents, переживает удаление). Затрагивает backupDatabase/backupToCSV/restoreFromFiles/restoreFromCSV, экспорт отчётов, copyFiles/copyDirFiles/newMakeDir, хранение URI. Новая зависимость (media_store_plus/saf).
+- tofix1 #15: перевести backup/restore с dart:io путей на MediaStore/SAF, 
+  чтобы убрать MANAGE_EXTERNAL_STORAGE и публиковаться в Play (видимый 
+  Documents, переживает удаление). Затрагивает backupDatabase/backupToCSV/restoreFromFiles/restoreFromCSV, 
+  экспорт отчётов, copyFiles/copyDirFiles/newMakeDir, хранение URI. Новая 
+  зависимость (media_store_plus/saf).
