@@ -451,24 +451,21 @@ class _BikeLogScreenState extends State<BikeLogScreen> with RouteAware {
   }
 
   void _showTotalSum() async {
-    double totalSum;
-    int totalCount;
-
-    // If filter is active, use current actions
-    if (xvFilter != '') {
-      totalSum = actions.fold(0.0, (sum, action) {
-        final price = action['price'] ?? 0.0;
-        return sum + (price is String ? double.tryParse(price) ?? 0.0 : price);
-      });
-      totalCount = actions.length;
-    }
-    // Otherwise query all records
-    else {
-      String sql = 'SELECT COUNT(*) as count, SUM(price) as total FROM actions';
-      final result = await getDbData(sql);
-      totalSum = result[0]['total'] ?? 0.0;
-      totalCount = result[0]['count'] ?? 0;
-    }
+    // Sum over the same row set the list is built from (same joins + filter),
+    // but ignore the 'Last actions' display limit: that limit only caps how
+    // many rows are drawn, not the total. Using the joins keeps the count in
+    // step with the INNER JOIN'd visible list.
+    final String sql = '''
+    select count(*) as count, sum(actions.price) as total
+    from actions
+    inner join bikes on actions.bike = bikes.num
+    inner join owners on bikes.owner = owners.num
+    inner join events on actions.event = events.num
+    $xvFilter
+  ''';
+    final result = await getDbData(sql, xvFilterArgs);
+    final double totalSum = (result[0]['total'] as num?)?.toDouble() ?? 0.0;
+    final int totalCount = (result[0]['count'] as num?)?.toInt() ?? 0;
 
     String sumStr =
         xdef['Round to integer'] == 'true'

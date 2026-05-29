@@ -101,7 +101,7 @@ replace, and include the photo directory in backup/restore.
 
 ## MEDIUM
 
-### 9. "Sum" total is inconsistent with the visible list
+### ✅ 9. "Sum" total is inconsistent with the visible list
 In `lib/bike_log_screen.dart::_showTotalSum`: when a filter is active it folds
 over the in-memory `actions` (which may be truncated by the 'Last actions' LIMIT
 applied in `_loadActions`), but when no filter is active it runs
