@@ -2,15 +2,23 @@
 set -e
 
 PROJECT="bikelog"
-APK_DIR="/home/e/AndroidStudioProjects/bikelog/build/app/outputs/flutter-apk"
-TODO_FILE="lib/ToDo.txt"
-CHANGELOG_FILE="/tmp/release_notes_$$.md"
+ROOT="$(git rev-parse --show-toplevel)"
+APK_DIR="$ROOT/build/app/outputs/flutter-apk"
+CHANGELOG_SRC="$ROOT/CHANGELOG.md"
+NOTES_FILE="/tmp/release_notes_$$.md"
 
-echo "=== Detecting latest tag ==="
-TAG=$(git tag --list 'v*' | sort -V | tail -n 1)
+echo "=== Reading version from pubspec.yaml ==="
+FULL_VER=$(grep -oP '^version:\s*\K[0-9.]+\+[0-9]+' "$ROOT/pubspec.yaml")
 
-if [[ -z "$TAG" ]]; then
-    echo "ERROR: No tags found."
+if [[ -z "$FULL_VER" ]]; then
+    echo "ERROR: Could not read version from pubspec.yaml."
+    exit 1
+fi
+
+TAG="v$FULL_VER"
+
+if ! git rev-parse -q --verify "refs/tags/$TAG" >/dev/null; then
+    echo "ERROR: Tag $TAG not found. Run 01-PushTag.sh first."
     exit 1
 fi
 
@@ -32,65 +40,36 @@ echo "Version: $VERSION"
 echo "Build:   $BUILD"
 
 # ------------------------------------------------------------
-# Function: build_changelog
-# Stops at ANY version tag (# v...) after current tag
+# Function: extract_changelog
+# Extract the notes for the given version from CHANGELOG.md:
+# everything between "## <tag>" and the next "## " heading.
 # ------------------------------------------------------------
-build_changelog() {
-    local todo_file="$1"
-    local cur_tag="$2"
+extract_changelog() {
+    local changelog="$1"
+    local tag="$2"
     local out_file="$3"
 
-    awk -v cur="# $cur_tag" '
-    BEGIN {
-        group=""
-        capture=0
-        printed["TODO"]=0
-        printed["TOFIX"]=0
-        printed["ERRORS"]=0
-    }
-
-    # Detect group headers
-    /^===TODO:/   { group="TODO";   capture=0; next }
-    /^===TOFIX:/  { group="TOFIX";  capture=0; next }
-    /^===ERRORS:/ { group="ERRORS"; capture=0; next }
-
-    # Start capture after current tag inside group
-    group != "" && index($0, cur) == 1 {
-        capture=1
-        next
-    }
-
-    # Stop capture at any other version tag (# v...)
-    group != "" && capture && /^# v[0-9]/ {
-        capture=0
-        next
-    }
-
-    # Capture items
-    capture && /^[+]/ {
-        # Print group header once
-        if (!printed[group]) {
-            print ""
-            print "### From " group ":"
-            printed[group]=1
-        }
-
-        sub(/^[+][[:space:]]*/, "- ")
-        print
-        next
-    }
-    ' "$todo_file" > "$out_file"
+    awk -v ver="## $tag" '
+    $0 == ver { capture=1; next }
+    capture && /^## / { capture=0 }
+    capture { print }
+    ' "$changelog" > "$out_file"
 }
 
 # ------------------------------------------------------------
-# Build changelog
+# Build release notes
 # ------------------------------------------------------------
-echo "=== Building changelog from $TODO_FILE ==="
-build_changelog "$TODO_FILE" "$TAG" "$CHANGELOG_FILE"
+echo "=== Extracting release notes from $CHANGELOG_SRC ==="
+extract_changelog "$CHANGELOG_SRC" "$TAG" "$NOTES_FILE"
 
-echo "Generated changelog:"
+if [[ ! -s "$NOTES_FILE" ]]; then
+    echo "ERROR: No CHANGELOG section found for $TAG."
+    exit 1
+fi
+
+echo "Release notes:"
 echo "--------------------------------------------------"
-cat "$CHANGELOG_FILE"
+cat "$NOTES_FILE"
 echo "--------------------------------------------------"
 
 # ------------------------------------------------------------
@@ -174,7 +153,7 @@ else
     echo "Creating GitHub Release..."
     gh release create "$TAG" \
         --title "Release $TAG" \
-        --notes-file "$CHANGELOG_FILE"
+        --notes-file "$NOTES_FILE"
 fi
 
 # ------------------------------------------------------------
@@ -194,4 +173,5 @@ echo "=== Release upload completed successfully ==="
 # ------------------------------------------------------------
 # Cleanup
 # ------------------------------------------------------------
-rm -f "$CHANGELOG_FILE"
+rm -f "$NOTES_FILE"
+sleep 2

@@ -1,7 +1,10 @@
 # CHANGELOG
 > N=new feature, E=error fix, F=fine-tune, R=refactor, I=infrastructure, T=tag
 
-## Audit (2026-05-29)
+## Unreleased
+- I: Refuse to build on a dirty tree in 00-Make.sh; move tagging out of the build
+- I: 01-PushTag.sh derives the tag from pubspec.yaml and stamps CHANGELOG (## Unreleased -> ## vX)
+- I: 02-RelUpload.sh reads release notes from CHANGELOG; fix dead PRG APK/notes paths
 - I: Fix 00-Make.sh PROJ_PATH (was dead $HOME/PRG path) so APK rename/copy works
 - R: Map options help ids explicitly by setting key instead of by position (tofix1 #25)
 - R: Extract shared bikes/events/owners selection loaders into db_helpers (tofix1 #24)

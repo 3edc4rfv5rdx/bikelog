@@ -23,7 +23,6 @@ PUB_FILE="pubspec.yaml"
 GLOB_FILE="./lib/globals.dart"
 # Version and tags
 FULL_VER="$VER+$VER_CODE"
-TAG_MSG="Release $FULL_VER: $COMMENT"
 # Get current date
 DATE=$(date +"%Y%m%d")
 DATE_SHORT=$(date +"%y%m%d")
@@ -101,7 +100,8 @@ update_version() {
         exit 1
     fi
 
-    # Create Git commit and tag if in a Git repository
+    # Create Git commit for the version bump. Tagging is done by 01-PushTag.sh,
+    # not on every build.
     if [ -d ".git" ] || git rev-parse --is-inside-work-tree > /dev/null 2>&1; then
         # Commit the version changes
         git add "$PUB_FILE" "$GLOB_FILE" "00-Make.sh"
@@ -109,17 +109,11 @@ update_version() {
 
         if [ $? -eq 0 ]; then
             echo "✓ Git commit successfully created for version $FULL_VER"
-            git tag -a "v$FULL_VER" -m "$TAG_MSG"
-            if [ $? -eq 0 ]; then
-                echo "✓ Git tag v$FULL_VER successfully created"
-            else
-                echo "✗ Error creating Git tag"
-            fi
         else
             echo "✗ Error creating Git commit"
         fi
     else
-        echo "! Warning: Current directory is not a Git repository. Commit and tag were not created."
+        echo "! Warning: Current directory is not a Git repository. Commit was not created."
     fi
 }
 
@@ -288,6 +282,16 @@ copy_final_apk() {
 # ============ MAIN EXECUTION ============
 echo "========== STARTING BUILD PROCESS =========="
 echo "Project: $PROJ_NAME"
+
+# Refuse to build on a dirty tree: the tagged release must match the built code.
+# Commit your code (with CHANGELOG.md) first; this script only adds the version bump.
+echo "===== CHECKING WORKING TREE IS CLEAN ====="
+if ! git diff --quiet || ! git diff --cached --quiet; then
+    echo "✗ ERROR: You have uncommitted changes."
+    echo "  Commit your code (with CHANGELOG.md) before building."
+    exit 1
+fi
+echo "✓ Working tree is clean"
 
 auto_increment_version
 
