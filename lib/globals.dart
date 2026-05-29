@@ -43,7 +43,19 @@ String xvExt1Path = '';
 String xvMainHome = '';
 String xvSettHome = '';
 String xvBakDir = '';
+String xvPhotoDir = ''; // persistent dir for bike photos, set in initializePaths()
 bool xvBusiness = false;
+
+// Subdirectory name for bike photos under xvHomePath, reused by backup/restore.
+const String photoDirName = 'photos';
+
+// Resolve a stored bike photo (filename only) to its full path. Empty stays
+// empty. Photos live in xvPhotoDir so only the filename is persisted in the DB,
+// keeping it valid across reinstalls and trivial to back up.
+String bikePhotoPath(String? fileName) {
+  if (fileName == null || fileName.isEmpty) return '';
+  return '$xvPhotoDir/$fileName';
+}
 
 const String progVersion = '0.9.260529';
 const int buildNumber = 61;

@@ -126,6 +126,8 @@ Future<bool> restoreFromFiles(String backupDir) async {
       File sourceFile = File(pair.$2);
       await sourceFile.copy(pair.$1);
     }
+    // Restore bike photos if the backup carried them.
+    await copyDirFiles('$backupDir/$photoDirName', xvPhotoDir);
     myPrint('File restore completed successfully');
     return true;
   } catch (e) {
@@ -223,6 +225,10 @@ Future<bool> backupDatabase() async {
   List<String> dbFiles = [xvMainHome, xvSettHome];
   myPrint('Copying database files to backup directory');
   bool result = await copyFiles(dbFiles, backupDirPath);
+  // Carry bike photos along so they survive a restore.
+  if (result) {
+    result = await copyDirFiles(xvPhotoDir, '$backupDirPath/$photoDirName');
+  }
   myPrint(
     result
         ? 'Database backup completed successfully'

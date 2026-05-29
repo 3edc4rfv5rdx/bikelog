@@ -221,6 +221,23 @@ Future<bool> copyFiles(List<String> sourcePaths, String destinationDir) async {
   }
 }
 
+// Copy every file directly inside sourceDir into destinationDir (created if
+// needed). Subdirectories are ignored. A missing source is treated as success
+// (nothing to copy). Used to carry the bike photos dir through backup/restore.
+Future<bool> copyDirFiles(String sourceDir, String destinationDir) async {
+  try {
+    final src = Directory(sourceDir);
+    if (!await src.exists()) return true;
+    if (!await newMakeDir(destinationDir)) return false;
+    final files = src.listSync().whereType<File>().map((f) => f.path).toList();
+    if (files.isEmpty) return true;
+    return await copyFiles(files, destinationDir);
+  } catch (e) {
+    myPrint('Error copying directory $sourceDir: $e');
+    return false;
+  }
+}
+
 Future<void> initializeIni() async {
   final dbFile = File(xvSettHome);
   if (!await dbFile.exists()) {

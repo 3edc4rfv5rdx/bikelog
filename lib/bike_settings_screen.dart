@@ -151,7 +151,8 @@ class _BikeSettingsScreenState extends State<BikeSettingsScreen> {
     }
   }
 
-  void _showPhoto(String photoPath) {
+  void _showPhoto(String photoFileName) {
+    final photoPath = bikePhotoPath(photoFileName);
     showDialog(
       context: context,
       builder:
@@ -336,6 +337,8 @@ class _BikeEditPanelState extends State<BikeEditPanel> {
   final TextEditingController serialNumController = TextEditingController();
   final TextEditingController buyDateController = TextEditingController();
   final TextEditingController photoController = TextEditingController();
+  // Photo filename loaded from the DB, kept to delete the old file on replace.
+  String _originalPhoto = '';
 
   // Focus nodes
   final FocusNode brandFocusNode = FocusNode();
@@ -435,6 +438,7 @@ class _BikeEditPanelState extends State<BikeEditPanel> {
           }
 
           photoController.text = bike['photo'] ?? '';
+          _originalPhoto = photoController.text;
         });
       }
     } catch (e) {
@@ -452,6 +456,7 @@ class _BikeEditPanelState extends State<BikeEditPanel> {
       serialNumController.clear();
       buyDateController.clear();
       photoController.clear();
+      _originalPhoto = '';
     });
   }
 
@@ -486,13 +491,36 @@ class _BikeEditPanelState extends State<BikeEditPanel> {
         source: choice == 'camera' ? ImageSource.camera : ImageSource.gallery,
       );
       if (image != null) {
+        // Copy out of the picker's purgeable cache into persistent storage.
+        // Only the filename is stored in the DB; bikePhotoPath() rebuilds the
+        // full path so it survives reinstalls and is trivial to back up.
+        final current = photoController.text.trim();
+        // Drop a previously picked-but-unsaved copy to avoid orphaning it.
+        if (current.isNotEmpty && current != _originalPhoto) {
+          await _deletePhotoFile(current);
+        }
+        final base = image.path.split('/').last;
+        final ext = base.contains('.') ? base.split('.').last : 'jpg';
+        final fileName = 'bike_${DateTime.now().millisecondsSinceEpoch}.$ext';
+        await File(image.path).copy('$xvPhotoDir/$fileName');
         setState(() {
-          photoController.text = image.path;
+          photoController.text = fileName;
         });
       }
     } catch (e) {
       String msg = lw('Error picking file');
       okInfoBarRed('$msg: $e');
+    }
+  }
+
+  // Delete a persistent photo file by its stored filename. Best-effort.
+  Future<void> _deletePhotoFile(String fileName) async {
+    if (fileName.isEmpty) return;
+    try {
+      final f = File(bikePhotoPath(fileName));
+      if (await f.exists()) await f.delete();
+    } catch (e) {
+      myPrint('Failed to delete photo file $fileName: $e');
     }
   }
 
@@ -535,6 +563,11 @@ class _BikeEditPanelState extends State<BikeEditPanel> {
       }
 
       await setDbData(sql, args);
+      // Remove the replaced photo file once the new path is committed.
+      if (_originalPhoto.isNotEmpty && _originalPhoto != photo) {
+        await _deletePhotoFile(_originalPhoto);
+      }
+      _originalPhoto = photo;
       widget
           .onSaved(); // Call the callback to refresh the list on the main screen
       Navigator.pop(context); // Close the edit panel

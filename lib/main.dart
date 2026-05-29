@@ -228,6 +228,10 @@ Future<void> initializePaths() async {
   // Set common database paths
   xvMainHome = '$xvHomePath/$mainDb';
   xvSettHome = '$xvHomePath/$settDb';
+  // Persistent storage for bike photos; created up front so picks can be copied
+  // out of the OS-purgeable picker cache into a stable location.
+  xvPhotoDir = '$xvHomePath/$photoDirName';
+  await newMakeDir(xvPhotoDir);
   myPrint("initializePaths finished");
 }
 

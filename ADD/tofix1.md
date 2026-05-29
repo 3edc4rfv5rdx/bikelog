@@ -87,7 +87,7 @@ referencing rows (like the owner flow), and either block, reassign, or cascade.
 Optionally enable `PRAGMA foreign_keys = ON` on every connection and handle the
 constraint errors.
 
-### 8. Bike photo stored as a temporary picker path
+### ✅ 8. Bike photo stored as a temporary picker path
 In `lib/bike_settings_screen.dart`, `_pickPhoto` stores `image.path` from
 `ImagePicker` directly into `photoController` (~line 494), and `_saveBike` writes
 that path to `bikes.photo`. On Android this is a cache/temp path that the OS can
