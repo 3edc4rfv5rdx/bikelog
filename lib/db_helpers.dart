@@ -58,6 +58,53 @@ Future<List<Map<String, dynamic>>> getDbData(String sql, [List<dynamic>? argumen
   });
 }
 
+// Shared selection-list loaders, reused by the add-action, filter and
+// bike-settings screens. Each returns rows shaped for dropdowns: 'num' as a
+// String and an 'Unknown' fallback for any null display field.
+
+/// Bikes for selection: {num, owner, brand, model}.
+Future<List<Map<String, dynamic>>> loadBikesForSelect() async {
+  final rows = await getDbData('''
+    select bikes.num as num, owners.name as owner,
+           bikes.brand as brand, bikes.model as model
+    from bikes
+    inner join owners on bikes.owner = owners.num
+    order by owners.name, bikes.brand, bikes.model;
+  ''');
+  return rows
+      .map((b) => {
+            'num': b['num']?.toString() ?? '0',
+            'owner': b['owner'] ?? lw('Unknown'),
+            'brand': b['brand'] ?? lw('Unknown'),
+            'model': b['model'] ?? lw('Unknown'),
+          })
+      .toList();
+}
+
+/// Events for selection: {num, name}.
+Future<List<Map<String, dynamic>>> loadEventsForSelect() async {
+  final rows =
+      await getDbData('select num as num, name as name from events order by num;');
+  return rows
+      .map((e) => {
+            'num': e['num']?.toString() ?? '0',
+            'name': e['name'] ?? lw('Unknown'),
+          })
+      .toList();
+}
+
+/// Owners for selection: {num, name}.
+Future<List<Map<String, dynamic>>> loadOwnersForSelect() async {
+  final rows =
+      await getDbData('select num as num, name as name from owners order by name;');
+  return rows
+      .map((o) => {
+            'num': o['num']?.toString() ?? '0',
+            'name': o['name'] ?? lw('Unknown'),
+          })
+      .toList();
+}
+
 Future<void> setDbData(String sql, [List<dynamic>? arguments]) {
   return _runSerialized(() async {
     Database? database;

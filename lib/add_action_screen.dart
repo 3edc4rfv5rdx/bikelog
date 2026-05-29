@@ -204,49 +204,17 @@ class _AddActionScreenState extends State<AddActionScreen> {
 
   // Load bikes from the database
   Future<void> _loadBikes() async {
-    final sql = '''
-      select bikes.num as num, owners.name as owner, 
-      bikes.brand as brand, bikes.model as model
-      from bikes
-      inner join owners on bikes.owner = owners.num
-      order by owners.name, bikes.brand, bikes.model;
-    ''';
-    // Execute the database query
-    final bikesFromDb = await getDbData(sql);
+    final loaded = await loadBikesForSelect();
     setState(() {
-      // Save data to the bikes list
-      bikes =
-          bikesFromDb.map((bike) {
-            return {
-              'num': bike['num']?.toString() ?? '0',
-              // Use 'Num' from the query
-              'owner': bike['owner'] ?? lw('Unknown'),
-              // Use 'Owner' from the query
-              'brand': bike['brand'] ?? lw('Unknown'),
-              // Use 'Brand' from the query
-              'model': bike['model'] ?? lw('Unknown'),
-              // Use 'Model' from the query
-            };
-          }).toList();
+      bikes = loaded;
     });
   }
 
   // Load events from the database
   Future<void> _loadEvents() async {
-    final sql = "select num as num, name as name from events order by num;";
-    // Execute the database query
-    final eventsFromDb = await getDbData(sql);
+    final loaded = await loadEventsForSelect();
     setState(() {
-      // Save data to the events list
-      events =
-          eventsFromDb.map((event) {
-            return {
-              'num': event['num']?.toString() ?? '0',
-              // Use 'Num' from the query
-              'name': event['name'] ?? lw('Unknown'),
-              // Use 'Name' from the query
-            };
-          }).toList();
+      events = loaded;
     });
   }
 

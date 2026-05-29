@@ -387,11 +387,10 @@ class _BikeEditPanelState extends State<BikeEditPanel> {
   }
 
   Future<void> _loadOwners() async {
-    final sql = 'SELECT num as num, name as name FROM owners ORDER BY name;';
     try {
-      final ownersFromDb = await getDbData(sql);
+      final loaded = await loadOwnersForSelect();
       setState(() {
-        owners = ownersFromDb;
+        owners = loaded;
       });
     } catch (e) {
       String msg = lw('Failed to load owners');

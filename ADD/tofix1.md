@@ -224,7 +224,7 @@ unary minus and allows negative results (e.g. `5-10`) to be saved as a negative
 price with no guard. Decide intended behavior and validate accordingly (and reject
 or warn on negative computed prices).
 
-### 24. Duplicated query/loader code
+### ✅ 24. Duplicated query/loader code
 `_loadBikes`, `_loadOwners`, and `_loadEvents` (and their mapping logic) are copied
 across `add_action_screen.dart`, `filter_screen.dart`, and
 `bike_settings_screen.dart`. Per project convention, extract these into shared
