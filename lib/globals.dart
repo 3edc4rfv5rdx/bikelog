@@ -269,7 +269,8 @@ bool validatePriceInput(String input) {
   if (input.isEmpty) {
     return true;
   }
-  final RegExp priceRegex = RegExp(r'^\d+(\.\d{1,2})?$');
+  // Accept 5, 5.5, .5 and 5. (up to 2 decimals); reject a lone dot.
+  final RegExp priceRegex = RegExp(r'^(\d+\.?\d{0,2}|\.\d{1,2})$');
   return priceRegex.hasMatch(input);
 }
 

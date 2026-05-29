@@ -217,7 +217,7 @@ hardcoding the year.
 places and `DateTime(2099)` in others. Unify the allowed range via shared
 constants.
 
-### 23. Price input edge cases
+### ✅ 23. Price input edge cases
 `globals.dart::validatePriceInput` regex `^\d+(\.\d{1,2})?$` rejects `.5` and `5.`,
 and the expression evaluator in `add_action_screen.dart` does not support a leading
 unary minus and allows negative results (e.g. `5-10`) to be saved as a negative

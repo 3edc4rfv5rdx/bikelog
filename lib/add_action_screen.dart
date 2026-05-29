@@ -355,6 +355,13 @@ class _AddActionScreenState extends State<AddActionScreen> {
                     // Calculate the expression
                     price = evaluateExpression(priceText);
 
+                    // A price is a cost: reject a negative computed result.
+                    if (price < 0) {
+                      okInfoBarYellow(lw('Price cannot be negative'));
+                      priceFocusNode.requestFocus();
+                      return;
+                    }
+
                     // Add expression to comment
                     String expressionComment = ' (=' + priceText + ')';
                     if (!commentController.text.contains(expressionComment)) {

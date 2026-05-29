@@ -2,6 +2,7 @@
 > N=new feature, E=error fix, F=fine-tune, R=refactor, I=infrastructure, T=tag
 
 ## Audit (2026-05-29)
+- E: Accept .5/5. price input and reject negative computed prices (tofix1 #23)
 - F: About shows GitHub link and email, derives copyright year dynamically (tofix1 #21)
 - F: Document the unused `del` column as a reserved soft-delete flag (tofix1 #19)
 - I: Defer tofix1 #15 (drop MANAGE_EXTERNAL_STORAGE via MediaStore/SAF) to TODO.txt
