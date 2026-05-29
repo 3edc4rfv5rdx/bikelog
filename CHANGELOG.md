@@ -2,6 +2,7 @@
 > N=new feature, E=error fix, F=fine-tune, R=refactor, I=infrastructure, T=tag
 
 ## Audit (2026-05-29)
+- R: Remove dead code: getDbOne, 6 unused date helpers, StringExtension, strCleanAndEscape (tofix1 #18)
 - F: Replace deprecated Color.withOpacity with withValues(alpha:) (tofix1 #26)
 - R: Remove redundant no-op setKey('.First start','true') in first-run flow (tofix1 #20)
 - E: Protect default type #1 from deletion via Save in reference editor (tofix1 #6)

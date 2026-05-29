@@ -41,26 +41,6 @@ Future<T> _runSerialized<T>(Future<T> Function() action) {
   return completer.future;
 }
 
-Future<String> getDbOne(String sql) {
-  return _runSerialized(() async {
-    Database? database;
-    String result = '';
-    try {
-      database = await myOpenDatabase(xvMainHome);
-      List<Map<String, dynamic>> queryResult = await database.rawQuery(sql);
-      if (queryResult.isNotEmpty && queryResult[0].values.first != null) {
-        result = queryResult[0].values.first.toString();
-      }
-    } catch (e) {
-      myPrint('Error in getDbOne: $e');
-      rethrow;
-    } finally {
-      await database?.close();
-    }
-    return result;
-  });
-}
-
 Future<List<Map<String, dynamic>>> getDbData(String sql, [List<dynamic>? arguments]) {
   return _runSerialized(() async {
     Database? database;

@@ -113,55 +113,6 @@ bool isValidDateFormat(String input) {
   return RegExp(pattern).hasMatch(input);
 }
 
-bool isValidDate(String input) {
-  try {
-    String storageFormat = dateToStorageFormat(input);
-    final parts = storageFormat.split('-');
-    if (parts.length != 3) return false;
-
-    final year = int.parse(parts[0]);
-    final month = int.parse(parts[1]);
-    final day = int.parse(parts[2]);
-
-    final date = DateTime(year, month, day);
-    return date.year == year && date.month == month && date.day == day;
-  } catch (e) {
-    return false;
-  }
-}
-
-bool isDateNotInFuture(String input) {
-  try {
-    String storageFormat = dateToStorageFormat(input);
-    final parts = storageFormat.split('-');
-    if (parts.length != 3) return false;
-
-    final year = int.parse(parts[0]);
-    final month = int.parse(parts[1]);
-    final day = int.parse(parts[2]);
-
-    final inputDate = DateTime(year, month, day);
-    final currentDate = DateTime.now();
-
-    return inputDate.isBefore(currentDate) || inputDate.isAtSameMomentAs(currentDate);
-  } catch (e) {
-    return false;
-  }
-}
-
-bool isDateFromBeforeDateTo(String dateFrom, String dateTo) {
-  try {
-    String fromStorage = dateToStorageFormat(dateFrom);
-    String toStorage = dateToStorageFormat(dateTo);
-
-    final from = DateTime.parse(fromStorage);
-    final to = DateTime.parse(toStorage);
-    return from.isBefore(to) || from.isAtSameMomentAs(to);
-  } catch (e) {
-    return false;
-  }
-}
-
 Future<DateTime?> showLocalizedDatePicker({
   required BuildContext context,
   required DateTime initialDate,
@@ -271,22 +222,6 @@ bool isDateIntInFuture(int dateInt) {
   if (dateInt <= 0) return false;
   int todayInt = getTodayAsInt();
   return dateInt > todayInt;
-}
-
-bool isDateIntFromBeforeDateIntTo(int dateFromInt, int dateToInt) {
-  if (dateFromInt <= 0 || dateToInt <= 0) return false;
-  return dateFromInt <= dateToInt;
-}
-
-String sqlDateCondition(String fieldName, String displayDate) {
-  int dateInt = dateToStorageInt(displayDate);
-  return "$fieldName = $dateInt";
-}
-
-String sqlDateRangeCondition(String fieldName, String fromDate, String toDate) {
-  int fromDateInt = dateToStorageInt(fromDate);
-  int toDateInt = dateToStorageInt(toDate);
-  return "$fieldName BETWEEN $fromDateInt AND $toDateInt";
 }
 
 bool validateDateInput(String input) {

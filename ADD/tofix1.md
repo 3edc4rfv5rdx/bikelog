@@ -168,12 +168,12 @@ to broad permissions where unavoidable, to keep the app publishable.
 location (e.g. `getApplicationDocumentsDirectory()` / `HOME` env) and remove the
 personal path.
 
-### 17. Debug logging shipped on
-`lib/globals.dart` has `bool xvDebug = true;` and `myPrint` calls `print(...)`,
-so verbose logs ship in release builds. Gate logging behind `kReleaseMode`
-(default off in release) or set `xvDebug = false` for releases.
+### ⛔ 17. Debug logging shipped on — NOT APPLICABLE
+`lib/globals.dart` has `bool xvDebug = true;`. This is intentional for dev: the
+release build flips it via `00-Make.sh` (it `sed`s `xvDebug = false;` before the
+build and restores it after — see lines ~160/173). No code change needed.
 
-### 18. Dead code
+### ✅ 18. Dead code
 The following are defined but never referenced: `getDbOne` (`db_helpers.dart`);
 `isValidDate`, `isDateNotInFuture`, `isDateFromBeforeDateTo`, `sqlDateCondition`,
 `sqlDateRangeCondition`, `isDateIntFromBeforeDateIntTo` (`date_helpers.dart`); and

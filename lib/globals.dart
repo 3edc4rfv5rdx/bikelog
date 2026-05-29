@@ -189,12 +189,6 @@ const String helpFile = 'assets/help.json';
 const String langFile = 'assets/locales.json';
 const String refFile = 'assets/references.json';
 
-extension StringExtension on String {
-  String replace(String from, String to) {
-    return replaceAll(from, to);
-  }
-}
-
 int currentThemeIndex = 0;
 void initThemeColors(int themeIndex) {
   clFon = curTHEME[themeIndex][0];
@@ -264,17 +258,3 @@ bool validatePriceInput(String input) {
 }
 
 void myPrint(String msg) {if (xvDebug) print('>>> $msg');}
-
-String strCleanAndEscape(String input) {
-  if (input.isEmpty) return input;
-  // First clean the string from extra spaces and line breaks
-  String cleaned = input
-      .trim()
-      .replaceAll(RegExp(r'\s+'), ' ')
-      .replaceAll(RegExp(r'[\r\n]+'), ' ');
-  // Then escape special SQL characters
-  String escaped = cleaned
-      .replaceAll("'", "''")
-      .replaceAll('\\', '\\\\');
-  return escaped;
-}
