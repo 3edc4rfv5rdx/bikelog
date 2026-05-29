@@ -36,7 +36,7 @@ Map<String, dynamic> xdef = {
   '.Prog version': progVersion,
 };
 
-bool xvDebug = true;
+bool xvDebug = false;
 String xvFilter = '';
 // Bound arguments for the placeholders inside xvFilter (kept in sync with it).
 List<dynamic> xvFilterArgs = [];

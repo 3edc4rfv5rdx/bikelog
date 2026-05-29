@@ -158,7 +158,12 @@ and validate that expected backup files exist before overwriting.
 created but never disposed. Fix: dispose the controller when the dialog closes,
 and consider storing a salted hash of the PIN instead of the raw value.
 
-### 15. Broad storage permission
+### ⏸ 15. Broad storage permission — DEFERRED to TODO.txt
+Moved to TODO.txt: removing MANAGE_EXTERNAL_STORAGE while keeping backups in a
+user-visible, uninstall-surviving location requires migrating the whole
+backup/restore I/O from dart:io paths to MediaStore/SAF (new dependency). Done
+as a standalone task before Play Store publishing, not inline with the audit.
+
 `settings_screen.dart::requestStoragePermission` requests
 `Permission.manageExternalStorage` (MANAGE_EXTERNAL_STORAGE), a Play-Store
 restricted, all-files permission. Fix: prefer scoped storage / SAF
