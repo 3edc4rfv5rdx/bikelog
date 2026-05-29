@@ -204,7 +204,7 @@ all reads) or drop the column from the schema.
 `if (xdef['.First start'] == 'true') { await setKey('.First start', 'true'); ... }`
 — writing 'true' back to a key that is already 'true' is a no-op. Remove it.
 
-### 21. Placeholder author contact / commented About fields
+### ✅ 21. Placeholder author contact / commented About fields
 `lib/globals.dart` has `progEmail = 'xxxx@xxx.xx'`, and
 `bike_log_screen.dart::_showAbout` has the email/site lines commented out and a
 hardcoded "2025". Fill in real values or remove the dead lines, and avoid

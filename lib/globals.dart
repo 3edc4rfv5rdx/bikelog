@@ -36,7 +36,7 @@ Map<String, dynamic> xdef = {
   '.Prog version': progVersion,
 };
 
-bool xvDebug = false;
+bool xvDebug = true;
 String xvFilter = '';
 // Bound arguments for the placeholders inside xvFilter (kept in sync with it).
 List<dynamic> xvFilterArgs = [];
@@ -63,8 +63,9 @@ String bikePhotoPath(String? fileName) {
 const String progVersion = '0.9.260529';
 const int buildNumber = 62;
 const String progAuthor = 'Eugen';
-const String progEmail = 'xxxx@xxx.xx';
+const String progEmail = '3edc4rfv5rdx@gmail.com';
 const String progSite = 'bikelogbook.od.ua';
+const String progGithub = 'https://github.com/3edc4rfv5rdx';
 
 const List<(String, int, int)> prgEditions = [
   ('Personal', 1, 3),

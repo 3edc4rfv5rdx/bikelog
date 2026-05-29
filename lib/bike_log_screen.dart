@@ -231,8 +231,9 @@ class _BikeLogScreenState extends State<BikeLogScreen> with RouteAware {
     txt += '${lw('Version')}: $progVersion\n';
     txt += '${lw('Build number')}: $buildNumber\n\n';
     //    txt += '${lw('Date')}: $progDate\n';
-    txt += '(c): $progAuthor 2025\n';
-    //    txt += '$progEmail\n';
+    txt += '(c): $progAuthor ${DateTime.now().year}\n';
+    txt += '$progGithub\n';
+    txt += '$progEmail\n';
     // txt += '$progSite\n\n';
     if (xvBusiness == true) {
       txt += '${lw('Edition')}: $progEdition\n';
