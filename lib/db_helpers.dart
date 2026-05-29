@@ -340,6 +340,14 @@ Future<void> initializeIni() async {
       await database?.close();
     }
   }
+  await reloadSettings();
+  myPrint("initializeIni finished");
+}
+
+/// Load every known setting from the settings DB into the in-memory [xdef],
+/// writing defaults for any key not yet stored. Safe to call after a settings
+/// restore so restored values take effect without an app restart.
+Future<void> reloadSettings() async {
   for (var key in xdef.keys) {
     String saved = await getKey(key);
     if (saved == '') {
@@ -348,5 +356,4 @@ Future<void> initializeIni() async {
       xdef[key] = saved;
     }
   }
-  myPrint("initializeIni finished");
 }

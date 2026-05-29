@@ -108,6 +108,15 @@ Future<bool> restoreFromFiles(String backupDir) async {
       (xvSettHome, '$backupDir/${xvSettHome.split('/').last}'),
     ];
 
+    // Validate the source before overwriting any live data.
+    for (var pair in filePairs) {
+      if (!await File(pair.$2).exists()) {
+        myPrint('Backup file missing: ${pair.$2}');
+        okInfoBarRed('${lw('Backup file not found')}: ${pair.$2.split('/').last}');
+        return false;
+      }
+    }
+
     for (var pair in filePairs) {
       myPrint('Copying file from ${pair.$2} to ${pair.$1}');
       File sourceFile = File(pair.$2);
@@ -115,6 +124,8 @@ Future<bool> restoreFromFiles(String backupDir) async {
     }
     // Restore bike photos if the backup carried them.
     await copyDirFiles('$backupDir/$photoDirName', xvPhotoDir);
+    // Reload settings so restored values take effect without a restart.
+    await reloadSettings();
     myPrint('File restore completed successfully');
     return true;
   } catch (e) {

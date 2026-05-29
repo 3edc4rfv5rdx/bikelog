@@ -144,7 +144,7 @@ statement splitter that respects quoted string literals, or require/validate a
 known-safe import format. At minimum, document the limitation and reject lines that
 would be mis-parsed.
 
-### 13. Restore does not reload settings or validate the source
+### ✅ 13. Restore does not reload settings or validate the source
 `settings_screen.dart::restoreFromFiles` overwrites `xvMainHome` and `xvSettHome`
 but the in-memory `xdef` is not reloaded, so restored settings only take effect
 after a restart. There is also no check that the chosen directory actually
