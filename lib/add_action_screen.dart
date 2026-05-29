@@ -556,8 +556,8 @@ class _AddActionScreenState extends State<AddActionScreen> {
                           final DateTime? pickedDate = await showLocalizedDatePicker(
                             context: context,
                             initialDate: initialDate,
-                            firstDate: DateTime(1950),
-                            lastDate: DateTime.now(),
+                            firstDate: datePickerFirstDate,
+                            lastDate: datePickerLastDate,
                           );
 
                           if (pickedDate != null) {

@@ -806,8 +806,8 @@ class _FilterScreenState extends State<FilterScreen> {
                             final DateTime? picked = await showLocalizedDatePicker(
                               context: context,
                               initialDate: _dateFrom ?? DateTime.now(),
-                              firstDate: DateTime(1950),
-                              lastDate: DateTime(2099),
+                              firstDate: datePickerFirstDate,
+                              lastDate: datePickerLastDate,
                             );
                             if (picked != null && picked != _dateFrom) {
                               setState(() {
@@ -893,8 +893,8 @@ class _FilterScreenState extends State<FilterScreen> {
                             final DateTime? picked = await showLocalizedDatePicker(
                               context: context,
                               initialDate: _dateTo ?? DateTime.now(),
-                              firstDate: DateTime(1950),
-                              lastDate: DateTime(2099),
+                              firstDate: datePickerFirstDate,
+                              lastDate: datePickerLastDate,
                             );
                             if (picked != null && picked != _dateTo) {
                               setState(() {

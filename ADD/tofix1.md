@@ -197,7 +197,7 @@ all reads) or drop the column from the schema.
 hardcoded "2025". Fill in real values or remove the dead lines, and avoid
 hardcoding the year.
 
-### 22. Inconsistent date-picker bounds
+### ✅ 22. Inconsistent date-picker bounds
 `firstDate` differs across pickers: `DateTime(1900)` in
 `date_helpers.dart::showDatePickerWithFormat`, `DateTime(1950)` in
 `add_action_screen.dart` and `filter_screen.dart`. `lastDate` is `now()` in some

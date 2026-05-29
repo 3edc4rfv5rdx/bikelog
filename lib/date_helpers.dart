@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 import 'globals.dart';
 
+// Shared bounds for every date picker, kept consistent with validateDateInput /
+// isValidDateInt (lower bound 1900, no future dates).
+DateTime get datePickerFirstDate => DateTime(1900);
+DateTime get datePickerLastDate => DateTime.now();
+
 String dateToStorageFormat(String displayDate) {
   if (displayDate.isEmpty) return '';
 
@@ -277,8 +282,8 @@ Future<String> showDatePickerWithFormat({
   final DateTime? pickedDate = await showLocalizedDatePicker(
     context: context,
     initialDate: initialDate,
-    firstDate: DateTime(1900),
-    lastDate: DateTime.now(),
+    firstDate: datePickerFirstDate,
+    lastDate: datePickerLastDate,
   );
 
   if (pickedDate != null) {
