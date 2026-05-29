@@ -21,15 +21,17 @@ class _BikeLogScreenState extends State<BikeLogScreen> with RouteAware {
   // Added ScrollController for the ListView
   final ScrollController _scrollController = ScrollController();
 
-  final Map<String, String> menuLabels = {
-    'filters': lw('Filters'),
-    'settings': lw('Settings'),
-    'sum': lw('Sum'),
-    'reportToCSV': lw('Report to CSV'),
-    'refresh': lw('Refresh'),
-    'help': lw('Help'),
-    'about': lw('About'),
-  };
+  // Computed per access so the menu re-localizes after a language change
+  // (this State lives for the app lifetime).
+  Map<String, String> get menuLabels => {
+        'filters': lw('Filters'),
+        'settings': lw('Settings'),
+        'sum': lw('Sum'),
+        'reportToCSV': lw('Report to CSV'),
+        'refresh': lw('Refresh'),
+        'help': lw('Help'),
+        'about': lw('About'),
+      };
 
   @override
   void initState() {

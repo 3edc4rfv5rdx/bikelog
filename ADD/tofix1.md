@@ -127,7 +127,7 @@ threshold with the flag cleared. Showing the local value on reopen matches the
 model. No code change needed. (The genuine residual issue — the Back button
 desyncing returned state from the applied filter — is tracked separately as #28.)
 
-### 11. `menuLabels` localized once at construction
+### ✅ 11. `menuLabels` localized once at construction
 In `lib/bike_log_screen.dart`, the `menuLabels` map is initialized inline with
 `lw(...)` calls (~lines 24–32), evaluated once when the State is created. The home
 screen State lives for the app lifetime, so after the user changes the program
