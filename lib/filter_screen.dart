@@ -23,9 +23,6 @@ class _FilterScreenState extends State<FilterScreen> {
   String? _selectedEvent;
   DateTime? _dateFrom;
   DateTime? _dateTo;
-  String? _priceFrom;
-  String? _priceTo;
-  String? _comment;
   bool _isPriceFromForeign = false;
   bool _isPriceToForeign = false;
 
@@ -191,10 +188,6 @@ class _FilterScreenState extends State<FilterScreen> {
           _isPriceFromForeign = widget.initialFilters!['isPriceFromForeign'] ?? false;
           _isPriceToForeign = widget.initialFilters!['isPriceToForeign'] ?? false;
 
-          _priceFrom = _priceFromController.text;
-          _priceTo = _priceToController.text;
-          _comment = _commentController.text;
-
           if (_dateFrom != null) {
             // Convert DateTime to integer, then to display format
             int dateInt = dateTimeToInt(_dateFrom!);
@@ -320,18 +313,10 @@ class _FilterScreenState extends State<FilterScreen> {
             iconSize: fsLarge,
             color: clText,
             onPressed: () {
-              Navigator.pop(context, {
-                'owner': _selectedOwner,
-                'bike': _selectedBike,
-                'event': _selectedEvent,
-                'dateFrom': _dateFrom,
-                'dateTo': _dateTo,
-                'priceFrom': _priceFrom != null ? double.tryParse(_priceFrom!) : null,
-                'priceTo': _priceTo != null ? double.tryParse(_priceTo!) : null,
-                'comment': _comment,
-                'isPriceFromForeign': _isPriceFromForeign,
-                'isPriceToForeign': _isPriceToForeign,
-              });
+              // Back cancels: close without returning a result so the caller
+              // leaves currentFilters and the applied xvFilter untouched. Apply
+              // (the check button) is the only path that commits the filter.
+              Navigator.pop(context);
             },
           ),
         ),
@@ -348,9 +333,6 @@ class _FilterScreenState extends State<FilterScreen> {
                   _selectedEvent = '0';
                   _dateFrom = null;
                   _dateTo = null;
-                  _priceFrom = '';
-                  _priceTo = '';
-                  _comment = '';
                   _dateFromController.text = '';
                   _dateToController.text = '';
                   _priceFromController.text = '';
@@ -968,11 +950,6 @@ class _FilterScreenState extends State<FilterScreen> {
                       focusNode: _priceFromFocusNode,
                       keyboardType: TextInputType.number,
                       style: TextStyle(fontSize: fsNormal, color: clText),
-                      onChanged: (value) {
-                        setState(() {
-                          _priceFrom = value;
-                        });
-                      },
                       decoration: const InputDecoration(
                         contentPadding: EdgeInsets.symmetric(vertical: 8, horizontal: 4),
                         border: InputBorder.none,
@@ -990,7 +967,6 @@ class _FilterScreenState extends State<FilterScreen> {
                       onPressed: () {
                         setState(() {
                           _priceFromController.clear();
-                          _priceFrom = '';
                         });
                       },
                     ),
@@ -1038,11 +1014,6 @@ class _FilterScreenState extends State<FilterScreen> {
                       focusNode: _priceToFocusNode,
                       keyboardType: TextInputType.number,
                       style: TextStyle(fontSize: fsNormal, color: clText),
-                      onChanged: (value) {
-                        setState(() {
-                          _priceTo = value;
-                        });
-                      },
                       decoration: const InputDecoration(
                         contentPadding: EdgeInsets.symmetric(vertical: 8, horizontal: 4),
                         border: InputBorder.none,
@@ -1060,7 +1031,6 @@ class _FilterScreenState extends State<FilterScreen> {
                       onPressed: () {
                         setState(() {
                           _priceToController.clear();
-                          _priceTo = '';
                         });
                       },
                     ),
@@ -1097,11 +1067,6 @@ class _FilterScreenState extends State<FilterScreen> {
                         contentPadding: EdgeInsets.symmetric(vertical: 8, horizontal: 4),
                         border: InputBorder.none,
                       ),
-                      onChanged: (value) {
-                        setState(() {
-                          _comment = value;
-                        });
-                      },
                     ),
                   ),
                 ),
@@ -1115,7 +1080,6 @@ class _FilterScreenState extends State<FilterScreen> {
                       onPressed: () {
                         setState(() {
                           _commentController.clear();
-                          _comment = '';
                         });
                       },
                     ),

@@ -110,14 +110,22 @@ applied in `_loadActions`), but when no filter is active it runs
 rows. Fix: make the sum reflect exactly the same rows shown (apply the same
 filter + limit), or clearly document/label that the total is over all records.
 
-### 10. Filter foreign-currency flags are not persisted
+### ⛔ 10. Filter foreign-currency flags are not persisted — NOT APPLICABLE
 In `lib/filter_screen.dart`, the Apply handler always returns
 `'isPriceFromForeign': false` and `'isPriceToForeign': false` (~lines 470–471),
 discarding the actual checkbox state. The returned `priceFrom`/`priceTo` are
 already converted to local currency, so on reopening the filter the values are
-shown as if they were local and the `$` checkboxes are reset. Fix: persist the
-real flag state and the user-entered (pre-conversion) values so the filter screen
-round-trips correctly.
+shown as if they were local and the `$` checkboxes are reset.
+
+Reviewed against the app's currency model and this is intended, not a bug. The
+app stores prices only in local currency: `add_action_screen.dart` converts a
+`$` amount by `Exchange rate` and notes the original in the comment as ` ($100)`,
+the per-action `$` flag is reset after save, and there is no foreign column in
+`actions`. The filter operates on `actions.price` (always local), so the `$` box
+is just an input aid and the Apply handler correctly persists the local-currency
+threshold with the flag cleared. Showing the local value on reopen matches the
+model. No code change needed. (The genuine residual issue — the Back button
+desyncing returned state from the applied filter — is tracked separately as #28.)
 
 ### 11. `menuLabels` localized once at construction
 In `lib/bike_log_screen.dart`, the `menuLabels` map is initialized inline with
@@ -235,3 +243,17 @@ Follow-up to #8. Deleting a bike (`_confirmAndDeleteBike` in
 (`_deleteOwnerWithData` in `reference_settings_screen.dart`) removes the rows
 but leaves the photo files under `xvPhotoDir` behind, leaking storage. Fix:
 delete each affected bike's photo file before removing its row.
+
+### ✅ 28. Filter Back button desyncs state from the applied filter
+In `lib/filter_screen.dart` the screen has two exit paths that behave
+differently. Apply (~line 388) converts foreign prices, calls `buildFilter` to
+update the global `xvFilter`/`xvFilterArgs`, and returns the local-currency
+state with the `$` flags cleared. The Back arrow (~line 322) returns a state map
+too — with the raw (unconverted) price and the real `$` flags — but never calls
+`buildFilter`. The caller (`bike_log_screen.dart`) stores the returned map as
+`currentFilters` and reloads the list, so pressing Back changes what the filter
+screen shows on reopen while the actual query keeps the previous `xvFilter`:
+the displayed fields and the applied filter diverge, and the returned price is
+unconverted/inconsistent with what Apply returns. Fix: make Back either not
+return a result (pure cancel, leave `currentFilters` untouched) or go through
+the same convert+`buildFilter` path as Apply so state and query stay in sync.
