@@ -82,7 +82,8 @@ else
 fi
 
 echo "=== Pushing current branch ($DRY) ==="
-git push $DRY "$REMOTE"
+# -u HEAD also sets the upstream on first push of a new branch
+git push $DRY -u "$REMOTE" HEAD
 
 echo "=== Pushing tag ($DRY) ==="
 git push $DRY "$REMOTE" "$LAST_TAG"

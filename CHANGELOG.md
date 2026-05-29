@@ -2,6 +2,7 @@
 > N=new feature, E=error fix, F=fine-tune, R=refactor, I=infrastructure, T=tag
 
 ## Unreleased
+- I: Set upstream on first branch push in 01-PushTag.sh (push -u HEAD)
 
 ## v0.9.260529+65
 - I: Remove completed post-audit CHECK-LIST.md and tidy TODO.txt formatting
