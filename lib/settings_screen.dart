@@ -54,21 +54,8 @@ Future<void> processSqlFile() async {
     File sqlFile = File(filePath);
     String sqlContent = await sqlFile.readAsString();
 
-    // Remove comments and split into queries
-    sqlContent = sqlContent.replaceAll(RegExp(r'/\*.*?\*/', dotAll: true), '');
-
-    List<String> queries =
-        sqlContent
-            .split(';')
-            .map(
-              (q) => q
-                  .split('\n')
-                  .where((line) => !line.trim().startsWith('--'))
-                  .join(' '),
-            )
-            .map((q) => q.trim())
-            .where((q) => q.isNotEmpty)
-            .toList();
+    // Split into queries, respecting quoted literals and comments.
+    List<String> queries = splitSqlStatements(sqlContent);
 
     // Execute queries
     Database? database;
@@ -324,7 +311,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             onLongPress:
                 () => okHelp(67), // Add corresponding help ID
             child: IconButton(
-              icon: Icon(Icons.download, color: clUpBar), // SQL icon
+              icon: Icon(Icons.download, color: clText), // SQL icon
               onPressed: () {
                 processSqlFile(); // Call SQL file processing function
               },

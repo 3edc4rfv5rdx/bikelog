@@ -131,22 +131,93 @@ Future<void> compactDatabase() {
   });
 }
 
+/// Split a SQL script into individual statements, respecting single-quoted
+/// strings, double-quoted identifiers, line comments (`--`) and block comments
+/// (`/* */`). This prevents a `;`, `--`, or `/* */` embedded in string data
+/// from corrupting the split, which the previous regex/`split(';')` approach
+/// did. Returns trimmed, non-empty statements.
+List<String> splitSqlStatements(String sql) {
+  final List<String> statements = [];
+  final StringBuffer current = StringBuffer();
+  final int n = sql.length;
+  int i = 0;
+  while (i < n) {
+    final String c = sql[i];
+
+    // Line comment: -- ... to end of line.
+    if (c == '-' && i + 1 < n && sql[i + 1] == '-') {
+      i += 2;
+      while (i < n && sql[i] != '\n') {
+        i++;
+      }
+      continue;
+    }
+
+    // Block comment: /* ... */.
+    if (c == '/' && i + 1 < n && sql[i + 1] == '*') {
+      i += 2;
+      while (i + 1 < n && !(sql[i] == '*' && sql[i + 1] == '/')) {
+        i++;
+      }
+      i += 2; // Skip the closing */.
+      continue;
+    }
+
+    // Quoted string ('...') or identifier ("..."), copied verbatim. A doubled
+    // quote inside is an escaped quote, not a terminator.
+    if (c == "'" || c == '"') {
+      final String quote = c;
+      current.write(c);
+      i++;
+      while (i < n) {
+        final String d = sql[i];
+        if (d == quote) {
+          if (i + 1 < n && sql[i + 1] == quote) {
+            current.write(quote);
+            current.write(quote);
+            i += 2;
+            continue;
+          }
+          current.write(quote);
+          i++;
+          break;
+        }
+        current.write(d);
+        i++;
+      }
+      continue;
+    }
+
+    // Top-level statement terminator.
+    if (c == ';') {
+      final String stmt = current.toString().trim();
+      if (stmt.isNotEmpty) {
+        statements.add(stmt);
+      }
+      current.clear();
+      i++;
+      continue;
+    }
+
+    current.write(c);
+    i++;
+  }
+
+  final String tail = current.toString().trim();
+  if (tail.isNotEmpty) {
+    statements.add(tail);
+  }
+  return statements;
+}
+
 Future<void> setMultiOper(String sql, String databasePath) {
   return _runSerialized(() async {
     Database database = await myOpenDatabase(databasePath);
-    String normalizedSql = sql
-        .replaceAll(RegExp(r'/\*.*?\*/', dotAll: true), '') // Remove multi-line comments
-        .replaceAll(RegExp(r'--.*$', multiLine: true), '')  // Remove single-line comments
-        .replaceAll('\n', ' ')
-        .replaceAll(RegExp(r'\s+'), ' ');
     try {
-      List<String> queries = normalizedSql.split(';');
+      List<String> queries = splitSqlStatements(sql);
       await database.transaction((txn) async {
         for (String query in queries) {
-          query = query.trim();
-          if (query.isNotEmpty) {
-            await txn.execute(query);
-          }
+          await txn.execute(query);
         }
       });
     } catch (e) {

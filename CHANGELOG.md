@@ -2,6 +2,8 @@
 > N=new feature, E=error fix, F=fine-tune, R=refactor, I=infrastructure, T=tag
 
 ## Audit (2026-05-29)
+- E: Split SQL by a quote/comment-aware splitter so embedded ;/--/* don't corrupt import (tofix1 #12)
+- F: Color the settings SQL-import icon clText so it's visible on the app bar
 - E: Recompute home menu labels per build so they re-localize after a language change (tofix1 #11)
 - E: Filter Back button now cancels without desyncing state from the applied filter (tofix1 #28)
 - E: Make total Sum match the filtered list, ignoring the Last-actions display limit (tofix1 #9)

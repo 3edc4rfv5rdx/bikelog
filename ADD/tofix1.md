@@ -135,7 +135,7 @@ language and returns, the menu stays in the old language while the rest of the U
 (built with `lw()` in `build`) updates. Fix: compute the labels inside `build`
 (or another per-build location) instead of as a final field.
 
-### 12. Fragile SQL splitting in import/migration
+### ✅ 12. Fragile SQL splitting in import/migration
 `db_helpers.dart::setMultiOper` and `settings_screen.dart::processSqlFile` strip
 comments with regex and split statements on `;`. This corrupts any statement whose
 string data contains `;`, `--`, or `/* */`, and `processSqlFile` only drops lines
