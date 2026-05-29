@@ -65,7 +65,7 @@ serialization mechanism — e.g. a shared single `Database` instance kept open, 
 proper async mutex/queue that every DB helper goes through — and remove the
 ad-hoc boolean.
 
-### 6. Type #1 can be deleted despite the guard
+### ✅ 6. Type #1 can be deleted despite the guard
 In `lib/reference_settings_screen.dart`, `_deleteItem` blocks `num == 1` for both
 owners and types (`widget.refMode == 1 || widget.refMode == 2`, ~line 85), but
 `_saveItem`'s delete branch (`edMode == 2`) only protects owners

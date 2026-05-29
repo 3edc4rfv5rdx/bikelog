@@ -129,12 +129,16 @@ class _ReferenceSettingsScreenState extends State<ReferenceSettingsScreen> {
         return;
       }
 
+      // Protect the default owner (#1) and the default type (#1), both
+      // referenced by the seed bike, from deletion via Save too (not only via
+      // _deleteItem). Matches the guard in _deleteItem.
+      if ((widget.refMode == 1 || widget.refMode == 2) && _selectedItemNum == 1) {
+        okInfoBarOrange(lw('Cannot delete this record'));
+        return;
+      }
+
       if (widget.refMode == 1) {
         // For owners
-        if (_selectedItemNum == 1) {
-          okInfoBarOrange(lw('Cannot delete this record'));
-          return;
-        }
         try {
           final deleted = await _deleteOwnerWithData(_selectedItemNum!);
           _selectedItemNum = null;
