@@ -270,8 +270,8 @@ class _BikeLogScreenState extends State<BikeLogScreen> with RouteAware {
     sql += ';';
 
     try {
-      // Execute the query using your getDbData function
-      final actionsFromDb = await getDbData(sql);
+      // Execute the query, binding any filter placeholders (e.g. comment LIKE).
+      final actionsFromDb = await getDbData(sql, xvFilterArgs);
 
       // Format dates according to user's preferences before setting state
       final formattedActions =

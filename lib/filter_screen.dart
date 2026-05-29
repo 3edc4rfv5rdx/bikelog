@@ -56,6 +56,7 @@ class _FilterScreenState extends State<FilterScreen> {
   }) {
     // First clear the global filter
     xvFilter = '';
+    xvFilterArgs = [];
 
     // Check if any field is filled
     if ((owner != null && owner != '0') ||
@@ -88,7 +89,11 @@ class _FilterScreenState extends State<FilterScreen> {
 
       if (priceFrom != null && priceFrom.isNotEmpty) s.add('actions.price >= $priceFrom');
       if (priceTo != null && priceTo.isNotEmpty) s.add('actions.price <= $priceTo');
-      if (comment != null && comment.isNotEmpty) s.add('actions.comment LIKE "%${strCleanAndEscape(comment)}%"');
+      // Bind the comment as a parameter instead of concatenating it into SQL.
+      if (comment != null && comment.isNotEmpty) {
+        s.add('actions.comment LIKE ?');
+        xvFilterArgs.add('%$comment%');
+      }
 
       // Form the filter string
       if (s.isNotEmpty) {
@@ -241,7 +246,6 @@ class _FilterScreenState extends State<FilterScreen> {
 
   Future<void> _loadOwners() async {
     final sql = "select num as num, name as name from owners order by name;";
-    waitForMainDb();
     final ownersFromDb = await getDbData(sql);
     setState(() {
       owners = ownersFromDb.map((owner) {
@@ -263,7 +267,6 @@ class _FilterScreenState extends State<FilterScreen> {
       order by owners.name, bikes.brand, bikes.model;
     ''';
     // Execute the database query
-    waitForMainDb();
     final bikesFromDb = await getDbData(sql);
     setState(() {
       // Save data to the bikes list
@@ -282,7 +285,6 @@ class _FilterScreenState extends State<FilterScreen> {
   Future<void> _loadEvents() async {
     final sql = "select num as num, name as name from events order by num;";
     // Execute the database query
-    waitForMainDb();
     final eventsFromDb = await getDbData(sql);
     setState(() {
       // Save data to the events list
@@ -358,6 +360,7 @@ class _FilterScreenState extends State<FilterScreen> {
                   _isPriceToForeign = false;
                 });
                 xvFilter = '';
+                xvFilterArgs = [];
 
                 // Only navigate back if 'Back after clear' is true
                 if (xdef['Back after clear'] == 'true') {
@@ -444,7 +447,9 @@ class _FilterScreenState extends State<FilterScreen> {
                 String? dateToStr = _dateToController.text.isNotEmpty ?
                 _dateToController.text : null;
 
-                String normComment = strCleanAndEscape(_commentController.text);
+                // Raw text: it is now passed as a bound parameter, so no manual
+                // SQL escaping is needed (and double-escaping is avoided).
+                String normComment = _commentController.text.trim();
 
                 buildFilter(
                   owner: _selectedOwner,

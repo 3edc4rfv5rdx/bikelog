@@ -70,7 +70,6 @@ class _ReferenceSettingsScreenState extends State<ReferenceSettingsScreen> {
       String sql =
           'SELECT num as num, name as name, comment as comment FROM $_tableName ORDER BY $orderBy';
 
-      waitForMainDb();
       final items = await getDbData(sql);
       setState(() {
         _items = items;

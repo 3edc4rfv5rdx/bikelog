@@ -35,6 +35,8 @@ Map<String, dynamic> xdef = {
 
 bool xvDebug = true;
 String xvFilter = '';
+// Bound arguments for the placeholders inside xvFilter (kept in sync with it).
+List<dynamic> xvFilterArgs = [];
 String xvSelect = '???';
 String xvHomePath = '/home/e/Documents';
 String xvExt1Path = '';
@@ -177,7 +179,6 @@ const FontWeight fwNormal = FontWeight.normal;
 TextStyle get tsNormal => TextStyle(fontSize: fsNormal, fontWeight: fwNormal, color: clText);
 TextStyle get tsLarge => TextStyle(fontSize: fsLarge, fontWeight: fwNormal, color: clText);
 
-bool dbMainBusy = false;
 const String prgName = 'bikelog';
 // Main database and SQL file
 const String mainDb = '${prgName}_main.db';

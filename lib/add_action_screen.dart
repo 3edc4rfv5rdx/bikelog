@@ -212,7 +212,6 @@ class _AddActionScreenState extends State<AddActionScreen> {
       order by owners.name, bikes.brand, bikes.model;
     ''';
     // Execute the database query
-    waitForMainDb();
     final bikesFromDb = await getDbData(sql);
     setState(() {
       // Save data to the bikes list
@@ -236,7 +235,6 @@ class _AddActionScreenState extends State<AddActionScreen> {
   Future<void> _loadEvents() async {
     final sql = "select num as num, name as name from events order by num;";
     // Execute the database query
-    waitForMainDb();
     final eventsFromDb = await getDbData(sql);
     setState(() {
       // Save data to the events list
@@ -258,7 +256,6 @@ class _AddActionScreenState extends State<AddActionScreen> {
     from actions where num = $actionNum;
   ''';
     try {
-      waitForMainDb();
       final actionData = await getDbData(sql);
       if (actionData.isNotEmpty) {
         final action = actionData.first;

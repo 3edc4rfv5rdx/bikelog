@@ -87,8 +87,12 @@ class _OptionsSettingsScreenState extends State<OptionsSettingsScreen> {
       await setKey('.Date format', _dateFormat);
       await setKey('.Date separator', _dateSeparator);
 
-      // Update the global variable xdef
-      xdef = Map.from(_xdef);
+      // Update the global variable xdef in place, preserving hidden
+      // '.'-prefixed keys (.PIN code, .First start, .Prog version) that _xdef
+      // does not contain (they were filtered out in initState).
+      for (var entry in _xdef.entries) {
+        xdef[entry.key] = entry.value;
+      }
       // Update hidden settings in global variable
       xdef['.Date format'] = _dateFormat;
       xdef['.Date separator'] = _dateSeparator;

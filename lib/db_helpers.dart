@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:flutter/foundation.dart' show defaultTargetPlatform, TargetPlatform;
@@ -23,73 +24,73 @@ Future<Database> myOpenDatabase(String path) async {
   }
 }
 
-Future<void> waitForMainDb() async {
-  int attempts = 0;
-  while (dbMainBusy && attempts < 100) { // 5 seconds maximum
-    await Future.delayed(Duration(milliseconds: 50));
-    attempts++;
-  }
-  if (attempts >= 100) {
-    throw Exception('Database busy timeout exceeded');
-  }
+// Serialize all main-database operations so the same SQLite file is never
+// opened from two concurrent code paths (which would cause "database is
+// locked"). Every operation is chained onto a single tail future.
+Future<dynamic> _dbQueue = Future<dynamic>.value();
+
+Future<T> _runSerialized<T>(Future<T> Function() action) {
+  final Completer<T> completer = Completer<T>();
+  _dbQueue = _dbQueue.then((_) async {
+    try {
+      completer.complete(await action());
+    } catch (e, st) {
+      completer.completeError(e, st);
+    }
+  });
+  return completer.future;
 }
 
-Future<String> getDbOne(String sql) async {
-  dbMainBusy = true;
-  Database? database;
-  String result = '';
-  try {
-    database = await myOpenDatabase(xvMainHome);
-    List<Map<String, dynamic>> queryResult = await database.rawQuery(sql);
-    if (queryResult.isNotEmpty && queryResult[0].values.first != null) {
-      result = queryResult[0].values.first.toString();
+Future<String> getDbOne(String sql) {
+  return _runSerialized(() async {
+    Database? database;
+    String result = '';
+    try {
+      database = await myOpenDatabase(xvMainHome);
+      List<Map<String, dynamic>> queryResult = await database.rawQuery(sql);
+      if (queryResult.isNotEmpty && queryResult[0].values.first != null) {
+        result = queryResult[0].values.first.toString();
+      }
+    } catch (e) {
+      myPrint('Error in getDbOne: $e');
+      rethrow;
+    } finally {
+      await database?.close();
     }
-  } catch (e) {
-    myPrint('Error in getDbOne: $e');
-    rethrow;
-  } finally {
-    if (database != null) {
-      await database.close();
-    }
-    dbMainBusy = false;
-  }
-  return result;
+    return result;
+  });
 }
 
-Future<List<Map<String, dynamic>>> getDbData(String sql, [List<dynamic>? arguments]) async {
-  dbMainBusy = true;
-  Database? database;
-  List<Map<String, dynamic>> result = [];
-  try {
-    database = await myOpenDatabase(xvMainHome);
-    result = await database.rawQuery(sql, arguments ?? []);
-  } catch (e) {
-    myPrint('Error in getDbData: $e');
-    rethrow;
-  } finally {
-    if (database != null) {
-      await database.close();
+Future<List<Map<String, dynamic>>> getDbData(String sql, [List<dynamic>? arguments]) {
+  return _runSerialized(() async {
+    Database? database;
+    List<Map<String, dynamic>> result = [];
+    try {
+      database = await myOpenDatabase(xvMainHome);
+      result = await database.rawQuery(sql, arguments ?? []);
+    } catch (e) {
+      myPrint('Error in getDbData: $e');
+      rethrow;
+    } finally {
+      await database?.close();
     }
-    dbMainBusy = false;
-  }
-  return result;
+    return result;
+  });
 }
 
-Future<void> setDbData(String sql, [List<dynamic>? arguments]) async {
-  dbMainBusy = true;
-  Database? database;
-  try {
-    database = await myOpenDatabase(xvMainHome);
-    await database.execute(sql, arguments ?? []);
-  } catch (e) {
-    myPrint('Error in setDbData: $e');
-    rethrow;
-  } finally {
-    if (database != null) {
-      await database.close();
+Future<void> setDbData(String sql, [List<dynamic>? arguments]) {
+  return _runSerialized(() async {
+    Database? database;
+    try {
+      database = await myOpenDatabase(xvMainHome);
+      await database.execute(sql, arguments ?? []);
+    } catch (e) {
+      myPrint('Error in setDbData: $e');
+      rethrow;
+    } finally {
+      await database?.close();
     }
-    dbMainBusy = false;
-  }
+  });
 }
 
 Future<void> setKey(String key, String value) async {
@@ -133,76 +134,69 @@ Future<String> getKey(String key) async {
   return result;
 }
 
-Future<void> compactDatabase() async {
-  await waitForMainDb();
-  dbMainBusy = true;
-  Database? database;
-  try {
-    database = await myOpenDatabase(xvMainHome);
-    await database.execute("VACUUM");
-    myPrint('Database VACUUM ok');
-  } catch (e) {
-    myPrint('Error during VACUUM compaction: $e');
-    okInfoBarRed('VACUUM ${lw('An error occurred')}: $e');
-    rethrow;
-  } finally {
-    if (database != null) {
+Future<void> compactDatabase() {
+  return _runSerialized(() async {
+    Database? database;
+    try {
+      database = await myOpenDatabase(xvMainHome);
+      await database.execute("VACUUM");
+      myPrint('Database VACUUM ok');
+    } catch (e) {
+      myPrint('Error during VACUUM compaction: $e');
+      okInfoBarRed('VACUUM ${lw('An error occurred')}: $e');
+      rethrow;
+    } finally {
+      await database?.close();
+    }
+  });
+}
+
+Future<void> setMultiOper(String sql, String databasePath) {
+  return _runSerialized(() async {
+    Database database = await myOpenDatabase(databasePath);
+    String normalizedSql = sql
+        .replaceAll(RegExp(r'/\*.*?\*/', dotAll: true), '') // Remove multi-line comments
+        .replaceAll(RegExp(r'--.*$', multiLine: true), '')  // Remove single-line comments
+        .replaceAll('\n', ' ')
+        .replaceAll(RegExp(r'\s+'), ' ');
+    try {
+      List<String> queries = normalizedSql.split(';');
+      await database.transaction((txn) async {
+        for (String query in queries) {
+          query = query.trim();
+          if (query.isNotEmpty) {
+            await txn.execute(query);
+          }
+        }
+      });
+    } catch (e) {
+      myPrint('Error in setMultiOper: $e');
+      rethrow;
+    } finally {
       await database.close();
     }
-    dbMainBusy = false;
-  }
+  });
 }
 
-Future<void> setMultiOper(String sql, String databasePath) async {
-  await waitForMainDb();
-  dbMainBusy = true;
-
-  Database database = await myOpenDatabase(databasePath);
-  String normalizedSql = sql
-      .replaceAll(RegExp(r'/\*.*?\*/', dotAll: true), '') // Remove multi-line comments
-      .replaceAll(RegExp(r'--.*$', multiLine: true), '')  // Remove single-line comments
-      .replaceAll('\n', ' ')
-      .replaceAll(RegExp(r'\s+'), ' ');
-  try {
-    List<String> queries = normalizedSql.split(';');
-    await database.transaction((txn) async {
-      for (String query in queries) {
-        query = query.trim();
-        if (query.isNotEmpty) {
-          await txn.execute(query);
+Future<void> executeDbTransaction(List<String> sqlStatements) {
+  return _runSerialized(() async {
+    final db = await myOpenDatabase(xvMainHome);
+    try {
+      await db.transaction((txn) async {
+        for (String sql in sqlStatements) {
+          sql = sql.trim();
+          if (sql.isNotEmpty) {
+            await txn.execute(sql);
+          }
         }
-      }
-    });
-  } catch (e) {
-    myPrint('Error in setMultiOper: $e');
-    rethrow;
-  } finally {
-    await database.close();
-    dbMainBusy = false;
-  }
-}
-
-Future<void> executeDbTransaction(List<String> sqlStatements) async {
-  await waitForMainDb();
-  dbMainBusy = true;
-
-  final db = await myOpenDatabase(xvMainHome);
-  try {
-    await db.transaction((txn) async {
-      for (String sql in sqlStatements) {
-        sql = sql.trim();
-        if (sql.isNotEmpty) {
-          await txn.execute(sql);
-        }
-      }
-    });
-  } catch (e) {
-    myPrint('Error in executeDbTransaction: $e');
-    rethrow;
-  } finally {
-    await db.close();
-    dbMainBusy = false;
-  }
+      });
+    } catch (e) {
+      myPrint('Error in executeDbTransaction: $e');
+      rethrow;
+    } finally {
+      await db.close();
+    }
+  });
 }
 
 Future<int> getTableRowCount(String tableName) async {

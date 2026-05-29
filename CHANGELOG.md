@@ -1,6 +1,11 @@
 # CHANGELOG
 > N=new feature, E=error fix, F=fine-tune, R=refactor, I=infrastructure, T=tag
 
+## Audit (2026-05-29)
+- E: Serialize all main-DB access to prevent concurrent "database is locked" (tofix1 #4, #5)
+- E: Fix filter comment search — bind as SQL parameter, drop double-escaping (tofix1 #2, #3)
+- E: Fix Options save dropping hidden settings (.PIN code etc.) from memory (tofix1 #1)
+
 ## v0.9.260324+57
 - E: Fix photo icon tap requiring double tap in bike list (GestureDetector → IconButton)
 - N: Swipe gestures on action list (right=edit, left=delete)

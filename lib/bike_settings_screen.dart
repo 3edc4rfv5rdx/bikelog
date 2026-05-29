@@ -44,7 +44,6 @@ class _BikeSettingsScreenState extends State<BikeSettingsScreen> {
       ORDER BY owner, brand, model;
     ''';
     try {
-      waitForMainDb();
       final bikesFromDb = await getDbData(sql);
       setState(() {
         bikes = bikesFromDb;
@@ -384,7 +383,6 @@ class _BikeEditPanelState extends State<BikeEditPanel> {
   Future<void> _loadOwners() async {
     final sql = 'SELECT num as num, name as name FROM owners ORDER BY name;';
     try {
-      waitForMainDb();
       final ownersFromDb = await getDbData(sql);
       setState(() {
         owners = ownersFromDb;
@@ -398,7 +396,6 @@ class _BikeEditPanelState extends State<BikeEditPanel> {
   Future<void> _loadTypes() async {
     final sql = 'SELECT num as num, name as name FROM types ORDER BY name;';
     try {
-      waitForMainDb();
       final typesFromDb = await getDbData(sql);
       setState(() {
         types = typesFromDb;
@@ -418,7 +415,6 @@ class _BikeEditPanelState extends State<BikeEditPanel> {
     ''';
 
     try {
-      waitForMainDb();
       final bikeData = await getDbData(sql);
       if (bikeData.isNotEmpty) {
         final bike = bikeData[0];
