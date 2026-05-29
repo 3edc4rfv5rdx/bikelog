@@ -2,6 +2,7 @@
 > N=new feature, E=error fix, F=fine-tune, R=refactor, I=infrastructure, T=tag
 
 ## Audit (2026-05-29)
+- E: Dispose the PIN dialog controller; document PIN plaintext as intentional (tofix1 #14)
 - E: Reload settings after file restore and validate backup files exist first (tofix1 #13)
 - E: Split SQL by a quote/comment-aware splitter so embedded ;/--/* don't corrupt import (tofix1 #12)
 - F: Color the settings SQL-import icon clText so it's visible on the app bar

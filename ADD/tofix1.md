@@ -152,7 +152,7 @@ contains valid backup files (a missing file throws and is reported generically).
 Fix: after a settings-DB restore, re-run the settings load (or prompt restart),
 and validate that expected backup files exist before overwriting.
 
-### 14. PIN stored in plaintext; PIN dialog controller leaked
+### ✅ 14. PIN stored in plaintext; PIN dialog controller leaked
 `.PIN code` is stored as plaintext in the settings DB, and in
 `ui_helpers.dart::showPinDialog` the `pinController` `TextEditingController` is
 created but never disposed. Fix: dispose the controller when the dialog closes,

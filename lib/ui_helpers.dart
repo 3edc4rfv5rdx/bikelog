@@ -265,5 +265,6 @@ Future<String?> showPinDialog({
       );
     },
   );
+  pinController.dispose();
   return result;
 }

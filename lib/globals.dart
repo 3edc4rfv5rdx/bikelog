@@ -28,6 +28,9 @@ Map<String, dynamic> xdef = {
   'Use PIN': 'false',
   '.Date format': 'YYYY-MM-DD',
   '.Date separator': '-',
+  // Stored in plaintext by design: this is a casual lock, not a security
+  // boundary. A 4-digit PIN is trivially brute-forceable, so hashing adds no
+  // real protection.
   '.PIN code': '',
   '.First start': 'false',
   '.Prog version': progVersion,
