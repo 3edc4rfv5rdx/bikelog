@@ -155,6 +155,29 @@ class _ReferenceSettingsScreenState extends State<ReferenceSettingsScreen> {
           return;
         }
       } else {
+        // For types and events - block deletion while still referenced, since
+        // foreign keys are declared but not enforced (PRAGMA foreign_keys is
+        // off). Deleting a referenced type leaves bikes pointing at a missing
+        // type; deleting a referenced event silently drops its actions from the
+        // INNER JOIN'd main list (data appears lost).
+        final refTable = widget.refMode == 2 ? 'bikes' : 'actions';
+        final refColumn = widget.refMode == 2 ? 'type' : 'event';
+        final refLabel = widget.refMode == 2 ? lw('Bikes') : lw('Actions');
+        try {
+          final rows = await getDbData(
+            'SELECT COUNT(*) as cnt FROM $refTable WHERE $refColumn = ?',
+            [_selectedItemNum],
+          );
+          final refCount = int.parse(rows[0]['cnt'].toString());
+          if (refCount > 0) {
+            okInfoBarOrange('${lw('Cannot delete still in use')}: $refLabel $refCount');
+            return;
+          }
+        } catch (e) {
+          okInfoBarRed('${lw('Error deleting data')}: $e');
+          return;
+        }
+
         // For other record types - standard deletion
         sql = 'DELETE FROM $_tableName WHERE num = ?';
         sqlArgs = [_selectedItemNum];

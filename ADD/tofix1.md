@@ -76,7 +76,7 @@ type #1 (referenced by the default bike created in `writeRef`). Fix: apply the
 num==1 protection consistently in `_saveItem` for the same refModes guarded in
 `_deleteItem`.
 
-### 7. No referential integrity on type/event deletion
+### ✅ 7. No referential integrity on type/event deletion
 Foreign keys are declared in `assets/bikelog_main.sql` but `PRAGMA foreign_keys`
 is never enabled, so they are not enforced. Owner deletion manually cascades
 (`_deleteOwnerWithData`), and bike deletion cascades its actions, but deleting a
