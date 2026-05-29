@@ -161,7 +161,7 @@ to broad permissions where unavoidable, to keep the app publishable.
 
 ## LOW / CLEANUP
 
-### 16. Hardcoded developer path
+### ✅ 16. Hardcoded developer path
 `lib/globals.dart` sets `xvHomePath = '/home/e/Documents';` and
 `lib/main.dart::initializePaths` hardcodes `/home/e/Documents` and
 `/home/e/Documents/BikeLogBackup` for the Linux platform. Replace with a portable

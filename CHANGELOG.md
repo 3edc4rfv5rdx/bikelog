@@ -2,6 +2,7 @@
 > N=new feature, E=error fix, F=fine-tune, R=refactor, I=infrastructure, T=tag
 
 ## Audit (2026-05-29)
+- F: Derive Linux paths from $HOME instead of hardcoded /home/e/Documents (tofix1 #16)
 - F: Unify date-picker bounds via datePickerFirstDate/LastDate (1900..today) (tofix1 #22)
 - E: Add missing "Build number" RU/UA translation shown in About (tofix1 #21 partial)
 - R: Remove dead code: getDbOne, 6 unused date helpers, StringExtension, strCleanAndEscape (tofix1 #18)

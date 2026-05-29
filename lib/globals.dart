@@ -38,7 +38,7 @@ String xvFilter = '';
 // Bound arguments for the placeholders inside xvFilter (kept in sync with it).
 List<dynamic> xvFilterArgs = [];
 String xvSelect = '???';
-String xvHomePath = '/home/e/Documents';
+String xvHomePath = ''; // set per-platform in initializePaths()
 String xvExt1Path = '';
 String xvMainHome = '';
 String xvSettHome = '';

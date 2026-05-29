@@ -204,9 +204,10 @@ Future<void> initializePaths() async {
       break;
 
     case TargetPlatform.linux:
-      xvHomePath = '/home/e/Documents';
+      final String home = Platform.environment['HOME'] ?? '.';
+      xvHomePath = '$home/Documents';
       xvExt1Path = xvHomePath;
-      xvBakDir = '/home/e/Documents/BikeLogBackup';
+      xvBakDir = '$xvHomePath/BikeLogBackup';
       break;
 
     case TargetPlatform.iOS:
