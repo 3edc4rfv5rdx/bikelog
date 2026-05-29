@@ -1,6 +1,20 @@
 import 'package:flutter/material.dart';
 import 'globals.dart'; // Import global variables and functions
 
+// Help ids mapped explicitly by setting key, so reordering or adding a setting
+// never silently shifts or collides help ids. The Date Format row uses 29.
+const Map<String, int> _settingHelpIds = {
+  'Program language': 20,
+  'Color theme': 21,
+  'Last actions': 22,
+  'Exchange rate': 23,
+  'Newest first': 24,
+  'Several actions': 25,
+  'Back after clear': 26,
+  'Round to integer': 27,
+  'Use PIN': 28,
+};
+
 class OptionsSettingsScreen extends StatefulWidget {
   const OptionsSettingsScreen({super.key});
 
@@ -120,7 +134,7 @@ class _OptionsSettingsScreenState extends State<OptionsSettingsScreen> {
     // Create widget list for ListView
     List<Widget> settingItems = List.generate(_xdef.entries.length, (index) {
       var entry = _xdef.entries.elementAt(index);
-      int helpId = 20 + index;
+      int helpId = _settingHelpIds[entry.key] ?? 0;
       return Padding(
         padding: const EdgeInsets.all(8.0),
         child: Row(

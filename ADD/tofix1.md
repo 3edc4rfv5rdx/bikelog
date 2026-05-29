@@ -231,7 +231,7 @@ across `add_action_screen.dart`, `filter_screen.dart`, and
 helper functions (e.g. in `db_helpers.dart` or a new `data_helpers.dart`) to
 remove duplication.
 
-### 25. Positional help-id mapping is fragile
+### ✅ 25. Positional help-id mapping is fragile
 `options_settings_screen.dart` derives help ids as `helpId = 20 + index` from the
 order of `_xdef.entries`, and inserts an extra "Date Format" row using a fixed
 `okHelp(29)`. Reordering or adding a setting silently shifts every help id and can
