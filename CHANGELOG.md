@@ -2,6 +2,7 @@
 > N=new feature, E=error fix, F=fine-tune, R=refactor, I=infrastructure, T=tag
 
 ## Audit (2026-05-29)
+- I: Fix 00-Make.sh PROJ_PATH (was dead $HOME/PRG path) so APK rename/copy works
 - R: Map options help ids explicitly by setting key instead of by position (tofix1 #25)
 - R: Extract shared bikes/events/owners selection loaders into db_helpers (tofix1 #24)
 - E: Accept .5/5. price input and reject negative computed prices (tofix1 #23)
