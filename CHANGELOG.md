@@ -2,6 +2,7 @@
 > N=new feature, E=error fix, F=fine-tune, R=refactor, I=infrastructure, T=tag
 
 ## Audit (2026-05-29)
+- E: Delete bike photo file on bike/owner deletion to avoid orphaned files (tofix1 #27)
 - E: Persist bike photos in app storage, store filename only, back them up (tofix1 #8)
 - E: Block deleting a type/event still referenced by bikes/actions (tofix1 #7)
 - F: Derive Linux paths from $HOME instead of hardcoded /home/e/Documents (tofix1 #16)

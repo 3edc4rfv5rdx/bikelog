@@ -260,6 +260,13 @@ class _ReferenceSettingsScreenState extends State<ReferenceSettingsScreen> {
         return false;
       }
 
+      // Capture photo filenames before the bike rows are gone, so their files
+      // can be removed from the photos dir after the cascade.
+      final photoRows = await getDbData(
+        "SELECT photo as photo FROM bikes "
+        "WHERE owner = $ownerNum AND photo IS NOT NULL AND photo != ''",
+      );
+
       final statements = [
         'DELETE FROM actions WHERE bike IN (SELECT num FROM bikes WHERE owner = $ownerNum)',
         'DELETE FROM bikes WHERE owner = $ownerNum',
@@ -267,6 +274,10 @@ class _ReferenceSettingsScreenState extends State<ReferenceSettingsScreen> {
       ];
 
       await executeDbTransaction(statements);
+
+      for (final row in photoRows) {
+        await deleteBikePhoto(row['photo']?.toString());
+      }
       return true;
     } catch (e) {
       rethrow;

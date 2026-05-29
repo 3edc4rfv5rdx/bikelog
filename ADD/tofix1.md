@@ -228,3 +228,10 @@ collide. Map help ids explicitly by setting key instead of by position.
 `options_settings_screen.dart` uses `clFill.withOpacity(0.5)` (~line 551).
 `withOpacity` is deprecated in recent Flutter; switch to `withValues(alpha: ...)`
 (or `.withAlpha`) to match the pattern already used in `bike_settings_screen.dart`.
+
+### ✅ 27. Bike photo file orphaned on bike/owner deletion
+Follow-up to #8. Deleting a bike (`_confirmAndDeleteBike` in
+`bike_settings_screen.dart`) or cascade-deleting an owner
+(`_deleteOwnerWithData` in `reference_settings_screen.dart`) removes the rows
+but leaves the photo files under `xvPhotoDir` behind, leaking storage. Fix:
+delete each affected bike's photo file before removing its row.

@@ -139,6 +139,9 @@ class _BikeSettingsScreenState extends State<BikeSettingsScreen> {
         final deleteBikeSql = 'DELETE FROM bikes WHERE num = ${bike['num']}';
         await setDbData(deleteBikeSql);
 
+        // Drop the photo file so it doesn't linger in the photos dir.
+        await deleteBikePhoto(bike['photo']);
+
         await _loadBikes();
         setState(() {
           selectedBikeIndex = null;
@@ -497,7 +500,7 @@ class _BikeEditPanelState extends State<BikeEditPanel> {
         final current = photoController.text.trim();
         // Drop a previously picked-but-unsaved copy to avoid orphaning it.
         if (current.isNotEmpty && current != _originalPhoto) {
-          await _deletePhotoFile(current);
+          await deleteBikePhoto(current);
         }
         final base = image.path.split('/').last;
         final ext = base.contains('.') ? base.split('.').last : 'jpg';
@@ -510,17 +513,6 @@ class _BikeEditPanelState extends State<BikeEditPanel> {
     } catch (e) {
       String msg = lw('Error picking file');
       okInfoBarRed('$msg: $e');
-    }
-  }
-
-  // Delete a persistent photo file by its stored filename. Best-effort.
-  Future<void> _deletePhotoFile(String fileName) async {
-    if (fileName.isEmpty) return;
-    try {
-      final f = File(bikePhotoPath(fileName));
-      if (await f.exists()) await f.delete();
-    } catch (e) {
-      myPrint('Failed to delete photo file $fileName: $e');
     }
   }
 
@@ -565,7 +557,7 @@ class _BikeEditPanelState extends State<BikeEditPanel> {
       await setDbData(sql, args);
       // Remove the replaced photo file once the new path is committed.
       if (_originalPhoto.isNotEmpty && _originalPhoto != photo) {
-        await _deletePhotoFile(_originalPhoto);
+        await deleteBikePhoto(_originalPhoto);
       }
       _originalPhoto = photo;
       widget

@@ -238,6 +238,19 @@ Future<bool> copyDirFiles(String sourceDir, String destinationDir) async {
   }
 }
 
+// Best-effort delete of a bike photo file by its stored filename (no-op for
+// null/empty). Keeps the photos dir from leaking files on replace or row
+// deletion.
+Future<void> deleteBikePhoto(String? fileName) async {
+  if (fileName == null || fileName.isEmpty) return;
+  try {
+    final f = File(bikePhotoPath(fileName));
+    if (await f.exists()) await f.delete();
+  } catch (e) {
+    myPrint('Failed to delete photo file $fileName: $e');
+  }
+}
+
 Future<void> initializeIni() async {
   final dbFile = File(xvSettHome);
   if (!await dbFile.exists()) {
