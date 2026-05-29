@@ -186,7 +186,7 @@ no query ever writes or filters on `del` (all deletes are hard `DELETE FROM`).
 Either implement soft-delete consistently (write `del=1` and add `WHERE del=0` to
 all reads) or drop the column from the schema.
 
-### 20. Redundant first-start write
+### ✅ 20. Redundant first-start write
 `lib/main.dart::firstRunLanguageSelection` begins with
 `if (xdef['.First start'] == 'true') { await setKey('.First start', 'true'); ... }`
 — writing 'true' back to a key that is already 'true' is a no-op. Remove it.

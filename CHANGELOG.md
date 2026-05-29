@@ -2,6 +2,7 @@
 > N=new feature, E=error fix, F=fine-tune, R=refactor, I=infrastructure, T=tag
 
 ## Audit (2026-05-29)
+- R: Remove redundant no-op setKey('.First start','true') in first-run flow (tofix1 #20)
 - E: Protect default type #1 from deletion via Save in reference editor (tofix1 #6)
 - E: Serialize all main-DB access to prevent concurrent "database is locked" (tofix1 #4, #5)
 - E: Fix filter comment search — bind as SQL parameter, drop double-escaping (tofix1 #2, #3)

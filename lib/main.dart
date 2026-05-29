@@ -19,7 +19,6 @@ import 'settings_screen.dart';
 // === STARTER ===
 Future<void> firstRunLanguageSelection() async {
   if (xdef['.First start'] == 'true') {
-    await setKey('.First start', 'true');
     List<String> availableLangs = appLANGUAGES;
     Completer<String> completer = Completer<String>();
     runApp(
