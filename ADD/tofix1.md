@@ -224,7 +224,7 @@ order of `_xdef.entries`, and inserts an extra "Date Format" row using a fixed
 `okHelp(29)`. Reordering or adding a setting silently shifts every help id and can
 collide. Map help ids explicitly by setting key instead of by position.
 
-### 26. Deprecated API usage
+### ✅ 26. Deprecated API usage
 `options_settings_screen.dart` uses `clFill.withOpacity(0.5)` (~line 551).
 `withOpacity` is deprecated in recent Flutter; switch to `withValues(alpha: ...)`
 (or `.withAlpha`) to match the pattern already used in `bike_settings_screen.dart`.

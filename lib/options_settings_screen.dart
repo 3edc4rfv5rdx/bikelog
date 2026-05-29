@@ -552,7 +552,7 @@ class _OptionsSettingsScreenState extends State<OptionsSettingsScreen> {
                       width: double.infinity,
                       padding: EdgeInsets.all(8),
                       decoration: BoxDecoration(
-                        color: clFill.withOpacity(0.5),
+                        color: clFill.withValues(alpha: 0.5),
                         borderRadius: BorderRadius.circular(4),
                         border: Border.all(color: clFrame),
                       ),
