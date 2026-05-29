@@ -61,7 +61,7 @@ String bikePhotoPath(String? fileName) {
 }
 
 const String progVersion = '0.9.260529';
-const int buildNumber = 63;
+const int buildNumber = 64;
 const String progAuthor = 'Eugen';
 const String progEmail = '3edc4rfv5rdx@gmail.com';
 const String progSite = 'bikelogbook.od.ua';

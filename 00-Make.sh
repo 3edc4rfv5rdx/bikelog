@@ -11,7 +11,9 @@ VER_CODE=''
 PROJ_NAME="bikelog"
 # Project paths
 OUT_PATH="$HOME"
-PROJ_PATH="$OUT_PATH/PRG/$PROJ_NAME"
+# Project root = current dir (the script already uses relative ./lib, pubspec.yaml,
+# so it must be run from the project root). Avoids a hardcoded $HOME/<dir> path.
+PROJ_PATH="$(pwd)"
 APK_PATH="$PROJ_PATH/build/app/outputs/flutter-apk"
 # Archive directory structure
 ZIP_DIR="$OUT_PATH/ZIP"
