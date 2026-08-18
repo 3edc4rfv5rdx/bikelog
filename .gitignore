@@ -50,7 +50,16 @@ key.properties
 .metadata
 Bikelog-*.apkx
 analysis_options.yaml
-android/
+android/.gradle/
+android/app/.cxx/
+# Never: the signing key and the hand-kept copies of the build file
+android/app/*.jks
+android/app/build.gradle.kts.*
+android/app/build.gradle.kts-*
+android/.kotlin/
+android/build/
+android/app/build/
+android/local.properties
 assets/help-finger.png
 assets/iconbig.png
 assets/main512.png

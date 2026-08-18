@@ -2,6 +2,7 @@
 > N=new feature, E=error fix, F=fine-tune, R=refactor, I=infrastructure, T=tag
 
 ## Unreleased
+- I: Keep the Android sources in git: ignore only what is generated, plus the signing key and the local copies of the build file
 - I: Bump the Gradle wrapper to 9.3.1 and Kotlin to 2.4, and move the app to the compilerOptions DSL
 - I: Merge fix/tofix1-audit into main (fast-forward) and delete the merged branch
 - I: Set upstream on first branch push in 01-PushTag.sh (push -u HEAD)
