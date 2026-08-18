@@ -2,6 +2,7 @@
 > N=new feature, E=error fix, F=fine-tune, R=refactor, I=infrastructure, T=tag
 
 ## Unreleased
+- I: Bump AGP to 8.11.1, the version that works with the Gradle 9 wrapper
 - I: 02-RelUpload.sh no longer generates or uploads the SHA256 checksums
 - I: Keep the Android sources in git: ignore only what is generated, plus the signing key and the local copies of the build file
 - I: Bump the Gradle wrapper to 9.3.1 and Kotlin to 2.4, and move the app to the compilerOptions DSL
