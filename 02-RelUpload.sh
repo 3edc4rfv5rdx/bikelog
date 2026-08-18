@@ -107,28 +107,28 @@ for f in "$SRC_APK_MAIN" "$SRC_APK_ARM64"; do
 done
 
 # ------------------------------------------------------------
-# Generate SHA256
+# Generate SHA256 (disabled)
 # ------------------------------------------------------------
-echo "=== Generating SHA256 checksums ==="
-
-(
-    cd "$APK_DIR"
-
-    echo "Generating $SRC_SHA_MAIN"
-    sha256sum "$SRC_APK_MAIN" > "$SRC_SHA_MAIN"
-
-    echo "Generating $SRC_SHA_ARM64"
-    sha256sum "$SRC_APK_ARM64" > "$SRC_SHA_ARM64"
-)
+# echo "=== Generating SHA256 checksums ==="
+#
+# (
+#     cd "$APK_DIR"
+#
+#     echo "Generating $SRC_SHA_MAIN"
+#     sha256sum "$SRC_APK_MAIN" > "$SRC_SHA_MAIN"
+#
+#     echo "Generating $SRC_SHA_ARM64"
+#     sha256sum "$SRC_APK_ARM64" > "$SRC_SHA_ARM64"
+# )
 
 # ------------------------------------------------------------
 # Files to upload (source#destination)
 # ------------------------------------------------------------
 FILES=(
     "$SRC_APK_MAIN#$DST_APK_MAIN"
-    "$SRC_SHA_MAIN#$DST_SHA_MAIN"
     "$SRC_APK_ARM64#$DST_APK_ARM64"
-    "$SRC_SHA_ARM64#$DST_SHA_ARM64"
+#    "$SRC_SHA_MAIN#$DST_SHA_MAIN"
+#    "$SRC_SHA_ARM64#$DST_SHA_ARM64"
 )
 
 echo "=== Verifying generated files ==="
