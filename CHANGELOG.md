@@ -2,6 +2,7 @@
 > N=new feature, E=error fix, F=fine-tune, R=refactor, I=infrastructure, T=tag
 
 ## Unreleased
+- I: Keep the flags the Flutter migrator wrote into gradle.properties, and refresh pubspec.lock
 - I: Bump AGP to 8.11.1, the version that works with the Gradle 9 wrapper
 - I: 02-RelUpload.sh no longer generates or uploads the SHA256 checksums
 - I: Keep the Android sources in git: ignore only what is generated, plus the signing key and the local copies of the build file
