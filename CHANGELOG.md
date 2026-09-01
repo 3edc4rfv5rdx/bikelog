@@ -2,6 +2,7 @@
 > N=new feature, E=error fix, F=fine-tune, R=refactor, I=infrastructure, T=tag
 
 ## Unreleased
+- I: Ignore the icon-preview.png link kept in the working tree, so it cannot block a build
 - I: The generated launcher resources carry the redrawn icon, sized to the 72dp the launcher actually shows
 - I: 98-InstallAPK.sh installs on every attached device, picking the arm64 .apkx or the universal APK to match each device ABI
 - F: Redraw the launcher icon in the family style: the BikeTracker bicycle standing in an open book, white on #013895
