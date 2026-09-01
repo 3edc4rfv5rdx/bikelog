@@ -2,6 +2,7 @@
 > N=new feature, E=error fix, F=fine-tune, R=refactor, I=infrastructure, T=tag
 
 ## Unreleased
+- I: 98-InstallAPK.sh installs on every attached device, picking the arm64 .apkx or the universal APK to match each device ABI
 - F: Redraw the launcher icon in the family style: the BikeTracker bicycle standing in an open book, white on #013895
 - I: Keep the flags the Flutter migrator wrote into gradle.properties, and refresh pubspec.lock
 - I: Bump AGP to 8.11.1, the version that works with the Gradle 9 wrapper
