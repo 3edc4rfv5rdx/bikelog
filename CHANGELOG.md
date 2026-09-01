@@ -2,6 +2,7 @@
 > N=new feature, E=error fix, F=fine-tune, R=refactor, I=infrastructure, T=tag
 
 ## Unreleased
+- F: Thicker lines in the launcher icon, so it still reads at 48px after the mark was scaled down
 - I: Ignore the icon-preview.png link kept in the working tree, so it cannot block a build
 - I: The generated launcher resources carry the redrawn icon, sized to the 72dp the launcher actually shows
 - I: 98-InstallAPK.sh installs on every attached device, picking the arm64 .apkx or the universal APK to match each device ABI
