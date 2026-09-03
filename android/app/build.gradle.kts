@@ -76,3 +76,22 @@ kotlin {
 flutter {
     source = "../.."
 }
+
+// With --split-per-abi the Flutter plugin rewrites each APK's version code as
+// abi * 1000 + build, so one build reads as 2070 on arm64 and 4070 on x86_64.
+// A store needs that ordering; these APKs are installed by hand and offered by
+// the updater, which compares the manifest against the code inside the installed
+// APK, so the two must be the same number.
+//
+// Registered here rather than in afterEvaluate, where the property is already
+// closed for writing: the plugin hooks the variants from its own apply(), so an
+// action added below it in this script still runs second and wins.
+@Suppress("DEPRECATION")
+(extensions.getByName("android") as com.android.build.gradle.AppExtension)
+    .applicationVariants
+    .all {
+        outputs.all {
+            (this as com.android.build.gradle.api.ApkVariantOutput).versionCodeOverride =
+                flutter.versionCode
+        }
+    }
