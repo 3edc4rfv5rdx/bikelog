@@ -2,6 +2,7 @@
 > N=new feature, E=error fix, F=fine-tune, R=refactor, I=infrastructure, T=tag
 
 ## Unreleased
+- I: Regenerate the launcher PNGs so the shipped resources carry the heavier icon lines
 - I: Keep the APK version code equal to the pubspec build number under --split-per-abi, instead of the plugin's abi*1000+build
 - F: Thicker lines in the launcher icon, so it still reads at 48px after the mark was scaled down
 - I: Ignore the icon-preview.png link kept in the working tree, so it cannot block a build
