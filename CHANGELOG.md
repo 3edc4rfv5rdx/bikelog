@@ -2,6 +2,8 @@
 > N=new feature, E=error fix, F=fine-tune, R=refactor, I=infrastructure, T=tag
 
 ## Unreleased
+
+## v0.9.20260904-72
 - I: The Linux desktop build is back: 13-MakeLinux.sh builds the bundle and 14-MakeAppImage.sh packs it into one AppImage, both run by hand and picked up by 19-LinkOut.sh and 22-RelUpload.sh when an image exists
 - I: The linux/ runner is in git, the way the android/ one is
 - F: One app icon, assets/icon.png, instead of the same picture under a second name
