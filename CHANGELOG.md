@@ -2,6 +2,10 @@
 > N=new feature, E=error fix, F=fine-tune, R=refactor, I=infrastructure, T=tag
 
 ## Unreleased
+- I: The Linux desktop build is back: 13-MakeLinux.sh builds the bundle and 14-MakeAppImage.sh packs it into one AppImage, both run by hand and picked up by 19-LinkOut.sh and 22-RelUpload.sh when an image exists
+- I: The linux/ runner is in git, the way the android/ one is
+- F: One app icon, assets/icon.png, instead of the same picture under a second name
+- E: 22-RelUpload.sh looks for the tag the way 20-MakeTag.sh writes it, with a dash rather than a plus, so a release upload finds it instead of stopping at "Tag not found"
 - I: The build scripts are the same numbered set every other project here uses — 00-MakeAll, 05-Lint, 06-Test, 10-MakeRelease, 11-EmulRELEASE, 12-PhoneRELEASE, 19-LinkOut, 20-MakeTag, 21-PushTag, 22-RelUpload, 99-CopyToAPKX — in place of 00-Make.sh, 01-PushTag.sh and 02-RelUpload.sh
 - F: Debug logging follows the build type, so a release build is quiet without anyone remembering to flip xvDebug
 - I: Every artifact carries one name — bikelog-<version>-<build>-<abi>.apk, and the .apkx beside it the same with the extension changed — and the tag it goes out under is v<version>-<build>. The date in the version grows to four digits of year, so the next build is 0.9.20260903 rather than 0.9.260903

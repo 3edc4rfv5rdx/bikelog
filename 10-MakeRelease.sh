@@ -170,17 +170,18 @@ flutter pub get
 # Run `dart run flutter_launcher_icons` on its own after an icon change and
 # commit what it rewrote before a release.
 
-# armeabi-v7a is here for the 32-bit Amlogic TV boxes; phones and the emulator
-# take the 64-bit splits.
+# The three ABIs the default build produces anyway, named here so the set is
+# fixed: the collection below expects exactly these splits plus the fat APK.
 flutter build apk --release --target-platform android-arm64,android-arm,android-x64
 flutter build apk --release --split-per-abi --target-platform android-arm64,android-arm,android-x64
 
 # ---------- collect ----------
 # Flutter always writes app-<abi>-release.apk; rename to
 # <project>-<version>-<build>-<arch>.apk, the one shape every project here uses,
-# so every artifact sorts and reads alike once it leaves the build directory. The fat APK carries both ABIs and so is named for that rather
-# than for one of them. Everything here is a release build, which is why the
-# word is not in the name.
+# so every artifact sorts and reads alike once it leaves the build directory.
+# The fat APK carries every ABI and so is named -universal rather than for one
+# of them. Everything here is a release build, which is why the word is not in
+# the name.
 for abi in "" "-arm64-v8a" "-armeabi-v7a" "-x86_64"; do
     SOURCE_ARTIFACTS+=("$APK_PATH/app${abi}-release.apk")
     FINAL_ARTIFACTS+=("$APK_PATH/$PROJ_NAME-$VERSION-$BUILD${abi:--universal}.apk")

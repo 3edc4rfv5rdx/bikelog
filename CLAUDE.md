@@ -1,6 +1,7 @@
 # BikeLog project rules
 
-Flutter / Dart Android app. SQLite via `sqflite`. Single-package `lib/` layout.
+Flutter / Dart app for Android and Linux desktop. SQLite via `sqflite` on
+Android and `sqflite_common_ffi` on the desktop. Single-package `lib/` layout.
 
 ## Build / install
 - Release-only workflow. Use the numbered scripts (do not run `flutter build`
@@ -10,8 +11,14 @@ Flutter / Dart Android app. SQLite via `sqflite`. Single-package `lib/` layout.
   - `10-MakeRelease.sh` — build the release APK splits and auto-bump the version
   - `11-EmulRELEASE.sh` / `12-PhoneRELEASE.sh` — install the fresh release on the
     emulator / on a physical phone
-  - `19-LinkOut.sh` — link the arm64 and universal APKs into `OUT/` under their
-    own names, sweeping whatever else was there
+  - `13-MakeLinux.sh` / `14-MakeAppImage.sh` — the Linux desktop build: the
+    bundle, and the same bundle packed into one AppImage. Both ship without the
+    execute bit and are commented out in `00-MakeAll.sh`: the desktop build is
+    slow and needs the clang/GTK toolchain, so it is run by hand when a Linux
+    artifact is wanted. `19-LinkOut.sh` and `22-RelUpload.sh` pick the AppImage
+    up when there is one and say so when there is not.
+  - `19-LinkOut.sh` — link the arm64 and universal APKs, and the AppImage if one
+    was built, into `OUT/` under their own names, sweeping whatever else was there
   - `20-MakeTag.sh` — stamp the changelog and create the tag locally
   - `21-PushTag.sh` — push the branch and the tag
   - `22-RelUpload.sh` — publish the GitHub release with the APKs attached
@@ -40,7 +47,7 @@ Flutter / Dart Android app. SQLite via `sqflite`. Single-package `lib/` layout.
 - Entries for unreleased work go under the topmost `## Unreleased` section,
   newest first. Do not sort by tag.
 - Section headings are either `## Unreleased` (work in progress) or
-  `## vX.Y.ZZZZZZ+NN` (a released tag) — nothing else. At tag time
+  `## v<major>.<minor>.<date>-<build>` (a released tag) — nothing else. At tag time
   `20-MakeTag.sh` renames `## Unreleased` to the release version and opens a
   fresh empty `## Unreleased` above it; `22-RelUpload.sh` reads the release
   notes from that `## vX...` section. Don't stamp versions by hand.

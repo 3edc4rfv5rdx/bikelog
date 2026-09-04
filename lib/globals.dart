@@ -62,8 +62,8 @@ String bikePhotoPath(String? fileName) {
   return '$xvPhotoDir/$fileName';
 }
 
-const String progVersion = '0.9.260903';
-const int buildNumber = 71;
+const String progVersion = '0.9.20260904';
+const int buildNumber = 72;
 const String progAuthor = 'Eugen';
 const String progEmail = '3edc4rfv5rdx@gmail.com';
 const String progSite = 'bikelogbook.od.ua';

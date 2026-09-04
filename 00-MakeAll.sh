@@ -49,6 +49,11 @@ run() { # run <script> <fatal|optional>
 run 10-MakeRelease.sh fatal
 run 11-EmulRELEASE.sh optional
 run 12-PhoneRELEASE.sh optional
+# The desktop build, off by default: it is slow, it needs the clang/GTK
+# toolchain, and the Android run should not wait on it. Uncomment one of them —
+# and give the script the execute bit — when a Linux artifact is wanted too.
+#run 13-MakeLinux.sh optional
+#run 14-MakeAppImage.sh optional
 # The two APKs of this build, linked into OUT/ under their own names. Its own
 # script, so the same step also works on a build that already exists.
 run 19-LinkOut.sh optional

@@ -3,12 +3,13 @@ set -e
 
 ROOT="$(git rev-parse --show-toplevel)"
 
-# Nothing below is project-specific: the package name comes from pubspec.yaml,
-# the display title from the Android label, and 10/14 name their output after
-# the title. Copy the script to another Flutter project as it is.
+# Nothing below is project-specific: the name the release artifacts carry in
+# front of the version comes from pubspec.yaml. Copy the script to another
+# Flutter project as it is.
 PROJ_NAME=$(grep -oP '^name:\s*\K\S+' "$ROOT/pubspec.yaml") || { echo "No name: in pubspec.yaml" >&2; exit 1; }
 
 APK_DIR="$ROOT/build/app/outputs/flutter-apk"
+APPIMAGE_DIR="$ROOT/build/linux"
 CHANGELOG_SRC="$ROOT/CHANGELOG.md"
 NOTES_FILE="/tmp/release_notes_$$.md"
 
@@ -20,7 +21,9 @@ if [[ -z "$FULL_VER" ]]; then
     exit 1
 fi
 
-TAG="v$FULL_VER"
+# The pubspec spells the build with a +; the tag, the way 20-MakeTag.sh wrote
+# it, spells it with a dash.
+TAG="v${FULL_VER/+/-}"
 
 if ! git rev-parse -q --verify "refs/tags/$TAG" >/dev/null; then
     echo "ERROR: Tag $TAG not found. Run 21-PushTag.sh first."
@@ -141,6 +144,16 @@ FILES=(
 #    "$APK_DIR/$SRC_SHA_MAIN#$DST_SHA_MAIN"
 #    "$APK_DIR/$SRC_SHA_ARM64#$DST_SHA_ARM64"
 )
+
+# The Linux build of the same number, when 14-MakeAppImage.sh made one. That
+# step is off by default, so a release carrying only the APKs is normal and must
+# not stop the upload.
+SRC_APPIMAGE="${PROJ_NAME}-${VERSION}-${BUILD}-x86_64.AppImage"
+if [[ -f "$APPIMAGE_DIR/$SRC_APPIMAGE" ]]; then
+    FILES+=("$APPIMAGE_DIR/$SRC_APPIMAGE#$SRC_APPIMAGE")
+else
+    echo "No AppImage for build $BUILD; uploading the APKs only."
+fi
 
 echo "=== Verifying generated files ==="
 

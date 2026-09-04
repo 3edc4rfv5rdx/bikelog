@@ -5,6 +5,7 @@
 #
 #   OUT/bikelog-<version>-<build>-arm64-v8a.apk
 #   OUT/bikelog-<version>-<build>-universal.apk
+#   OUT/bikelog-<version>-<build>-x86_64.AppImage   (only if one was built)
 #
 # One place to copy the build from, instead of paths deep inside build/.
 # The links are hard ones: the entry here is the file itself, so copying it
@@ -30,25 +31,43 @@ MISSING=""
 # with separators in it.
 LINKED=()
 
+newest_of() { ls -t "$@" 2>/dev/null | head -1; }
+
+link_file() { # link_file <file>
+    local name
+    name=$(basename "$1")
+    mkdir -p OUT
+    ln -f "$1" "OUT/$name"
+    LINKED+=("$name")
+    echo "OUT/$name"
+}
+
 link_latest() { # link_latest <candidate files...>
     local newest
-    newest=$(ls -t "$@" 2>/dev/null | head -1)
+    newest=$(newest_of "$@")
     if [ -z "$newest" ] || [ ! -f "$newest" ]; then
         echo ">>> nothing to link into OUT"
         MISSING="yes"
         return 0
     fi
-    local name
-    name=$(basename "$newest")
-    mkdir -p OUT
-    ln -f "$newest" "OUT/$name"
-    LINKED+=("$name")
-    echo "OUT/$name"
+    link_file "$newest"
+}
+
+# The desktop build is a step of its own and is off by default, so a missing
+# image is not an incomplete set: link one when it is there, say nothing when it
+# is not. Marking it missing would stop the sweep below on every ordinary run.
+link_optional() { # link_optional <candidate files...>
+    local newest
+    newest=$(newest_of "$@")
+    [ -n "$newest" ] && [ -f "$newest" ] && link_file "$newest"
+    return 0
 }
 
 link_latest build/app/outputs/flutter-apk/*arm64-v8a*.apk
-# The fat APK, for a device whose ABI is neither of the splits built here.
+# The fat APK, for a device whose ABI is none of the splits built here.
 link_latest build/app/outputs/flutter-apk/*-universal.apk
+# The Linux build, when 14-MakeAppImage.sh made one.
+link_optional build/linux/*-x86_64.AppImage
 
 # Everything else goes: the previous build's names, an ABI no longer built, a
 # copy left behind. Only files and links — a directory somebody made here is
@@ -56,10 +75,8 @@ link_latest build/app/outputs/flutter-apk/*-universal.apk
 #
 # And only when every artifact was linked. A run that could not find one of them
 # used to sweep anyway, which deleted the previous good build and reported the
-# failure afterwards: OUT/ then held half a release, and the artifact that takes
-# longest to
-# produce was the one that went. Nothing is removed until there is a full set to
-# replace it with.
+# failure afterwards: OUT/ then held half a release. Nothing is removed until
+# there is a full set to replace it with.
 if [ -z "$MISSING" ] && [ -d OUT ]; then
     for entry in OUT/* ; do
         [ -d "$entry" ] && continue

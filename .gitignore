@@ -62,9 +62,8 @@ android/build/
 android/app/build/
 android/local.properties
 assets/help-finger.png
-assets/iconbig.png
+assets/icon.png
 assets/main512.png
-linux/
 pubspec.lock
 test/
 /icon-preview.png
