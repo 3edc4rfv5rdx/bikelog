@@ -5,12 +5,23 @@ Flutter / Dart Android app. SQLite via `sqflite`. Single-package `lib/` layout.
 ## Build / install
 - Release-only workflow. Use the numbered scripts (do not run `flutter build`
   manually):
-  - `00-Make.sh` — build APK splits, auto-bump version code, archive
-  - `98-InstallAPK.sh` — install latest `Bike*.apkx` on the device via adb
-  - `01-PushTag.sh` / `02-RelUpload.sh` — tag and publish
+  - `00-MakeAll.sh` — the whole run: build, install on emulator and phone, link OUT/
+  - `05-Lint.sh` / `06-Test.sh` — analyze and run the tests
+  - `10-MakeRelease.sh` — build the release APK splits and auto-bump the version
+  - `11-EmulRELEASE.sh` / `12-PhoneRELEASE.sh` — install the fresh release on the
+    emulator / on a physical phone
+  - `19-LinkOut.sh` — link the arm64 and universal APKs into `OUT/` under their
+    own names, sweeping whatever else was there
+  - `20-MakeTag.sh` — stamp the changelog and create the tag locally
+  - `21-PushTag.sh` — push the branch and the tag
+  - `22-RelUpload.sh` — publish the GitHub release with the APKs attached
+  - `98-InstallAPK.sh` — install the newest `*.apkx` on every attached device
+  - `99-CopyToAPKX.sh` — link the arm64 APK next to the sources as `*.apkx`
+- Artifacts carry one name across every project here:
+  `bikelog-<version>-<build>-<abi>.apk`, and the tag is `v<version>-<build>`.
 - The build/version number lives in **two** places that must stay in sync:
   `version:` in `pubspec.yaml` and `progVersion` / `buildNumber` in
-  `lib/globals.dart`. `00-Make.sh` owns both — never bump them by hand. When
+  `lib/globals.dart`. `10-MakeRelease.sh` owns both — never bump them by hand. When
   committing other changes, do stage them along if they show as modified, so the
   repo version stays in sync with the artifact.
 - Never build or install automatically. Make code changes only; the user builds
@@ -30,8 +41,8 @@ Flutter / Dart Android app. SQLite via `sqflite`. Single-package `lib/` layout.
   newest first. Do not sort by tag.
 - Section headings are either `## Unreleased` (work in progress) or
   `## vX.Y.ZZZZZZ+NN` (a released tag) — nothing else. At tag time
-  `01-PushTag.sh` renames `## Unreleased` to the release version and opens a
-  fresh empty `## Unreleased` above it; `02-RelUpload.sh` reads the release
+  `20-MakeTag.sh` renames `## Unreleased` to the release version and opens a
+  fresh empty `## Unreleased` above it; `22-RelUpload.sh` reads the release
   notes from that `## vX...` section. Don't stamp versions by hand.
 - Write the entry **only at commit time**, in the same commit as the code change.
   Skip during implementation. Every commit MUST include a CHANGELOG.md update.

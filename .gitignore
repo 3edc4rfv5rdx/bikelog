@@ -48,7 +48,8 @@ app.*.map.json
 key.properties
 
 .metadata
-Bikelog-*.apkx
+*.apkx
+OUT/
 analysis_options.yaml
 android/.gradle/
 android/app/.cxx/

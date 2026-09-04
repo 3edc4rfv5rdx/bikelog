@@ -12,8 +12,8 @@ cd "$(dirname "$0")"
 
 APK_PATH="build/app/outputs/flutter-apk"
 
-arm64_apk=$(ls -t Bike*.apkx 2>/dev/null | head -n1)
-universal_apk=$(ls -t "$APK_PATH"/app-release-*.apk 2>/dev/null | head -n1)
+arm64_apk=$(ls -t ./*.apkx 2>/dev/null | head -n1)
+universal_apk=$(ls -t "$APK_PATH"/*-universal.apk 2>/dev/null | head -n1)
 
 devices=$(adb devices | awk '/device$/{print $1}')
 if [ -z "$devices" ]; then

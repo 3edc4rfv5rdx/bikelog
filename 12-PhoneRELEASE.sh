@@ -2,24 +2,24 @@
 set -e
 
 # Install the freshest release APK on a physical phone.
-# Build one first: ./00-Make.sh
-#
-# 98-InstallAPK.sh installs on everything adb sees, emulator included, and picks
-# an APK per device ABI. This one goes to a single phone and takes a serial, for
-# when several devices are attached and only one of them is the one being tested.
+# Build one first: ./10-MakeRelease.sh
 
 cd "$(dirname "$0")"
 
+# Nothing below is project-specific: the package name comes from pubspec.yaml,
+# the display title from the Android label, and 10-MakeRelease.sh names the APKs
+# after the title. Copy the script to another Flutter project as it is.
+PROJ_NAME=$(grep -oP '^name:\s*\K\S+' pubspec.yaml) || { echo "No name: in pubspec.yaml" >&2; exit 1; }
+
 APK_DIR="build/app/outputs/flutter-apk"
 
-# Phones are arm64-v8a — pick that split, fall back to the universal APK that
-# 00-Make.sh leaves as app-release-<version>-<build>.apk
+# Phones are arm64-v8a — pick that split, fall back to the universal APK
 apk=$(ls -t "$APK_DIR"/*arm64-v8a*.apk 2>/dev/null | head -1)
-[ -z "$apk" ] && apk=$(ls -t "$APK_DIR"/app-release-*.apk 2>/dev/null | head -1)
+[ -z "$apk" ] && apk=$(ls -t "$APK_DIR/$PROJ_NAME"-*-universal.apk 2>/dev/null | head -1)
 [ -z "$apk" ] && apk=$(ls -t "$APK_DIR"/*.apk 2>/dev/null | head -1)
 
 if [ -z "$apk" ]; then
-    echo "No release APK found. Build first: ./00-Make.sh"
+    echo "No release APK found. Build first: ./10-MakeRelease.sh"
     exit 1
 fi
 
@@ -34,8 +34,9 @@ else
     COUNT=$(printf '%s\n' "$DEVICES" | sed '/^[[:space:]]*$/d' | wc -l | tr -d ' ')
     if [ "$COUNT" -eq 0 ]; then
         echo "No physical device connected. Connect one or pass a serial: $0 <serial>"
-        # 3, not 1: nothing was attempted, so a caller can tell "there was no
-        # phone to install on" from an install that was tried and failed.
+        # 3, not 1: nothing was attempted. 00-MakeAll.sh takes that as "there was
+        # nothing to install on" and finishes green, while a real install failure
+        # keeps its own non-zero code and makes the whole run non-zero.
         exit 3
     fi
     TEL=$(printf '%s\n' "$DEVICES" | head -1)

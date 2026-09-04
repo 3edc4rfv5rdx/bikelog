@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:flutter/services.dart' show rootBundle;
+import 'package:flutter/foundation.dart' show kReleaseMode;
 
 export 'db_helpers.dart';
 export 'ui_helpers.dart';
@@ -36,7 +37,8 @@ Map<String, dynamic> xdef = {
   '.Prog version': progVersion,
 };
 
-bool xvDebug = true;
+// Debug logging follows the build type: on in debug and profile, off in release.
+const bool xvDebug = !kReleaseMode;
 String xvFilter = '';
 // Bound arguments for the placeholders inside xvFilter (kept in sync with it).
 List<dynamic> xvFilterArgs = [];
